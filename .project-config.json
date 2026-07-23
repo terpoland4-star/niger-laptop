@@ -1,0 +1,36 @@
+{
+  "build_command": "pnpm run build",
+  "capabilities": [],
+  "dev_command": "pnpm run dev",
+  "env_vars": {},
+  "experiments": null,
+  "git_remote": {
+    "repo_url": "s3://vida-prod-gitrepo/webdev-git/310519663850250376/cPnQhcBYUEDnWutog7Qu4W",
+    "access_key_id": "ASIAZV3A2ECZCCCZEIGR",
+    "secret_access_key": "ETWHmgwxd2NgCYDc/llm8UVvrAONGTkrtB+0r21k",
+    "session_token": "IQoJb3JpZ2luX2VjECoaCXVzLWVhc3QtMSJIMEYCIQCrbAdOpAcrwcEpHLFgeGMdpz7BV+DFsW1cB1g4q1v2FwIhAOzgDYFjj4Tn3M6/jOww0L+EEhiO/Vh9CBAP0BSGpMbPKv8DCPP//////////wEQBBoMNjY1Mzg2MDk4ODY2Igx/BVoUG2QyEvTtyl8q0wNQdITNjfyKElYhGfVE3W7BO+apTejWy+AHhzXC87njLORRGOb5IM43MteWbL/WtoDWk/invoS3e5cMNzyrNZG6YzNEVsy4x+GfCvpgxRf2JP6zRAWWZHC2sgPU5TEKHFR6le/Mo9U+2Xyy4YtqEaXRP71ptKgTnq4OHjnruiOfXYzngPWC96sKivimKHsgCmeMwciABPsIPqAjQn3hVg2tRUBk3mpgF1isyMhfAva4GTUKbxeuK+SkgMzoCELBIbr5ZehKSPIAHdlUMmU5DF4vvq7lQsM3aYEhvMzfDbYSdBVdUP/WXEMknih59aU3AU6H80fP5COiYhiA90YMk6gkOfb/dvpIbpGTQBlPp5z58R8XB+KMFw8mpaksyKN0/xMmfkYetVVmxdkC+H1bItd3vcGl6c0RdgQ/qLRR8gKHuIGnbz0A0q4UWMOpnrvg0OhfFzuWKQIkZtFNRHY3uUtRkWE8SrNpNiH6lw6X1DRVu8ULsEzI2s40F+8ZOZjTXAdramjgo6m5w8qJT6X4t+Ynn58roG1xgv7oKSq3BSSzx7EODgf1XSbCx0RYGLAj7HKxWm1CyxmVAfpcoxElcbHw/oeYRqIa3XQiXYBfK+ZBk6XUwjDNronTBjqcAfxRUnkGxa0iPJb/YE/I5UGuHCbC4uCU9iWn2VwCjPRLZY4AoxbgBTS7EgA7/BWeJGTkmsGHM1OGHUb+oH7wgVAX24AlmJdVjDIGZ6B6vYIjT7qYa76fc+8/B+V/3iJM2PZtPBy2jOJ6zwYn5MKwCsQ4eVy/ZpJbo5K8lATwZ64MyCGsIQJqeUdq3OhO3+sqE8Olg5dxP3eunNuh8Q==",
+    "expiration": "2026-07-24T06:02:53.000Z",
+    "backend": "GIT_BACKEND_S3"
+  },
+  "name": "niger-laptops",
+  "path": "/home/ubuntu/niger-laptops",
+  "port": 3000,
+  "secrets": {
+    "BUILT_IN_FORGE_API_KEY": "LX7JQKqHngYVhVnu5Xm5yS",
+    "BUILT_IN_FORGE_API_URL": "https://forge.manus.ai",
+    "JWT_SECRET": "Ym9obajSE3HptuJiQ6a7mR",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "OWNER_NAME": "Hamadine Moctar",
+    "OWNER_OPEN_ID": "VrPdLdiY23jPkTEgcBkJTR",
+    "VITE_ANALYTICS_ENDPOINT": "https://manus-analytics.com",
+    "VITE_ANALYTICS_WEBSITE_ID": "c0acf7b5-fd62-461c-9a50-17e028050ea3",
+    "VITE_APP_ID": "cPnQhcBYUEDnWutog7Qu4W",
+    "VITE_APP_LOGO": "",
+    "VITE_APP_TITLE": "Niger Laptops - Votre expert informatique au Niger",
+    "VITE_FRONTEND_FORGE_API_KEY": "ihzgjn8yMeBf565gyXhGAS",
+    "VITE_FRONTEND_FORGE_API_URL": "https://forge.manus.ai",
+    "VITE_OAUTH_PORTAL_URL": "https://manus.im"
+  },
+  "template_id": "web-static",
+  "test_command": "pnpm test"
+}

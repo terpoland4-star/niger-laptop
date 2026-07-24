@@ -26,9 +26,7 @@ export const Header = ({
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-display font-bold text-lg">NL</span>
-            </div>
+            <img src="/logolap.png" alt="Niger Laptops" className="h-10 w-auto" />
             <div className="hidden sm:flex flex-col">
               <span className="font-display font-bold text-foreground text-sm">Niger Laptops</span>
               <span className="text-xs text-muted-foreground">Expert Informatique</span>

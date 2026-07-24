@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -21,15 +26,24 @@ jobs:
       - name: 🔨 Build du projet
         run: pnpm build
 
-      - name: 📂 Préparation du dossier de déploiement
+      - name: 📂 Préparation pour GitHub Pages
         run: |
-          mkdir -p deploy
-          cp -r dist/public/* deploy/
-          touch deploy/.nojekyll
+          mkdir -p _site
+          cp -r dist/public/* _site/
 
-      - name: 🚀 Déploiement sur GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: ⬆️ Upload de l'artefact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
-          commit_message: "🚀 Déploiement automatique [skip ci]"
+          path: _site
+
+  deploy:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 🚀 Déploiement sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

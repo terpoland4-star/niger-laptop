@@ -1,0 +1,37 @@
+name: 🚀 Déploiement Niger Laptops
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Récupération du code
+        uses: actions/checkout@v4
+
+      - name: 📦 Installation de pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 📦 Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: 📥 Installation des dépendances
+        run: pnpm install
+
+      - name: 🔨 Build du projet
+        run: pnpm build
+
+      - name: 🚀 Déploiement sur GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/public
+          commit_message: "🚀 Déploiement automatique [skip ci]"

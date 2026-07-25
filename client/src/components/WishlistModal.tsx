@@ -10,6 +10,7 @@ interface WishlistModalProps {
   items: WishlistItem[];
   onRemove: (id: number) => void;
   onClear: () => void;
+  onOrderClick: () => void;
   language?: "en" | "fr";
 }
 
@@ -19,6 +20,7 @@ export const WishlistModal = ({
   items,
   onRemove,
   onClear,
+  onOrderClick,
   language = "fr"
 }: WishlistModalProps) => {
   const handleShareWishlist = () => {
@@ -88,25 +90,33 @@ export const WishlistModal = ({
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col gap-3 pt-4 border-t border-border">
               <Button
-                onClick={handleShareWishlist}
-                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center justify-center gap-2"
+                onClick={onOrderClick}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
-                <Share2 size={18} />
-                {language === "en"
-                  ? "Share via WhatsApp"
-                  : "Partager sur WhatsApp"}
+                {language === "en" ? "Order Now" : "Commander maintenant"}
               </Button>
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleShareWishlist}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center justify-center gap-2"
+                >
+                  <Share2 size={18} />
+                  {language === "en"
+                    ? "Share via WhatsApp"
+                    : "Partager sur WhatsApp"}
+                </Button>
 
-              <Button
-                onClick={onClear}
-                variant="outline"
-                className="flex-1 border-destructive text-destructive hover:bg-destructive/10 font-semibold flex items-center justify-center gap-2"
-              >
-                <Trash2 size={18} />
-                {language === "en" ? "Clear All" : "Tout effacer"}
-              </Button>
+                <Button
+                  onClick={onClear}
+                  variant="outline"
+                  className="flex-1 border-destructive text-destructive hover:bg-destructive/10 font-semibold flex items-center justify-center gap-2"
+                >
+                  <Trash2 size={18} />
+                  {language === "en" ? "Clear All" : "Tout effacer"}
+                </Button>
+              </div>
             </div>
 
             {/* Info */}

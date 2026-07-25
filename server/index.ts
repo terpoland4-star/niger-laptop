@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import apiRouter from "./routes/api";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,12 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // Parse le JSON envoyé par le frontend (nécessaire pour POST /api/orders)
+  app.use(express.json());
+
+  // Routes API
+  app.use("/api", apiRouter);
 
   // Serve static files from dist/public in production
   const staticPath =

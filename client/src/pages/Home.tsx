@@ -6,11 +6,13 @@ import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { WishlistModal } from "@/components/WishlistModal";
+import { OrderModal } from "@/components/OrderModal";
 import { useWishlist } from "@/hooks/useWishlist";
 
 export default function Home() {
   const [language, setLanguage] = useState<"en" | "fr">("fr");
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
   const catalogRef = useRef<HTMLElement>(null);
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
 
@@ -23,6 +25,11 @@ export default function Home() {
 
   const handleLanguageChange = (newLang: "en" | "fr") => {
     setLanguage(newLang);
+  };
+
+  const handleOrderClick = () => {
+    setIsWishlistOpen(false);
+    setIsOrderOpen(true);
   };
 
   return (
@@ -60,6 +67,15 @@ export default function Home() {
         items={wishlist}
         onRemove={removeFromWishlist}
         onClear={clearWishlist}
+        onOrderClick={handleOrderClick}
+        language={language}
+      />
+
+      {/* Order Modal */}
+      <OrderModal
+        isOpen={isOrderOpen}
+        onClose={() => setIsOrderOpen(false)}
+        items={wishlist}
         language={language}
       />
     </div>

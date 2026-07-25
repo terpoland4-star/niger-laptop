@@ -46,3 +46,7 @@ coverage/
 # Temporary
 tmp/
 temp/
+
+# Database (local to this server, never commit)
+server/db/*.db
+server/db/*.db-journal

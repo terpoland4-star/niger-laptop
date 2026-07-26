@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -11,13 +12,16 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Parse le JSON envoyé par le frontend (nécessaire pour POST /api/orders)
-  app.use(express.json());
+  app.use(cors({
+    origin: [
+      "https://niger-laptops.com",
+      "https://www.niger-laptops.com",
+    ],
+  }));
 
-  // Routes API
+  app.use(express.json());
   app.use("/api", apiRouter);
 
-  // Serve static files from dist/public in production
   const staticPath =
     process.env.NODE_ENV === "production"
       ? path.resolve(__dirname, "public")
@@ -25,7 +29,6 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
-  // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
   });

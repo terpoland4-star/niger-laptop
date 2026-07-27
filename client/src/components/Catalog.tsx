@@ -6,18 +6,34 @@ import { useWishlist } from "@/hooks/useWishlist";
 
 interface CatalogProps {
   language?: "en" | "fr";
+  searchQuery?: string;
+  onAddToCart?: (product: Product) => void;
+  onOrderNow?: (product: Product) => void;
 }
 
-export const Catalog = ({ language = "fr" }: CatalogProps) => {
+export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrderNow }: CatalogProps) => {
   const [selectedCategory, setSelectedCategory] = useState<"all" | Product["category"]>("all");
   const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const filteredProducts = useMemo(() => {
-    if (selectedCategory === "all") {
-      return products;
+    let result = products;
+
+    if (selectedCategory !== "all") {
+      result = result.filter((p) => p.category === selectedCategory);
     }
-    return products.filter((p) => p.category === selectedCategory);
-  }, [selectedCategory]);
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter((p) => {
+        const name = (language === "en" ? p.nameEn : p.nameFr).toLowerCase();
+        const description = (p.description || "").toLowerCase();
+        const categoryLabel = categories[p.category][language].toLowerCase();
+        return name.includes(q) || description.includes(q) || categoryLabel.includes(q);
+      });
+    }
+
+    return result;
+  }, [selectedCategory, searchQuery, language]);
 
   const categoryList: Array<{ key: "all" | Product["category"]; label: string }> = [
     { key: "all", label: language === "en" ? "All Products" : "Tous les produits" },
@@ -32,9 +48,6 @@ export const Catalog = ({ language = "fr" }: CatalogProps) => {
 
     if (isInWishlist(productId)) {
       removeFromWishlist(productId);
-      // Show toast notification
-      const message = language === "en" ? "Removed from wishlist" : "Supprimé de la liste d'intérêt";
-      console.log(message);
     } else {
       addToWishlist({
         id: productId,
@@ -42,16 +55,12 @@ export const Catalog = ({ language = "fr" }: CatalogProps) => {
         imageUrl: product.image,
         addedAt: Date.now()
       });
-      // Show toast notification
-      const message = language === "en" ? "Added to wishlist" : "Ajouté à la liste d'intérêt";
-      console.log(message);
     }
   };
 
   return (
     <section id="catalog" className="py-16 bg-background">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
             {language === "en" ? "Our Catalog" : "Notre Catalogue"}
@@ -63,7 +72,6 @@ export const Catalog = ({ language = "fr" }: CatalogProps) => {
           </p>
         </div>
 
-        {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categoryList.map((cat) => (
             <Button
@@ -81,7 +89,6 @@ export const Catalog = ({ language = "fr" }: CatalogProps) => {
           ))}
         </div>
 
-        {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
             <ProductCard
@@ -89,12 +96,13 @@ export const Catalog = ({ language = "fr" }: CatalogProps) => {
               product={product}
               isInWishlist={isInWishlist(product.id)}
               onWishlistToggle={handleWishlistToggle}
+              onAddToCart={onAddToCart}
+              onOrderNow={onOrderNow}
               language={language}
             />
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
@@ -103,7 +111,6 @@ export const Catalog = ({ language = "fr" }: CatalogProps) => {
           </div>
         )}
 
-        {/* Results Count */}
         <div className="text-center mt-12 text-muted-foreground">
           <p className="text-sm">
             {language === "en"

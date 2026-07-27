@@ -18,7 +18,7 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [orderItems, setOrderItems] = useState<Array<{ id: number; name: string; imageUrl?: string }>>([]);
+  const [orderItems, setOrderItems] = useState<Array<{ id: number; name: string; imageUrl?: string; quantity?: number }>>([]);
 
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const {
@@ -55,19 +55,20 @@ export default function Home() {
     setOrderItems([{
       id: product.id,
       name: language === "en" ? product.nameEn : product.nameFr,
-      imageUrl: product.image
+      imageUrl: product.image,
+      quantity: 1
     }]);
     setIsOrderOpen(true);
   };
 
   const handleOrderFromWishlist = () => {
-    setOrderItems(wishlist.map((w) => ({ id: w.id, name: w.name, imageUrl: w.imageUrl })));
+    setOrderItems(wishlist.map((w) => ({ id: w.id, name: w.name, imageUrl: w.imageUrl, quantity: 1 })));
     setIsWishlistOpen(false);
     setIsOrderOpen(true);
   };
 
   const handleOrderFromCart = () => {
-    setOrderItems(cart.map((c) => ({ id: c.id, name: c.name, imageUrl: c.imageUrl })));
+    setOrderItems(cart.map((c) => ({ id: c.id, name: c.name, imageUrl: c.imageUrl, quantity: c.quantity })));
     setIsCartOpen(false);
     setIsOrderOpen(true);
   };

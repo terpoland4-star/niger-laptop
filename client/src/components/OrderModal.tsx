@@ -3,13 +3,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, CheckCircle2 } from "lucide-react";
-import { WishlistItem } from "@/hooks/useWishlist";
 import { createOrder } from "@/lib/api";
+
+interface OrderModalItem {
+  id: number;
+  name: string;
+  imageUrl?: string;
+  quantity?: number;
+}
 
 interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  items: WishlistItem[];
+  items: OrderModalItem[];
   language?: "en" | "fr";
 }
 
@@ -46,7 +52,7 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
         deliveryAddress: deliveryAddress || undefined,
         items: items.map((item) => ({
           productId: String(item.id),
-          quantity: 1,
+          quantity: item.quantity ?? 1,
         })),
       });
       setOrderNumber(result.data.orderNumber);

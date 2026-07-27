@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Catalog } from "@/components/Catalog";
@@ -6,15 +6,30 @@ import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { WishlistModal } from "@/components/WishlistModal";
+import { CartModal } from "@/components/CartModal";
 import { OrderModal } from "@/components/OrderModal";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useCart } from "@/hooks/useCart";
+import { Product } from "@/data/products";
 
 export default function Home() {
   const [language, setLanguage] = useState<"en" | "fr">("fr");
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
-  const catalogRef = useRef<HTMLElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [orderItems, setOrderItems] = useState<Array<{ id: number; name: string; imageUrl?: string }>>([]);
+
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
+  const {
+    cart,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    totalItems,
+    totalPrice
+  } = useCart();
 
   const handleCatalogClick = () => {
     const catalogElement = document.getElementById("catalog");
@@ -27,55 +42,90 @@ export default function Home() {
     setLanguage(newLang);
   };
 
-  const handleOrderClick = () => {
+  const handleAddToCart = (product: Product) => {
+    addToCart({
+      id: product.id,
+      name: language === "en" ? product.nameEn : product.nameFr,
+      imageUrl: product.image,
+      price: product.price
+    });
+  };
+
+  const handleOrderNowSingle = (product: Product) => {
+    setOrderItems([{
+      id: product.id,
+      name: language === "en" ? product.nameEn : product.nameFr,
+      imageUrl: product.image
+    }]);
+    setIsOrderOpen(true);
+  };
+
+  const handleOrderFromWishlist = () => {
+    setOrderItems(wishlist.map((w) => ({ id: w.id, name: w.name, imageUrl: w.imageUrl })));
     setIsWishlistOpen(false);
+    setIsOrderOpen(true);
+  };
+
+  const handleOrderFromCart = () => {
+    setOrderItems(cart.map((c) => ({ id: c.id, name: c.name, imageUrl: c.imageUrl })));
+    setIsCartOpen(false);
     setIsOrderOpen(true);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      {/* Header */}
       <Header
         wishlistCount={wishlist.length}
         onWishlistClick={() => setIsWishlistOpen(true)}
+        cartCount={totalItems}
+        onCartClick={() => setIsCartOpen(true)}
+        onSearchChange={setSearchQuery}
         language={language}
         onLanguageChange={handleLanguageChange}
       />
 
-      {/* Main Content */}
       <main className="flex-1">
-        {/* Hero Section */}
         <Hero language={language} onCatalogClick={handleCatalogClick} />
 
-        {/* Catalog Section */}
-        <Catalog language={language} />
+        <Catalog
+          language={language}
+          searchQuery={searchQuery}
+          onAddToCart={handleAddToCart}
+          onOrderNow={handleOrderNowSingle}
+        />
 
-        {/* About Section */}
         <About language={language} />
-
-        {/* Contact Section */}
         <Contact language={language} />
       </main>
 
-      {/* Footer */}
       <Footer language={language} />
 
-      {/* Wishlist Modal */}
       <WishlistModal
         isOpen={isWishlistOpen}
         onClose={() => setIsWishlistOpen(false)}
         items={wishlist}
         onRemove={removeFromWishlist}
         onClear={clearWishlist}
-        onOrderClick={handleOrderClick}
+        onOrderClick={handleOrderFromWishlist}
         language={language}
       />
 
-      {/* Order Modal */}
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        items={cart}
+        onRemove={removeFromCart}
+        onUpdateQuantity={updateQuantity}
+        onClear={clearCart}
+        onOrderClick={handleOrderFromCart}
+        totalPrice={totalPrice}
+        language={language}
+      />
+
       <OrderModal
         isOpen={isOrderOpen}
         onClose={() => setIsOrderOpen(false)}
-        items={wishlist}
+        items={orderItems}
         language={language}
       />
     </div>

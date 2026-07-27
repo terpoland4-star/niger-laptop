@@ -27,6 +27,8 @@ export default function Home() {
     removeFromCart,
     updateQuantity,
     clearCart,
+    saveCartToPhone,
+    loadCartFromPhone,
     totalItems,
     totalPrice
   } = useCart();
@@ -119,6 +121,8 @@ export default function Home() {
         onUpdateQuantity={updateQuantity}
         onClear={clearCart}
         onOrderClick={handleOrderFromCart}
+        onSaveToPhone={saveCartToPhone}
+        onLoadFromPhone={loadCartFromPhone}
         totalPrice={totalPrice}
         language={language}
       />

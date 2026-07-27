@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { products, orders } from "../db/schema";
+import { products, orders, carts } from "../db/schema";
 import { eq, like, or } from "drizzle-orm";
 import { orderSchema } from "../validators/orderValidator";
 import { randomUUID } from "crypto";
@@ -89,4 +89,30 @@ router.get("/orders/:id", async (req, res) => {
   res.json({ data: { ...order, items: JSON.parse(order.itemsJson) } });
 });
 
+
+// PUT /api/cart/:phone - sauvegarder le panier
+router.put("/cart/:phone", async (req, res) => {
+  const { items } = req.body;
+  const phone = req.params.phone;
+  const updatedAt = new Date().toISOString();
+
+  await db
+    .insert(carts)
+    .values({ phone, itemsJson: JSON.stringify(items), updatedAt })
+    .onConflictDoUpdate({
+      target: carts.phone,
+      set: { itemsJson: JSON.stringify(items), updatedAt },
+    });
+
+  res.json({ data: { phone, updatedAt } });
+});
+
+// GET /api/cart/:phone - récupérer le panier
+router.get("/cart/:phone", async (req, res) => {
+  const result = await db.select().from(carts).where(eq(carts.phone, req.params.phone));
+  if (result.length === 0) {
+    return res.status(404).json({ error: "Aucun panier trouvé pour ce numéro" });
+  }
+  res.json({ data: { items: JSON.parse(result[0].itemsJson), updatedAt: result[0].updatedAt } });
+});
 export default router;

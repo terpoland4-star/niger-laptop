@@ -27,3 +27,9 @@ export const orders = sqliteTable("orders", {
   itemsJson: text("items_json").notNull(),
   createdAt: text("created_at").notNull(),
 });
+
+export const carts = sqliteTable("carts", {
+  phone: text("phone").primaryKey(),
+  itemsJson: text("items_json").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export interface CartItem {
   id: number;
@@ -22,6 +23,8 @@ export const useCart = () => {
         setCart(JSON.parse(stored));
       } catch {
         console.error("Failed to parse cart from localStorage");
+        toast.error("Votre panier a été réinitialisé suite à un problème technique.");
+        localStorage.removeItem(CART_KEY);
       }
     }
     setIsLoaded(true);
@@ -61,6 +64,35 @@ export const useCart = () => {
 
   const clearCart = () => setCart([]);
 
+  const saveCartToPhone = async (phone: string) => {
+    try {
+      const res = await fetch(`https://api.niger-laptops.com/api/cart/${phone}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cart }),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Panier sauvegardé. Utilisez ce numéro pour le récupérer sur un autre appareil.");
+    } catch {
+      toast.error("Impossible de sauvegarder le panier. Réessayez plus tard.");
+    }
+  };
+
+  const loadCartFromPhone = async (phone: string) => {
+    try {
+      const res = await fetch(`https://api.niger-laptops.com/api/cart/${phone}`);
+      if (!res.ok) {
+        toast.error("Aucun panier trouvé pour ce numéro.");
+        return;
+      }
+      const { data } = await res.json();
+      setCart(data.items);
+      toast.success("Panier récupéré avec succès.");
+    } catch {
+      toast.error("Impossible de récupérer le panier. Réessayez plus tard.");
+    }
+  };
+
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -71,6 +103,8 @@ export const useCart = () => {
     updateQuantity,
     isInCart,
     clearCart,
+    saveCartToPhone,
+    loadCartFromPhone,
     totalItems,
     totalPrice,
     isLoaded

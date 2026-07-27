@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { X, Minus, Plus, Trash2, Save, Download } from "lucide-react";
 import { CartItem } from "@/hooks/useCart";
 
 interface CartModalProps {
@@ -11,6 +13,8 @@ interface CartModalProps {
   onUpdateQuantity: (id: number, quantity: number) => void;
   onClear: () => void;
   onOrderClick: () => void;
+  onSaveToPhone: (phone: string) => void;
+  onLoadFromPhone: (phone: string) => void;
   totalPrice: number;
   language?: "en" | "fr";
 }
@@ -23,9 +27,12 @@ export const CartModal = ({
   onUpdateQuantity,
   onClear,
   onOrderClick,
+  onSaveToPhone,
+  onLoadFromPhone,
   totalPrice,
   language = "fr"
 }: CartModalProps) => {
+  const [phone, setPhone] = useState("");
   const formattedTotal = new Intl.NumberFormat(language === "en" ? "en-US" : "fr-FR").format(totalPrice);
 
   return (
@@ -132,6 +139,42 @@ export const CartModal = ({
             </p>
           </div>
         )}
+
+        <div className="pt-4 border-t border-border space-y-2">
+          <p className="text-xs text-muted-foreground">
+            {language === "en"
+              ? "Save your cart to retrieve it on another device"
+              : "Sauvegardez votre panier pour le récupérer sur un autre appareil"}
+          </p>
+          <Input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+227 XX XX XX XX"
+          />
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!phone || items.length === 0}
+              onClick={() => onSaveToPhone(phone)}
+              className="flex-1 flex items-center justify-center gap-2 text-xs"
+            >
+              <Save size={16} />
+              {language === "en" ? "Save" : "Sauvegarder"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!phone}
+              onClick={() => onLoadFromPhone(phone)}
+              className="flex-1 flex items-center justify-center gap-2 text-xs"
+            >
+              <Download size={16} />
+              {language === "en" ? "Retrieve" : "Récupérer"}
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

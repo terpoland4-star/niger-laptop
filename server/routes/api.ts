@@ -4,8 +4,18 @@ import { products, orders, carts } from "../db/schema";
 import { eq, like, or } from "drizzle-orm";
 import { orderSchema } from "../validators/orderValidator";
 import { randomUUID } from "crypto";
+import rateLimit from "express-rate-limit";
+import { phoneParamSchema, cartItemsSchema } from "../validators/cartValidator";
 
 const router = Router();
+
+const cartLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Trop de requêtes, réessayez dans une minute." },
+});
 
 // GET /api/products - liste tous les produits (avec recherche optionnelle)
 router.get("/products", async (req, res) => {
@@ -91,9 +101,18 @@ router.get("/orders/:id", async (req, res) => {
 
 
 // PUT /api/cart/:phone - sauvegarder le panier
-router.put("/cart/:phone", async (req, res) => {
-  const { items } = req.body;
-  const phone = req.params.phone;
+router.put("/cart/:phone", cartLimiter, async (req, res) => {
+  const phoneCheck = phoneParamSchema.safeParse(req.params.phone);
+  if (!phoneCheck.success) {
+    return res.status(400).json({ error: "Numéro de téléphone invalide" });
+  }
+  const bodyCheck = cartItemsSchema.safeParse(req.body);
+  if (!bodyCheck.success) {
+    return res.status(400).json({ error: "Données du panier invalides", details: bodyCheck.error.issues });
+  }
+
+  const { items } = bodyCheck.data;
+  const phone = phoneCheck.data;
   const updatedAt = new Date().toISOString();
 
   await db
@@ -108,8 +127,12 @@ router.put("/cart/:phone", async (req, res) => {
 });
 
 // GET /api/cart/:phone - récupérer le panier
-router.get("/cart/:phone", async (req, res) => {
-  const result = await db.select().from(carts).where(eq(carts.phone, req.params.phone));
+router.get("/cart/:phone", cartLimiter, async (req, res) => {
+  const phoneCheck = phoneParamSchema.safeParse(req.params.phone);
+  if (!phoneCheck.success) {
+    return res.status(400).json({ error: "Numéro de téléphone invalide" });
+  }
+  const result = await db.select().from(carts).where(eq(carts.phone, phoneCheck.data));
   if (result.length === 0) {
     return res.status(404).json({ error: "Aucun panier trouvé pour ce numéro" });
   }

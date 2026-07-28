@@ -4,6 +4,8 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import apiRouter from "./routes/api";
+import cron from "node-cron";
+import { cleanupOldCarts } from "./jobs/cleanupCarts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +36,10 @@ async function startServer() {
   });
 
   const port = process.env.PORT || 3000;
+
+  cron.schedule("0 3 * * *", () => {
+    cleanupOldCarts().catch(console.error);
+  });
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);

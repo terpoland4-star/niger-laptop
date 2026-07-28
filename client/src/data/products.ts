@@ -269,7 +269,7 @@ export const products: Product[] = [
     category: "accessories",
     condition: "neuf",
     price: 0, // Prix sur demande
-    image: "assets/images/products/MikroTik hAP ax² C52iG-5HaxD2HaxD-TC.jpg",
+    image: "assets/images/products/MikroTik hAP ax²  C52iG-5HaxD2HaxD-TC.jpg",
     description: "Dual-band wireless router with excellent range"
   },
   {

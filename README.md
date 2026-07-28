@@ -155,3 +155,12 @@ Pour toute assistance, contactez :
 ---
 
 Fait avec ❤️ pour la communauté tech du Niger.
+
+## ⚠️ Note importante sur les lockfiles
+
+Ce projet a **deux pipelines de déploiement distincts**, chacun avec son propre gestionnaire de paquets :
+
+- **`package-lock.json`** (npm) : utilisé sur le VPS pour faire tourner l'API Express (`server/index.ts`)
+- **`pnpm-lock.yaml`** (pnpm) : utilisé par le workflow GitHub Actions (`.github/workflows/*.yml`) pour builder et déployer le frontend statique sur GitHub Pages
+
+**Ne supprimez ni l'un ni l'autre** — chacun est nécessaire à son pipeline respectif.

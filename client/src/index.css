@@ -40,6 +40,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-sahel-green: var(--sahel-green);
+  --color-sahel-blue: var(--sahel-blue);
 }
 
 :root {
@@ -49,8 +51,8 @@
   --color-sahel-earth: oklch(0.25 0.04 60);
   --color-sahel-light: oklch(0.95 0.02 70);
   --color-sahel-dark: oklch(0.15 0.02 60);
-  --color-sahel-green: oklch(0.50 0.14 135);
-  --color-sahel-blue: oklch(0.538 0.135 254);
+  --sahel-green: oklch(0.50 0.14 135);
+  --sahel-blue: oklch(0.538 0.135 254);
   
   /* Primary Accent: Warm Sunset Orange */
   --primary: oklch(0.65 0.18 40);
@@ -95,8 +97,8 @@
   --color-sahel-orange: oklch(0.72 0.15 40);
   --color-sahel-light: oklch(0.15 0.02 60);
   --color-sahel-dark: oklch(0.95 0.02 70);
-  --color-sahel-green: oklch(0.62 0.13 135);
-  --color-sahel-blue: oklch(0.715 0.102 249);
+  --sahel-green: oklch(0.62 0.13 135);
+  --sahel-blue: oklch(0.715 0.102 249);
   
   --primary: oklch(0.72 0.15 40);
   --primary-foreground: oklch(1 0 0);

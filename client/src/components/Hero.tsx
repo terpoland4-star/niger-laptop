@@ -108,7 +108,7 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
               src="/assets/images/logo/logolap-transparent.png"
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 m-auto w-[130%] max-w-none h-auto opacity-40 animate-logo-oscillate pointer-events-none select-none"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] max-w-none h-auto opacity-60 animate-logo-oscillate pointer-events-none select-none"
             />
 
             {/* Floating Cards Animation */}
@@ -134,7 +134,7 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="hidden lg:block absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <div className="flex flex-col items-center gap-2 text-muted-foreground">
           <span className="text-xs font-medium">
             {language === "en" ? "Scroll to explore" : "Défilez pour explorer"}

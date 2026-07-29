@@ -103,18 +103,17 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
         {/* Right Side - Image */}
         <div className="flex-1 relative h-96 md:h-full flex items-center justify-center">
           <div className="relative w-full h-full max-w-md">
-            {/* Transparent logo, oscillating, behind the floating card */}
-            <img
-              src="/assets/images/logo/logolap-transparent.png"
-              alt=""
-              aria-hidden="true"
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] max-w-none h-auto opacity-90 animate-logo-oscillate pointer-events-none select-none"
-            />
-
             {/* Floating Cards Animation */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-64 h-80 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300 flex items-center justify-center backdrop-blur-sm">
-                <div className="text-center">
+              <div className="relative w-64 h-80 rounded-2xl shadow-2xl overflow-hidden bg-card/70 backdrop-blur-sm transform hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+                {/* Transparent logo as background of the card, behind the emoji/text */}
+                <img
+                  src="/assets/images/logo/logolap-transparent.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-contain p-6 opacity-80 animate-logo-oscillate pointer-events-none select-none"
+                />
+                <div className="relative z-10 text-center">
                   <div className="text-6xl mb-4">💻</div>
                   <p className="font-display font-bold text-foreground text-xl">
                     {language === "en" ? "Premium Tech" : "Tech Premium"}

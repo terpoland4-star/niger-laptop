@@ -49,6 +49,8 @@
   --color-sahel-earth: oklch(0.25 0.04 60);
   --color-sahel-light: oklch(0.95 0.02 70);
   --color-sahel-dark: oklch(0.15 0.02 60);
+  --color-sahel-green: oklch(0.50 0.14 135);
+  --color-sahel-blue: oklch(0.538 0.135 254);
   
   /* Primary Accent: Warm Sunset Orange */
   --primary: oklch(0.65 0.18 40);
@@ -93,6 +95,8 @@
   --color-sahel-orange: oklch(0.72 0.15 40);
   --color-sahel-light: oklch(0.15 0.02 60);
   --color-sahel-dark: oklch(0.95 0.02 70);
+  --color-sahel-green: oklch(0.62 0.13 135);
+  --color-sahel-blue: oklch(0.715 0.102 249);
   
   --primary: oklch(0.72 0.15 40);
   --primary-foreground: oklch(1 0 0);
@@ -197,5 +201,29 @@
       padding-right: 2rem;
       max-width: 1280px; /* Standard content width */
     }
+  }
+}
+@keyframes logo-oscillate {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-logo-oscillate {
+  animation: logo-oscillate 4s ease-in-out infinite;
+}
+
+.animate-badge-float {
+  animation: badge-float 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-logo-oscillate,
+  .animate-badge-float {
+    animation: none !important;
   }
 }

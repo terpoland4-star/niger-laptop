@@ -19,13 +19,13 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
       <div className="relative container mx-auto px-4 py-20 flex flex-col lg:flex-row items-center justify-between gap-12">
         {/* Left Side - Text */}
         <div className="flex-1 max-w-2xl">
-          <div className="inline-block mb-6 px-4 py-2 bg-primary/10 rounded-full">
-            <span className="text-primary font-semibold text-sm">
+          <div className="inline-block mb-6 px-4 py-2 bg-primary/10 rounded-full animate-badge-float">
+            <span className="text-sahel-blue font-semibold text-sm">
               {language === "en" ? "Welcome to Niger Laptops" : "Bienvenue chez Niger Laptops"}
             </span>
           </div>
 
-          <h1 className="font-display text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="font-display text-5xl md:text-6xl font-bold text-sahel-green mb-6 leading-tight">
             {language === "en"
               ? "Your Tech Expert in Niger"
               : "Votre Expert Informatique au Niger"}
@@ -103,9 +103,17 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
         {/* Right Side - Image */}
         <div className="flex-1 relative h-96 md:h-full flex items-center justify-center">
           <div className="relative w-full h-full max-w-md">
+            {/* Transparent logo, oscillating, behind the floating card */}
+            <img
+              src="/assets/images/logo/logolap-transparent.png"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 m-auto w-[130%] max-w-none h-auto opacity-40 animate-logo-oscillate pointer-events-none select-none"
+            />
+
             {/* Floating Cards Animation */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-64 h-80 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="w-64 h-80 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300 flex items-center justify-center backdrop-blur-sm">
                 <div className="text-center">
                   <div className="text-6xl mb-4">💻</div>
                   <p className="font-display font-bold text-foreground text-xl">

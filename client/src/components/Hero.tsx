@@ -105,13 +105,13 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
           <div className="relative w-full h-full max-w-md">
             {/* Floating Cards Animation */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-64 h-80 rounded-2xl shadow-2xl overflow-hidden bg-card/70 backdrop-blur-sm transform hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="relative w-64 h-80 rounded-2xl shadow-2xl bg-card/90 transform hover:scale-105 transition-transform duration-300 flex items-center justify-center">
                 {/* Transparent logo as background of the card, behind the emoji/text */}
                 <img
                   src="/assets/images/logo/logolap-transparent.png"
                   alt=""
                   aria-hidden="true"
-                  className="absolute inset-0 w-full h-full object-contain p-6 opacity-80 animate-logo-oscillate pointer-events-none select-none"
+                  className="absolute inset-0 w-full h-full object-contain p-6 opacity-80 animate-logo-oscillate pointer-events-none select-none rounded-2xl"
                 />
                 <div className="relative z-10 text-center">
                   <div className="text-6xl mb-4">💻</div>

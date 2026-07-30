@@ -105,7 +105,7 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
           <div className="relative w-full h-full max-w-md">
             {/* Floating Cards Animation */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-64 h-80 rounded-2xl shadow-2xl bg-card/90 transform hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="relative w-64 h-80 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300 flex items-center justify-center" style={{backgroundColor: "red"}}>
                 {/* Transparent logo as background of the card, behind the emoji/text */}
                 <img
                   src="/assets/images/logo/logolap-transparent.png"

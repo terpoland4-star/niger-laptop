@@ -101,32 +101,27 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
         </div>
 
         {/* Right Side - Image */}
-        <div className="flex-1 relative h-96 md:h-full flex items-center justify-center">
-          <div className="relative w-full h-full max-w-md">
-            {/* Floating Cards Animation */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-64 h-80 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300 flex items-center justify-center" style={{backgroundColor: "red"}}>
-                {/* Transparent logo as background of the card, behind the emoji/text */}
-                <img
-                  src="/assets/images/logo/logolap-transparent.png"
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute inset-0 w-full h-full object-contain p-6 opacity-80 animate-logo-oscillate pointer-events-none select-none rounded-2xl"
-                />
-                <div className="relative z-10 text-center">
-                  <div className="text-6xl mb-4">💻</div>
-                  <p className="font-display font-bold text-foreground text-xl">
-                    {language === "en" ? "Premium Tech" : "Tech Premium"}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {language === "en" ? "34+ Products" : "34+ Produits"}
-                  </p>
-                </div>
-              </div>
+        <div className="w-full lg:flex-1 flex items-center justify-center py-10">
+          <div className="relative w-64 h-80 rounded-2xl shadow-2xl bg-card/90 transform hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+            {/* Decorative blur elements around the card */}
+            <div className="absolute -top-6 -right-6 w-32 h-32 bg-primary/10 rounded-full blur-2xl -z-10"></div>
+            <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary/5 rounded-full blur-3xl -z-10"></div>
 
-              {/* Floating Elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
+            {/* Transparent logo as background of the card, behind the emoji/text */}
+            <img
+              src="/assets/images/logo/logolap-transparent.png"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-contain p-6 opacity-80 animate-logo-oscillate pointer-events-none select-none rounded-2xl"
+            />
+            <div className="relative z-10 text-center">
+              <div className="text-6xl mb-4">💻</div>
+              <p className="font-display font-bold text-foreground text-xl">
+                {language === "en" ? "Premium Tech" : "Tech Premium"}
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                {language === "en" ? "34+ Products" : "34+ Produits"}
+              </p>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 import { createOrder } from "@/lib/api";
 
 interface OrderModalItem {
-  id: number;
+  id: string;
   name: string;
   imageUrl?: string;
   quantity?: number;

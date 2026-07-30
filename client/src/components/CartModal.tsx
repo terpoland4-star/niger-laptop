@@ -9,8 +9,8 @@ interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
   items: CartItem[];
-  onRemove: (id: number) => void;
-  onUpdateQuantity: (id: number, quantity: number) => void;
+  onRemove: (id: string) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
   onClear: () => void;
   onOrderClick: () => void;
   onSaveToPhone: (phone: string) => void;

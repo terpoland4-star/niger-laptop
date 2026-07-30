@@ -10,7 +10,7 @@ import { CartModal } from "@/components/CartModal";
 import { OrderModal } from "@/components/OrderModal";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
-import { Product } from "@/data/products";
+import { Product } from "@/lib/productLabels";
 
 export default function Home() {
   const [language, setLanguage] = useState<"en" | "fr">("fr");
@@ -18,7 +18,7 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [orderItems, setOrderItems] = useState<Array<{ id: number; name: string; imageUrl?: string; quantity?: number }>>([]);
+  const [orderItems, setOrderItems] = useState<Array<{ id: string; name: string; imageUrl?: string; quantity?: number }>>([]);
 
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const {

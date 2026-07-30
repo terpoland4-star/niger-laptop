@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { products, categories, Product } from "@/data/products";
+import { categories, Product } from "@/lib/productLabels";
+import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -13,6 +14,7 @@ interface CatalogProps {
 
 export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrderNow }: CatalogProps) => {
   const [selectedCategory, setSelectedCategory] = useState<"all" | Product["category"]>("all");
+  const { products, isLoading, error } = useProducts(language);
   const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const filteredProducts = useMemo(() => {
@@ -33,7 +35,7 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
     }
 
     return result;
-  }, [selectedCategory, searchQuery, language]);
+  }, [products, selectedCategory, searchQuery, language]);
 
   const categoryList: Array<{ key: "all" | Product["category"]; label: string }> = [
     { key: "all", label: language === "en" ? "All Products" : "Tous les produits" },
@@ -42,7 +44,7 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
     { key: "accessories", label: categories.accessories[language] }
   ];
 
-  const handleWishlistToggle = (productId: number) => {
+  const handleWishlistToggle = (productId: string) => {
     const product = products.find((p) => p.id === productId);
     if (!product) return;
 
@@ -89,35 +91,53 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isInWishlist={isInWishlist(product.id)}
-              onWishlistToggle={handleWishlistToggle}
-              onAddToCart={onAddToCart}
-              onOrderNow={onOrderNow}
-              language={language}
-            />
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
+        {isLoading && (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
-              {language === "en" ? "No products found" : "Aucun produit trouvé"}
+              {language === "en" ? "Loading products..." : "Chargement des produits..."}
             </p>
           </div>
         )}
 
-        <div className="text-center mt-12 text-muted-foreground">
-          <p className="text-sm">
-            {language === "en"
-              ? `Showing ${filteredProducts.length} of ${products.length} products`
-              : `Affichage de ${filteredProducts.length} sur ${products.length} produits`}
-          </p>
-        </div>
+        {error && !isLoading && (
+          <div className="text-center py-12">
+            <p className="text-destructive text-lg">{error}</p>
+          </div>
+        )}
+
+        {!isLoading && !error && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isInWishlist={isInWishlist(product.id)}
+                  onWishlistToggle={handleWishlistToggle}
+                  onAddToCart={onAddToCart}
+                  onOrderNow={onOrderNow}
+                  language={language}
+                />
+              ))}
+            </div>
+
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">
+                  {language === "en" ? "No products found" : "Aucun produit trouvé"}
+                </p>
+              </div>
+            )}
+
+            <div className="text-center mt-12 text-muted-foreground">
+              <p className="text-sm">
+                {language === "en"
+                  ? `Showing ${filteredProducts.length} of ${products.length} products`
+                  : `Affichage de ${filteredProducts.length} sur ${products.length} produits`}
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

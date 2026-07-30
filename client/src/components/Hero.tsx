@@ -114,12 +114,8 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
               aria-hidden="true"
               className="absolute inset-0 w-full h-full object-contain p-6 opacity-80 animate-logo-oscillate pointer-events-none select-none rounded-2xl"
             />
-            <div className="relative z-10 text-center">
-              <div className="text-6xl mb-4">💻</div>
-              <p className="font-display font-bold text-foreground text-xl">
-                {language === "en" ? "Premium Tech" : "Tech Premium"}
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-end pb-6">
+              <p className="text-sm font-medium text-muted-foreground bg-background/80 px-3 py-1 rounded-full">
                 {language === "en" ? "Wide Product Range" : "Large choix de produits"}
               </p>
             </div>

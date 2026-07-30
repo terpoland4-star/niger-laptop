@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { company } from "@/data/company";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 interface ContactProps {
@@ -64,6 +64,14 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
             {language === "en"
               ? "Have questions? We'd love to hear from you. Send us a message!"
               : "Vous avez des questions ? Nous aimerions vous entendre. Envoyez-nous un message !"}
+          </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto text-center mb-10 bg-primary/5 border border-primary/20 rounded-lg p-4">
+          <p className="text-foreground font-medium">
+            {language === "en"
+              ? "Can't find what you're looking for? Talk to a sales advisor \u2014 we probably have it in store."
+              : "Vous ne trouvez pas ce que vous cherchez ? Parlez-en à un conseiller clientèle, il y en a sûrement en magasin."}
           </p>
         </div>
 
@@ -221,6 +229,26 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                   >
                     {language === "en" ? "View on Google Maps" : "Voir sur Google Maps"}
                   </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Hours */}
+            <div className="bg-card rounded-lg border border-border p-6 hover:border-primary transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Clock size={24} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">
+                    {language === "en" ? "Hours" : "Horaires"}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {language === "en" ? "Monday - Friday: 9:00 AM - 6:00 PM" : "Lundi - Vendredi: 9h00 - 18h00"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {language === "en" ? "Saturday: 10:00 AM - 4:00 PM" : "Samedi: 10h00 - 16h00"}
+                  </p>
                 </div>
               </div>
             </div>

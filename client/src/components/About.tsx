@@ -1,4 +1,3 @@
-import { company } from "@/data/company";
 import { CheckCircle2, Zap, Shield, Users } from "lucide-react";
 
 interface AboutProps {
@@ -77,86 +76,20 @@ export const About = ({ language = "fr" }: AboutProps) => {
 
         {/* Company Info */}
         <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-8 border border-primary/20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-                {language === "en" ? "About Niger Laptops" : "À Propos de Niger Laptops"}
-              </h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
-                {language === "en"
-                  ? "Niger Laptops is a leading tech retailer in Niamey, Niger. We specialize in providing high-quality laptops, tablets, and tech accessories to individuals and businesses. Our mission is to make premium technology accessible to everyone in Niger."
-                  : "Niger Laptops est un détaillant informatique de premier plan à Niamey, Niger. Nous nous spécialisons dans la fourniture de portables, tablettes et accessoires informatiques de haute qualité aux particuliers et aux entreprises. Notre mission est de rendre la technologie premium accessible à tous au Niger."}
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                {language === "en"
-                  ? "With years of experience and a commitment to excellence, we ensure every customer receives the best service and products."
-                  : "Avec des années d'expérience et un engagement envers l'excellence, nous garantissons que chaque client reçoit le meilleur service et les meilleurs produits."}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-                {language === "en" ? "Contact Information" : "Informations de Contact"}
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-semibold text-muted-foreground mb-1">
-                    {language === "en" ? "Address" : "Adresse"}
-                  </p>
-                  <p className="text-foreground">{company.address}</p>
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-muted-foreground mb-1">
-                    {language === "en" ? "Phone" : "Téléphone"}
-                  </p>
-                  <div className="space-y-1">
-                    {company.phone.map((phone, idx) => (
-                      <a
-                        key={idx}
-                        href={`tel:${phone}`}
-                        className="text-primary hover:underline block"
-                      >
-                        {phone}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-muted-foreground mb-1">
-                    {language === "en" ? "Email" : "Email"}
-                  </p>
-                  <div className="space-y-1">
-                    {company.email.map((email, idx) => (
-                      <a
-                        key={idx}
-                        href={`mailto:${email}`}
-                        className="text-primary hover:underline block"
-                      >
-                        {email}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-muted-foreground mb-1">
-                    {language === "en" ? "Hours" : "Horaires"}
-                  </p>
-                  <p className="text-foreground">
-                    {language === "en"
-                      ? "Monday - Friday: 9:00 AM - 6:00 PM"
-                      : "Lundi - Vendredi: 9h00 - 18h00"}
-                  </p>
-                  <p className="text-foreground">
-                    {language === "en"
-                      ? "Saturday: 10:00 AM - 4:00 PM"
-                      : "Samedi: 10h00 - 16h00"}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="max-w-3xl mx-auto">
+            <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+              {language === "en" ? "About Niger Laptops" : "À Propos de Niger Laptops"}
+            </h3>
+            <p className="text-muted-foreground mb-4 leading-relaxed">
+              {language === "en"
+                ? "Niger Laptops is a leading tech retailer in Niamey, Niger. We specialize in providing high-quality laptops, tablets, and tech accessories to individuals and businesses. Our mission is to make premium technology accessible to everyone in Niger."
+                : "Niger Laptops est un détaillant informatique de premier plan à Niamey, Niger. Nous nous spécialisons dans la fourniture de portables, tablettes et accessoires informatiques de haute qualité aux particuliers et aux entreprises. Notre mission est de rendre la technologie premium accessible à tous au Niger."}
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              {language === "en"
+                ? "With years of experience and a commitment to excellence, we ensure every customer receives the best service and products."
+                : "Avec des années d'expérience et un engagement envers l'excellence, nous garantissons que chaque client reçoit le meilleur service et les meilleurs produits."}
+            </p>
           </div>
         </div>
       </div>

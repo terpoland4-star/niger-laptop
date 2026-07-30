@@ -120,7 +120,7 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
                 {language === "en" ? "Premium Tech" : "Tech Premium"}
               </p>
               <p className="text-sm text-muted-foreground mt-2">
-                {language === "en" ? "34+ Products" : "34+ Produits"}
+                {language === "en" ? "Wide Product Range" : "Large choix de produits"}
               </p>
             </div>
           </div>

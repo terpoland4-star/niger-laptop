@@ -1,5 +1,6 @@
 import { company } from "@/data/company";
 import { MapPin, Facebook } from "lucide-react";
+import { Link } from "wouter";
 
 interface FooterProps {
   language?: "en" | "fr";
@@ -95,12 +96,12 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
                 : `© ${currentYear} Niger Laptops. Tous droits réservés.`}
             </p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-primary transition-colors">
+              <Link href="/confidentialite" className="hover:text-primary transition-colors">
                 {language === "en" ? "Privacy" : "Confidentialité"}
-              </a>
-              <a href="#" className="hover:text-primary transition-colors">
+              </Link>
+              <Link href="/conditions" className="hover:text-primary transition-colors">
                 {language === "en" ? "Terms" : "Conditions"}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

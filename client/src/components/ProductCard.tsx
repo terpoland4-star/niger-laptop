@@ -1,4 +1,4 @@
-import { Product, conditions } from "@/data/products";
+import { Product, conditions } from "@/lib/productLabels";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart } from "lucide-react";
 import { openWhatsAppChat } from "@/lib/whatsapp";
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 interface ProductCardProps {
   product: Product;
   isInWishlist?: boolean;
-  onWishlistToggle?: (productId: number) => void;
+  onWishlistToggle?: (productId: string) => void;
   onAddToCart?: (product: Product) => void;
   onOrderNow?: (product: Product) => void;
   language?: "en" | "fr";

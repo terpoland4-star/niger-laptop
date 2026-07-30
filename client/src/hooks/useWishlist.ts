@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export interface WishlistItem {
-  id: number;
+  id: string;
   name: string;
   imageUrl?: string;
   addedAt: number;
@@ -41,11 +41,11 @@ export const useWishlist = () => {
     });
   };
 
-  const removeFromWishlist = (id: number) => {
+  const removeFromWishlist = (id: string) => {
     setWishlist((prev) => prev.filter((w) => w.id !== id));
   };
 
-  const isInWishlist = (id: number): boolean => {
+  const isInWishlist = (id: string): boolean => {
     return wishlist.some((w) => w.id === id);
   };
 

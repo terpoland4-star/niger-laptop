@@ -8,7 +8,7 @@ interface WishlistModalProps {
   isOpen: boolean;
   onClose: () => void;
   items: WishlistItem[];
-  onRemove: (id: number) => void;
+  onRemove: (id: string) => void;
   onClear: () => void;
   onOrderClick: () => void;
   language?: "en" | "fr";

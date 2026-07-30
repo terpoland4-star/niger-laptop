@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export interface CartItem {
-  id: number;
+  id: string;
   name: string;
   imageUrl?: string;
   price: number;
@@ -36,7 +36,7 @@ export const useCart = () => {
     }
   }, [cart, isLoaded]);
 
-  const addToCart = (item: { id: number; name: string; imageUrl?: string; price: number }, quantity: number = 1) => {
+  const addToCart = (item: { id: string; name: string; imageUrl?: string; price: number }, quantity: number = 1) => {
     setCart((prev) => {
       const existing = prev.find((c) => c.id === item.id);
       if (existing) {
@@ -48,11 +48,11 @@ export const useCart = () => {
     });
   };
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((c) => c.id !== id));
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(id);
       return;
@@ -60,7 +60,7 @@ export const useCart = () => {
     setCart((prev) => prev.map((c) => (c.id === id ? { ...c, quantity } : c)));
   };
 
-  const isInCart = (id: number): boolean => cart.some((c) => c.id === id);
+  const isInCart = (id: string): boolean => cart.some((c) => c.id === id);
 
   const clearCart = () => setCart([]);
 

@@ -1,5 +1,5 @@
 import { company } from "@/data/company";
-import { Mail, Phone, MapPin, Facebook } from "lucide-react";
+import { MapPin, Facebook } from "lucide-react";
 
 interface FooterProps {
   language?: "en" | "fr";
@@ -11,7 +11,7 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
   return (
     <footer className="bg-card border-t border-border mt-16">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Company Info */}
           <div>
             <h3 className="font-display font-bold text-foreground mb-4">Niger Laptops</h3>
@@ -63,31 +63,6 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
                   {language === "en" ? "Contact" : "Contact"}
                 </a>
               </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">
-              {language === "en" ? "Contact" : "Contact"}
-            </h4>
-            <ul className="space-y-2 text-sm">
-              {company.phone.map((phone, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <Phone size={14} className="text-primary" />
-                  <a href={`tel:${phone}`} className="text-muted-foreground hover:text-primary transition-colors">
-                    {phone}
-                  </a>
-                </li>
-              ))}
-              {company.email.map((email, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <Mail size={14} className="text-primary" />
-                  <a href={`mailto:${email}`} className="text-muted-foreground hover:text-primary transition-colors">
-                    {email}
-                  </a>
-                </li>
-              ))}
             </ul>
           </div>
 

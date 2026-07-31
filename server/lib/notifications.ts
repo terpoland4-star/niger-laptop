@@ -94,7 +94,7 @@ async function sendSingleEmail(order: OrderNotificationData, toEmail: string): P
 }
 
 export async function sendEmailNotifications(order: OrderNotificationData): Promise<void> {
-  const recipients = ["zoubeirou.zakariya@niger-laptops.com", "moctarhamadine54@gmail.com"];
+  const recipients = ["zoubeirou.zakariya@gmail.com", "moctarhamadine54@gmail.com"];
   await Promise.all(recipients.map((email) => sendSingleEmail(order, email)));
 }
 

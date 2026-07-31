@@ -22,21 +22,6 @@ export const company = {
     address: "Tchangarey, Marché de Bétail, Niamey (Niger)"
   },
   
-  // External Services
-  emailjs: {
-    serviceId: "service_4vlnw9a",
-    templateId: "template_kw3ckfd",
-    publicKey: "5b0yYf5ZL1hfHE7vn"
-  },
-  
-  oneSignal: {
-    appId: "1ab8bdc3-c665-4b8f-909a-ac625d0478c7"
-  },
-  
-  discord: {
-    webhookUrl: "https://discord.com/api/webhooks/1526219089293475882/_4ZhloVoqU7Wg9Hrb2nRwri6Niy8GXYhcCisoxAcEKxO-sCIlvbV4Ck5Y1dttv6bJQ0I"
-  },
-  
   // WhatsApp Configuration
   whatsapp: {
     defaultNumber: "+227 91 12 78 70",

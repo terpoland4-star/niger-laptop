@@ -70,6 +70,7 @@ router.post("/orders", async (req, res) => {
       quantity: item.quantity,
       unitPrice: price,
       lineTotal,
+      thumbnail: product?.thumbnail ?? null,
     };
   });
 

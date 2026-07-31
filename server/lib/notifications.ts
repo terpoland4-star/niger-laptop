@@ -4,6 +4,7 @@ interface OrderItem {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  thumbnail: string | null;
 }
 
 interface OrderNotificationData {
@@ -19,6 +20,22 @@ function formatItemsList(items: OrderItem[]): string {
   return items
     .map((i) => `- ${i.productName} x${i.quantity} = ${i.lineTotal.toLocaleString("fr-FR")} FCFA`)
     .join("\n");
+}
+
+const SITE_BASE_URL = "https://www.niger-laptops.com";
+
+function formatItemsHtml(items: OrderItem[]): string {
+  return items
+    .map((i) => {
+      const imgSrc = i.thumbnail
+        ? encodeURI(`${SITE_BASE_URL}/${i.thumbnail}`)
+        : null;
+      const imgTag = imgSrc
+        ? `<img src="${imgSrc}" alt="${i.productName}" width="60" height="60" style="object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:10px;">`
+        : "";
+      return `<div style="margin-bottom:8px;">${imgTag}<span>${i.productName} x${i.quantity} = ${i.lineTotal.toLocaleString("fr-FR")} FCFA</span></div>`;
+    })
+    .join("");
 }
 
 export async function sendDiscordNotification(order: OrderNotificationData): Promise<void> {
@@ -81,6 +98,7 @@ async function sendSingleEmail(order: OrderNotificationData, toEmail: string): P
           customer_phone: order.customerPhone,
           delivery_address: order.deliveryAddress || "Non renseignée",
           items_list: formatItemsList(order.items),
+          items_html: formatItemsHtml(order.items),
           total: `${order.total.toLocaleString("fr-FR")} FCFA`,
         },
       }),

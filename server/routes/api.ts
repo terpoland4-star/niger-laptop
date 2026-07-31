@@ -6,6 +6,7 @@ import { orderSchema } from "../validators/orderValidator";
 import { randomUUID } from "crypto";
 import rateLimit from "express-rate-limit";
 import { phoneParamSchema, cartItemsSchema } from "../validators/cartValidator";
+import { sendOrderNotifications } from "../lib/notifications";
 
 const router = Router();
 
@@ -85,6 +86,15 @@ router.post("/orders", async (req, res) => {
   };
 
   await db.insert(orders).values(order);
+
+  sendOrderNotifications({
+    orderNumber: order.orderNumber,
+    customerName: order.customerName,
+    customerPhone: order.customerPhone,
+    deliveryAddress: order.deliveryAddress,
+    total: order.total,
+    items: enrichedItems,
+  }).catch((err) => console.error("[orders] Erreur notification:", err));
 
   res.status(201).json({ data: { ...order, items: enrichedItems } });
 });

@@ -50,3 +50,4 @@ server/db/*.db
 server/db/*.db-journal
 *.db
 *.db.backup-*
+uploads/

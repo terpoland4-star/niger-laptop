@@ -26,6 +26,7 @@ async function startServer() {
   app.use(express.json());
   app.use("/api", apiRouter);
   app.use("/api/admin", adminRouter);
+  app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
   const staticPath =
     process.env.NODE_ENV === "production"

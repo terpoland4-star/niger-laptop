@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { createOrder } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface OrderModalItem {
   id: string;
@@ -20,9 +22,14 @@ interface OrderModalProps {
 }
 
 export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderModalProps) => {
+  const { isAuthenticated, token, loginWithToken } = useAuth();
+
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [wantAccount, setWantAccount] = useState(false);
+  const [accountEmail, setAccountEmail] = useState("");
+  const [accountPassword, setAccountPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
@@ -31,6 +38,9 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
     setCustomerName("");
     setCustomerPhone("");
     setDeliveryAddress("");
+    setWantAccount(false);
+    setAccountEmail("");
+    setAccountPassword("");
     setError(null);
     setOrderNumber(null);
   };
@@ -46,15 +56,32 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
     setIsSubmitting(true);
 
     try {
-      const result = await createOrder({
-        customerName,
-        customerPhone,
-        deliveryAddress: deliveryAddress || undefined,
-        items: items.map((item) => ({
-          productId: String(item.id),
-          quantity: item.quantity ?? 1,
-        })),
-      });
+      const shouldCreateAccount = wantAccount && !isAuthenticated;
+
+      const result = await createOrder(
+        {
+          customerName,
+          customerPhone,
+          deliveryAddress: deliveryAddress || undefined,
+          items: items.map((item) => ({
+            productId: String(item.id),
+            quantity: item.quantity ?? 1,
+          })),
+          ...(shouldCreateAccount
+            ? { createAccountEmail: accountEmail, createAccountPassword: accountPassword }
+            : {}),
+        },
+        isAuthenticated ? token ?? undefined : undefined
+      );
+
+      // Si un compte vient d'être créé pour cette commande, on connecte
+      // automatiquement le client sans bloquer l'affichage de la confirmation.
+      if (result.newAccountToken) {
+        loginWithToken(result.newAccountToken).catch(() => {
+          // Non bloquant : la commande a réussi même si l'auto-login échoue.
+        });
+      }
+
       setOrderNumber(result.data.orderNumber);
     } catch (err) {
       setError(
@@ -140,6 +167,54 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
                 placeholder={language === "en" ? "Address" : "Adresse"}
               />
             </div>
+
+            {!isAuthenticated && (
+              <div className="space-y-3 border-t border-border pt-4">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="wantAccount"
+                    checked={wantAccount}
+                    onCheckedChange={(checked) => setWantAccount(checked === true)}
+                  />
+                  <label htmlFor="wantAccount" className="text-sm font-medium cursor-pointer">
+                    {language === "en"
+                      ? "Create an account to track my orders"
+                      : "Créer un compte pour suivre mes commandes"}
+                  </label>
+                </div>
+
+                {wantAccount && (
+                  <div className="space-y-3 pl-1">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        {language === "en" ? "Email" : "Email"} *
+                      </label>
+                      <Input
+                        required={wantAccount}
+                        type="email"
+                        value={accountEmail}
+                        onChange={(e) => setAccountEmail(e.target.value)}
+                        placeholder={language === "en" ? "you@example.com" : "vous@exemple.com"}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        {language === "en" ? "Password" : "Mot de passe"} *
+                      </label>
+                      <Input
+                        required={wantAccount}
+                        type="password"
+                        minLength={6}
+                        value={accountPassword}
+                        onChange={(e) => setAccountPassword(e.target.value)}
+                        placeholder={language === "en" ? "At least 6 characters" : "6 caractères minimum"}
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {error && (
               <p className="text-sm text-destructive">{error}</p>

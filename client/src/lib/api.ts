@@ -36,6 +36,93 @@ export async function createOrder(payload: CreateOrderPayload): Promise<OrderRes
   return res.json();
 }
 
+// --- Comptes clients ---
+
+export interface CustomerAuthPayload {
+  email: string;
+  password: string;
+}
+
+export interface RegisterPayload extends CustomerAuthPayload {
+  name: string;
+  phone?: string;
+}
+
+export interface Customer {
+  id: string;
+  email: string;
+  name: string;
+  phone: string | null;
+}
+
+export interface CustomerAuthResponse {
+  data: {
+    token: string;
+    customer: Customer;
+  };
+}
+
+export async function registerCustomer(payload: RegisterPayload): Promise<CustomerAuthResponse> {
+  const res = await fetch(`${API_BASE}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de l'inscription");
+  }
+
+  return res.json();
+}
+
+export async function loginCustomer(payload: CustomerAuthPayload): Promise<CustomerAuthResponse> {
+  const res = await fetch(`${API_BASE}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la connexion");
+  }
+
+  return res.json();
+}
+
+export async function getMe(token: string): Promise<{ data: Customer }> {
+  const res = await fetch(`${API_BASE}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Impossible de charger le compte");
+  return res.json();
+}
+
+export interface CustomerOrder {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  deliveryAddress: string | null;
+  status: string;
+  total: number;
+  itemsJson: string;
+  createdAt: string;
+  customerId: string | null;
+}
+
+export async function getMyOrders(token: string): Promise<{ data: CustomerOrder[] }> {
+  const res = await fetch(`${API_BASE}/api/auth/orders`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Impossible de charger l'historique des commandes");
+  return res.json();
+}
+
 // --- Admin ---
 
 export interface AdminLoginPayload {

@@ -8,6 +8,13 @@
       "when": 1784945260695,
       "tag": "0000_opposite_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785551605877,
+      "tag": "0001_parallel_stephen_strange",
+      "breakpoints": true
     }
   ]
 }

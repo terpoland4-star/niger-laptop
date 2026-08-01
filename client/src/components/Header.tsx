@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, X, Heart, ShoppingCart, Moon, Sun, Search } from "lucide-react";
+import { Menu, X, Heart, ShoppingCart, Moon, Sun, Search, User } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
 
 interface HeaderProps {
@@ -27,6 +28,7 @@ export const Header = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -127,6 +129,21 @@ export const Header = ({
                 </span>
               )}
             </Button>
+
+            {/* Account Button */}
+            <Link href="/compte">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative rounded-full"
+                aria-label={language === "en" ? "My account" : "Mon compte"}
+              >
+                <User size={18} />
+                {isAuthenticated && (
+                  <span className="absolute -top-1 -right-1 bg-green-600 rounded-full w-2.5 h-2.5" />
+                )}
+              </Button>
+            </Link>
 
             {/* Mobile Menu Toggle */}
             <Button

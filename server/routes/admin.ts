@@ -1,11 +1,15 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { admins } from "../db/schema";
+import { admins, products, productHistory } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
+import multer from "multer";
+import path from "path";
+import { randomUUID } from "crypto";
+import { requireAdmin, AuthenticatedRequest } from "../middleware/auth";
 
 const router = Router();
 
@@ -55,5 +59,68 @@ router.post("/login", loginLimiter, async (req, res) => {
 
   res.json({ data: { token, admin: { id: admin.id, email: admin.email, role: admin.role } } });
 });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(process.cwd(), "uploads", "products"));
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${randomUUID()}${ext}`);
+  },
+});
+
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (ALLOWED_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Type de fichier non autorisé (jpg, png, webp uniquement)"));
+    }
+  },
+});
+
+router.post(
+  "/products/:id/image",
+  requireAdmin,
+  (req, res, next) => {
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    });
+  },
+  async (req: AuthenticatedRequest, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "Aucun fichier fourni" });
+    }
+
+    const productId = req.params.id;
+    const existing = await db.select().from(products).where(eq(products.id, productId));
+    if (existing.length === 0) {
+      return res.status(404).json({ error: "Produit non trouvé" });
+    }
+
+    const thumbnailUrl = `uploads/products/${req.file.filename}`;
+
+    await db.update(products).set({ thumbnail: thumbnailUrl }).where(eq(products.id, productId));
+
+    await db.insert(productHistory).values({
+      id: randomUUID(),
+      productId,
+      action: "update_image",
+      changesJson: JSON.stringify({ thumbnail: thumbnailUrl }),
+      adminId: req.admin!.id,
+      createdAt: new Date().toISOString(),
+    });
+
+    res.json({ data: { thumbnail: thumbnailUrl } });
+  }
+);
 
 export default router;

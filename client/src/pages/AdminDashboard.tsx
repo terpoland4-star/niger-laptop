@@ -5,6 +5,7 @@ import { AdminProduct } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { ProductFormDialog } from "@/components/ProductFormDialog";
 
 const API_BASE = "https://api.niger-laptops.com";
 
@@ -13,6 +14,8 @@ export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -52,7 +55,7 @@ export default function AdminDashboard() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display text-lg font-semibold">Produits ({products.length})</h2>
-          <Button>+ Nouveau produit</Button>
+          <Button onClick={() => { setEditingProduct(null); setDialogOpen(true); }}>+ Nouveau produit</Button>
         </div>
 
         {isLoading ? (
@@ -82,7 +85,7 @@ export default function AdminDashboard() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="sm">Modifier</Button>
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingProduct(p); setDialogOpen(true); }}>Modifier</Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -90,6 +93,14 @@ export default function AdminDashboard() {
           </Table>
         )}
       </main>
+
+      <ProductFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        product={editingProduct}
+        token={token!}
+        onSaved={loadProducts}
+      />
     </div>
   );
 }

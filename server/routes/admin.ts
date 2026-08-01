@@ -60,6 +60,86 @@ router.post("/login", loginLimiter, async (req, res) => {
   res.json({ data: { token, admin: { id: admin.id, email: admin.email, role: admin.role } } });
 });
 
+const productSchema = z.object({
+  nameFr: z.string().min(1),
+  nameEn: z.string().min(1),
+  category: z.string().min(1),
+  condition: z.string().min(1),
+  price: z.number().int().positive().optional(),
+  oldPrice: z.number().int().positive().optional(),
+  featured: z.boolean().optional(),
+  rating: z.number().min(0).max(5).optional(),
+  descriptionFr: z.string().optional(),
+  descriptionEn: z.string().optional(),
+  stockQuantity: z.number().int().min(0).optional(),
+});
+
+router.post("/products", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const parsed = productSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Données invalides", details: parsed.error.issues });
+  }
+
+  const id = randomUUID();
+  const productData = { id, ...parsed.data };
+
+  await db.insert(products).values(productData);
+
+  await db.insert(productHistory).values({
+    id: randomUUID(),
+    productId: id,
+    action: "create",
+    changesJson: JSON.stringify(parsed.data),
+    adminId: req.admin!.id,
+    createdAt: new Date().toISOString(),
+  });
+
+  res.status(201).json({ data: productData });
+});
+
+const productUpdateSchema = productSchema.partial();
+
+router.put("/products/:id", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const parsed = productUpdateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Données invalides", details: parsed.error.issues });
+  }
+
+  const productId = req.params.id;
+  const existing = await db.select().from(products).where(eq(products.id, productId));
+  if (existing.length === 0) {
+    return res.status(404).json({ error: "Produit non trouvé" });
+  }
+
+  if (Object.keys(parsed.data).length === 0) {
+    return res.status(400).json({ error: "Aucun champ à mettre à jour" });
+  }
+
+  await db.update(products).set(parsed.data).where(eq(products.id, productId));
+
+  await db.insert(productHistory).values({
+    id: randomUUID(),
+    productId,
+    action: "update",
+    changesJson: JSON.stringify(parsed.data),
+    adminId: req.admin!.id,
+    createdAt: new Date().toISOString(),
+  });
+
+  const updated = await db.select().from(products).where(eq(products.id, productId));
+  res.json({ data: updated[0] });
+});
+
+router.get("/products/:id/history", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const productId = req.params.id;
+  const history = await db
+    .select()
+    .from(productHistory)
+    .where(eq(productHistory.productId, productId));
+
+  res.json({ data: history });
+});
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(process.cwd(), "uploads", "products"));

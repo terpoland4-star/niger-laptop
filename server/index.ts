@@ -5,6 +5,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import apiRouter from "./routes/api";
+import adminRouter from "./routes/admin";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
 
@@ -24,6 +25,7 @@ async function startServer() {
 
   app.use(express.json());
   app.use("/api", apiRouter);
+  app.use("/api/admin", adminRouter);
 
   const staticPath =
     process.env.NODE_ENV === "production"

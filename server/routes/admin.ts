@@ -63,8 +63,12 @@ router.post("/login", loginLimiter, async (req, res) => {
 const productSchema = z.object({
   nameFr: z.string().min(1),
   nameEn: z.string().min(1),
-  category: z.string().min(1),
-  condition: z.string().min(1),
+  category: z.enum(["computers", "storage", "accessories"], {
+    message: "Catégorie invalide (computers, storage ou accessories attendu)",
+  }),
+  condition: z.enum(["new", "used"], {
+    message: "État invalide (new ou used attendu)",
+  }),
   price: z.number().int().positive().optional(),
   oldPrice: z.number().int().positive().optional(),
   featured: z.boolean().optional(),

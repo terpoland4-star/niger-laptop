@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { products, orders, carts } from "../db/schema";
+import { products, orders, carts, customers } from "../db/schema";
 import { eq, like, or } from "drizzle-orm";
 import { orderSchema } from "../validators/orderValidator";
 import { randomUUID } from "crypto";
 import rateLimit from "express-rate-limit";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { phoneParamSchema, cartItemsSchema } from "../validators/cartValidator";
 import { sendOrderNotifications } from "../lib/notifications";
+import { optionalCustomer, CustomerAuthenticatedRequest } from "../middleware/customerAuth";
 
 const router = Router();
 
@@ -45,13 +48,13 @@ router.get("/products/:id", async (req, res) => {
 });
 
 // POST /api/orders - créer une commande
-router.post("/orders", async (req, res) => {
+router.post("/orders", optionalCustomer, async (req: CustomerAuthenticatedRequest, res) => {
   const parsed = orderSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: "Données invalides", details: parsed.error.issues });
   }
 
-  const { customerName, customerPhone, deliveryAddress, items } = parsed.data;
+  const { customerName, customerPhone, deliveryAddress, items, createAccountEmail, createAccountPassword } = parsed.data;
 
   // Récupère les produits concernés pour calculer le total et enrichir les items
   const productIds = items.map((i) => i.productId);
@@ -74,6 +77,39 @@ router.post("/orders", async (req, res) => {
     };
   });
 
+  // Détermine le customerId à lier : token existant en priorité, sinon
+  // création automatique d'un compte si email + mot de passe fournis.
+  let customerId: string | null = req.customer?.id ?? null;
+  let newAccountToken: string | null = null;
+
+  if (!customerId && createAccountEmail && createAccountPassword) {
+    const existingCustomer = await db.select().from(customers).where(eq(customers.email, createAccountEmail));
+    if (existingCustomer.length > 0) {
+      // Un compte existe déjà avec cet email : on ne le lie pas automatiquement
+      // sans authentification, la commande reste en mode invité.
+    } else {
+      const passwordHash = await bcrypt.hash(createAccountPassword, 10);
+      const newCustomerId = randomUUID();
+      await db.insert(customers).values({
+        id: newCustomerId,
+        email: createAccountEmail,
+        passwordHash,
+        name: customerName,
+        phone: customerPhone,
+        createdAt: new Date().toISOString(),
+      });
+      customerId = newCustomerId;
+      const secret = process.env.JWT_SECRET;
+      if (secret) {
+        newAccountToken = jwt.sign(
+          { id: newCustomerId, email: createAccountEmail, type: "customer" },
+          secret,
+          { expiresIn: "30d" }
+        );
+      }
+    }
+  }
+
   const order = {
     id: randomUUID(),
     orderNumber: "NL-" + Date.now(),
@@ -84,6 +120,7 @@ router.post("/orders", async (req, res) => {
     total,
     itemsJson: JSON.stringify(enrichedItems),
     createdAt: new Date().toISOString(),
+    customerId,
   };
 
   await db.insert(orders).values(order);
@@ -97,7 +134,10 @@ router.post("/orders", async (req, res) => {
     items: enrichedItems,
   }).catch((err) => console.error("[orders] Erreur notification:", err));
 
-  res.status(201).json({ data: { ...order, items: enrichedItems } });
+  res.status(201).json({
+    data: { ...order, items: enrichedItems },
+    ...(newAccountToken ? { newAccountToken } : {}),
+  });
 });
 
 // GET /api/orders/:id - consulter une commande par son id

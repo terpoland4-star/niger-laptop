@@ -26,6 +26,16 @@ export const orders = sqliteTable("orders", {
   total: integer("total").notNull(),
   itemsJson: text("items_json").notNull(),
   createdAt: text("created_at").notNull(),
+  customerId: text("customer_id"),
+});
+
+export const customers = sqliteTable("customers", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  createdAt: text("created_at").notNull(),
 });
 
 export const carts = sqliteTable("carts", {

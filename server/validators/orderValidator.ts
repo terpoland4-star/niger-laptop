@@ -10,6 +10,9 @@ export const orderSchema = z.object({
       quantity: z.number().int().positive(),
     })
   ).min(1, "La commande doit contenir au moins un article"),
+  // Optionnel : si fourni sans compte existant lié au token, un compte est créé automatiquement.
+  createAccountEmail: z.string().email().optional(),
+  createAccountPassword: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères").optional(),
 });
 
 export type OrderInput = z.infer<typeof orderSchema>;

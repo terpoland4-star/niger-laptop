@@ -8,6 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   register: (payload: RegisterPayload) => Promise<void>;
   login: (payload: CustomerAuthPayload) => Promise<void>;
+  loginWithToken: (token: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -61,6 +62,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     persist(res.data.token, res.data.customer);
   }, [persist]);
 
+  // Utilisé quand un token est déjà émis ailleurs (ex: création de compte
+  // implicite lors d'une commande via OrderModal) : on récupère juste le
+  // profil client associé et on persiste la session.
+  const loginWithToken = useCallback(async (newToken: string) => {
+    const res = await getMe(newToken);
+    persist(newToken, res.data);
+  }, [persist]);
+
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(STORAGE_CUSTOMER_KEY);
@@ -70,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ customer, token, isLoading, isAuthenticated: !!token, register, login, logout }}
+      value={{ customer, token, isLoading, isAuthenticated: !!token, register, login, loginWithToken, logout }}
     >
       {children}
     </AuthContext.Provider>

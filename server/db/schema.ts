@@ -33,3 +33,29 @@ export const carts = sqliteTable("carts", {
   itemsJson: text("items_json").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
+
+export const admins = sqliteTable("admins", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: text("role").notNull().default("editor"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const productHistory = sqliteTable("product_history", {
+  id: text("id").primaryKey(),
+  productId: text("product_id").notNull(),
+  action: text("action").notNull(),
+  changesJson: text("changes_json"),
+  adminId: text("admin_id").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
+export const orderStatusHistory = sqliteTable("order_status_history", {
+  id: text("id").primaryKey(),
+  orderId: text("order_id").notNull(),
+  status: text("status").notNull(),
+  note: text("note"),
+  changedBy: text("changed_by"),
+  createdAt: text("created_at").notNull(),
+});

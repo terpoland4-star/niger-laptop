@@ -11,6 +11,24 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const CATEGORIES = [
+  { value: "computers", label: "Ordinateurs" },
+  { value: "storage", label: "Stockage" },
+  { value: "accessories", label: "Accessoires" },
+];
+
+const CONDITIONS = [
+  { value: "new", label: "Neuf" },
+  { value: "used", label: "Occasion" },
+];
 
 interface ProductFormDialogProps {
   open: boolean;
@@ -108,11 +126,29 @@ export function ProductFormDialog({ open, onOpenChange, product, token, onSaved 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category">Catégorie</Label>
-              <Input id="category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required />
+              <Select value={form.category} onValueChange={(value) => setForm({ ...form, category: value })}>
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Choisir..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="condition">État</Label>
-              <Input id="condition" value={form.condition} onChange={(e) => setForm({ ...form, condition: e.target.value })} required />
+              <Select value={form.condition} onValueChange={(value) => setForm({ ...form, condition: value })}>
+                  <SelectTrigger id="condition">
+                    <SelectValue placeholder="Choisir..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CONDITIONS.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
             </div>
           </div>
 

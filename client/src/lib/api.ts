@@ -10,6 +10,8 @@ export interface CreateOrderPayload {
   customerPhone: string;
   deliveryAddress?: string;
   items: OrderItem[];
+  createAccountEmail?: string;
+  createAccountPassword?: string;
 }
 
 export interface OrderResponse {
@@ -19,12 +21,16 @@ export interface OrderResponse {
     total: number;
     status: string;
   };
+  newAccountToken?: string;
 }
 
-export async function createOrder(payload: CreateOrderPayload): Promise<OrderResponse> {
+export async function createOrder(payload: CreateOrderPayload, token?: string): Promise<OrderResponse> {
   const res = await fetch(`${API_BASE}/api/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify(payload),
   });
 

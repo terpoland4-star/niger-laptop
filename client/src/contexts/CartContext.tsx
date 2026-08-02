@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export interface CartItem {
@@ -10,9 +10,25 @@ export interface CartItem {
   addedAt: number;
 }
 
+interface CartContextType {
+  cart: CartItem[];
+  addToCart: (item: { id: string; name: string; imageUrl?: string; price: number }, quantity?: number) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  isInCart: (id: string) => boolean;
+  clearCart: () => void;
+  saveCartToPhone: (phone: string) => Promise<void>;
+  loadCartFromPhone: (phone: string) => Promise<void>;
+  totalItems: number;
+  totalPrice: number;
+  isLoaded: boolean;
+}
+
 const CART_KEY = "niger-laptops-cart";
 
-export const useCart = () => {
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -96,17 +112,31 @@ export const useCart = () => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  return {
-    cart,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    isInCart,
-    clearCart,
-    saveCartToPhone,
-    loadCartFromPhone,
-    totalItems,
-    totalPrice,
-    isLoaded
-  };
-};
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        isInCart,
+        clearCart,
+        saveCartToPhone,
+        loadCartFromPhone,
+        totalItems,
+        totalPrice,
+        isLoaded,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+
+export function useCart() {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart must be used within CartProvider");
+  }
+  return context;
+}

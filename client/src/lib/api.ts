@@ -271,3 +271,49 @@ export async function getProductHistory(
   if (!res.ok) throw new Error("Impossible de charger l'historique");
   return res.json();
 }
+
+// --- Admin: commandes ---
+
+export interface AdminOrder {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  deliveryAddress: string | null;
+  status: string;
+  total: number;
+  itemsJson: string;
+  createdAt: string;
+  customerId: string | null;
+}
+
+export async function fetchAdminOrders(token: string): Promise<{ data: AdminOrder[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/orders`, {
+    headers: authHeaders(token),
+  });
+
+  if (!res.ok) throw new Error("Impossible de charger les commandes");
+  return res.json();
+}
+
+export type OrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+
+export async function updateOrderStatus(
+  token: string,
+  id: string,
+  status: OrderStatus,
+  note?: string
+): Promise<{ data: AdminOrder }> {
+  const res = await fetch(`${API_BASE}/api/admin/orders/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify({ status, note }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la mise à jour du statut");
+  }
+
+  return res.json();
+}

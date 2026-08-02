@@ -150,6 +150,10 @@ const STATUS_MESSAGES: Record<string, string> = {
 };
 
 export async function sendOrderStatusUpdateEmail(data: StatusUpdateData): Promise<void> {
+  if (!data.toEmail) {
+    console.log(`[notifications] toEmail vide pour la commande ${data.orderNumber}, envoi ignoré`);
+    return;
+  }
   const serviceId = process.env.EMAILJS_SERVICE_ID;
   const templateId = process.env.EMAILJS_STATUS_TEMPLATE_ID;
   const privateKey = process.env.EMAILJS_PRIVATE_KEY;

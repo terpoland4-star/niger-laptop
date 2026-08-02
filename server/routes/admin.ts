@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { admins, products, productHistory } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { admins, products, productHistory, orders, customers, orderStatusHistory } from "../db/schema";
+import { sendOrderStatusUpdateEmail } from "../lib/notifications";
+import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
@@ -206,5 +207,65 @@ router.post(
     res.json({ data: { thumbnail: thumbnailUrl } });
   }
 );
+
+
+
+const VALID_STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"] as const;
+
+const statusUpdateSchema = z.object({
+  status: z.enum(VALID_STATUSES, {
+    message: "Statut invalide (pending, confirmed, shipped, delivered ou cancelled attendu)",
+  }),
+  note: z.string().optional(),
+});
+
+router.get("/orders", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const allOrders = await db.select().from(orders).orderBy(desc(orders.createdAt));
+  res.json({ data: allOrders });
+});
+
+router.patch("/orders/:id/status", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const parsed = statusUpdateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Données invalides", details: parsed.error.issues });
+  }
+
+  const orderId = req.params.id;
+  const existing = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (existing.length === 0) {
+    return res.status(404).json({ error: "Commande non trouvée" });
+  }
+
+  const { status, note } = parsed.data;
+  const order = existing[0];
+
+  await db.update(orders).set({ status }).where(eq(orders.id, orderId));
+
+  await db.insert(orderStatusHistory).values({
+    id: randomUUID(),
+    orderId,
+    status,
+    note: note ?? null,
+    changedBy: req.admin!.id,
+    createdAt: new Date().toISOString(),
+  });
+
+  // Notifie le client par email si la commande est liée à un compte
+  if (order.customerId) {
+    const customerResult = await db.select().from(customers).where(eq(customers.id, order.customerId));
+    if (customerResult.length > 0) {
+      const customer = customerResult[0];
+      sendOrderStatusUpdateEmail({
+        orderNumber: order.orderNumber,
+        customerName: order.customerName,
+        toEmail: customer.email,
+        status,
+      }).catch((err) => console.error("[orders] Erreur notification statut:", err));
+    }
+  }
+
+  const updated = await db.select().from(orders).where(eq(orders.id, orderId));
+  res.json({ data: updated[0] });
+});
 
 export default router;

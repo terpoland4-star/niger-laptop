@@ -253,7 +253,7 @@ router.patch("/orders/:id/status", requireAdmin, async (req: AuthenticatedReques
   // Notifie le client par email si la commande est liée à un compte
   if (order.customerId) {
     const customerResult = await db.select().from(customers).where(eq(customers.id, order.customerId));
-    if (customerResult.length > 0) {
+    if (customerResult.length > 0 && customerResult[0].email) {
       const customer = customerResult[0];
       sendOrderStatusUpdateEmail({
         orderNumber: order.orderNumber,
@@ -261,6 +261,8 @@ router.patch("/orders/:id/status", requireAdmin, async (req: AuthenticatedReques
         toEmail: customer.email,
         status,
       }).catch((err) => console.error("[orders] Erreur notification statut:", err));
+    } else {
+      console.log(`[orders] Pas d'email pour la commande ${order.orderNumber}, notification statut ignorée`);
     }
   }
 

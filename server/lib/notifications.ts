@@ -122,3 +122,66 @@ export async function sendOrderNotifications(order: OrderNotificationData): Prom
     sendEmailNotifications(order),
   ]);
 }
+
+
+// --- Notifications de changement de statut (client) ---
+
+interface StatusUpdateData {
+  orderNumber: string;
+  customerName: string;
+  toEmail: string;
+  status: string;
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "En attente",
+  confirmed: "Confirmée",
+  shipped: "Expédiée",
+  delivered: "Livrée",
+  cancelled: "Annulée",
+};
+
+const STATUS_MESSAGES: Record<string, string> = {
+  pending: "Votre commande est en attente de traitement.",
+  confirmed: "Votre commande a été confirmée. Un livreur vous contactera bientôt pour confirmer votre adresse de livraison.",
+  shipped: "Votre commande est en cours de livraison. Notre livreur vous contactera pour confirmer votre adresse avant son passage.",
+  delivered: "Votre commande a été livrée. Merci pour votre confiance !",
+  cancelled: "Votre commande a été annulée. N'hésitez pas à nous contacter pour plus d'informations.",
+};
+
+export async function sendOrderStatusUpdateEmail(data: StatusUpdateData): Promise<void> {
+  const serviceId = process.env.EMAILJS_SERVICE_ID;
+  const templateId = process.env.EMAILJS_STATUS_TEMPLATE_ID;
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+  const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+
+  if (!serviceId || !templateId || !privateKey || !publicKey) {
+    console.error("[notifications] Config EmailJS (statut) incomplète, email ignoré");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: serviceId,
+        template_id: templateId,
+        user_id: publicKey,
+        accessToken: privateKey,
+        template_params: {
+          to_email: data.toEmail,
+          order_number: data.orderNumber,
+          customer_name: data.customerName,
+          status_label: STATUS_LABELS[data.status] ?? data.status,
+          message: STATUS_MESSAGES[data.status] ?? "",
+        },
+      }),
+    });
+    if (!res.ok) {
+      console.error(`[notifications] EmailJS (statut) a répondu ${res.status} pour ${data.toEmail}: ${await res.text()}`);
+    }
+  } catch (err) {
+    console.error(`[notifications] Échec envoi email statut à ${data.toEmail}:`, err);
+  }
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 export interface WishlistItem {
   id: string;
@@ -7,13 +7,24 @@ export interface WishlistItem {
   addedAt: number;
 }
 
+interface WishlistContextType {
+  wishlist: WishlistItem[];
+  addToWishlist: (item: WishlistItem) => void;
+  removeFromWishlist: (id: string) => void;
+  isInWishlist: (id: string) => boolean;
+  clearWishlist: () => void;
+  isLoaded: boolean;
+}
+
 const WISHLIST_KEY = "niger-laptops-wishlist";
 
-export const useWishlist = () => {
+const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+
+export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load wishlist from localStorage on mount
+  // Charge la wishlist depuis localStorage au montage
   useEffect(() => {
     const stored = localStorage.getItem(WISHLIST_KEY);
     if (stored) {
@@ -26,7 +37,7 @@ export const useWishlist = () => {
     setIsLoaded(true);
   }, []);
 
-  // Save wishlist to localStorage whenever it changes
+  // Sauvegarde la wishlist dans localStorage à chaque changement
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
@@ -53,12 +64,19 @@ export const useWishlist = () => {
     setWishlist([]);
   };
 
-  return {
-    wishlist,
-    addToWishlist,
-    removeFromWishlist,
-    isInWishlist,
-    clearWishlist,
-    isLoaded
-  };
-};
+  return (
+    <WishlistContext.Provider
+      value={{ wishlist, addToWishlist, removeFromWishlist, isInWishlist, clearWishlist, isLoaded }}
+    >
+      {children}
+    </WishlistContext.Provider>
+  );
+}
+
+export function useWishlist() {
+  const context = useContext(WishlistContext);
+  if (!context) {
+    throw new Error("useWishlist must be used within WishlistProvider");
+  }
+  return context;
+}

@@ -3,7 +3,7 @@ import { categories, Product } from "@/lib/productLabels";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 interface CatalogProps {
   language?: "en" | "fr";

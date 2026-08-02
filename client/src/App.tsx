@@ -5,6 +5,8 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
 import Home from "./pages/Home";
 import Confidentialite from "./pages/Confidentialite";
 import Conditions from "./pages/Conditions";
@@ -42,10 +44,14 @@ function App() {
         switchable
       >
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Router />
+              </TooltipProvider>
+            </WishlistProvider>
+          </CartProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>

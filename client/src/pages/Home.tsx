@@ -8,8 +8,8 @@ import { Footer } from "@/components/Footer";
 import { WishlistModal } from "@/components/WishlistModal";
 import { CartModal } from "@/components/CartModal";
 import { OrderModal } from "@/components/OrderModal";
-import { useWishlist } from "@/hooks/useWishlist";
-import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
 import { Product } from "@/lib/productLabels";
 
 export default function Home() {

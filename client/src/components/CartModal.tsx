@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Minus, Plus, Trash2, Save, Download } from "lucide-react";
-import { CartItem } from "@/hooks/useCart";
+import { CartItem } from "@/contexts/CartContext";
 
 interface CartModalProps {
   isOpen: boolean;

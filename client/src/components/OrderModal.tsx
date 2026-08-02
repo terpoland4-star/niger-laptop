@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { createOrder } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface OrderModalItem {
   id: string;
@@ -83,6 +84,12 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
       }
 
       setOrderNumber(result.data.orderNumber);
+      toast.info(
+        language === "en"
+          ? "A delivery person will call you to confirm your address."
+          : "Un livreur vous contactera pour confirmer votre adresse.",
+        { duration: 8000 }
+      );
     } catch (err) {
       setError(
         err instanceof Error

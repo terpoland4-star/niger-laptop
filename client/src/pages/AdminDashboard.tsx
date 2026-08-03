@@ -43,13 +43,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <header className="border-b border-border px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <h1 className="font-display text-xl font-bold">Administration Niger Laptops</h1>
           <Link href="/admin/orders"><Button variant="ghost" size="sm">Commandes →</Button></Link>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">{admin?.email}</span>
+          <span className="text-sm text-muted-foreground truncate">{admin?.email}</span>
           <Button variant="outline" size="sm" onClick={() => { logout(); navigate("/admin/login"); }}>
             Déconnexion
           </Button>

@@ -7,6 +7,7 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 import { createOrder } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 interface OrderModalItem {
   id: string;
@@ -54,6 +55,16 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!isValidPhoneNumber(customerPhone, "NE")) {
+      setError(
+        language === "en"
+          ? "Please enter a valid phone number."
+          : "Merci d'entrer un numéro de téléphone valide."
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {

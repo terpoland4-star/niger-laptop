@@ -97,8 +97,8 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
       setOrderNumber(result.data.orderNumber);
       toast.info(
         language === "en"
-          ? "A delivery person will call you to confirm your address."
-          : "Un livreur vous contactera pour confirmer votre adresse.",
+          ? "A delivery person will call you to confirm your address. You can track your order anytime."
+          : "Un livreur vous contactera pour confirmer votre adresse. Vous pouvez suivre votre commande à tout moment.",
         { duration: 8000 }
       );
     } catch (err) {
@@ -138,6 +138,14 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
                 ? "We will contact you shortly to confirm details."
                 : "Nous vous contacterons sous peu pour confirmer les détails."}
             </p>
+            <a
+              href={`/suivi/${orderNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-sm text-primary underline underline-offset-2"
+            >
+              {language === "en" ? "Track your order" : "Suivre votre commande"}
+            </a>
             <Button onClick={handleClose} className="w-full">
               {language === "en" ? "Close" : "Fermer"}
             </Button>

@@ -73,6 +73,7 @@ export default function AdminOrders() {
         <div className="flex items-center gap-4">
           <h1 className="font-display text-xl font-bold">Commandes</h1>
           <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>← Produits</Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/admin/customers")}>Clients →</Button>
         </div>
         <span className="text-sm text-muted-foreground">{admin?.email}</span>
       </header>

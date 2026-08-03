@@ -270,4 +270,28 @@ router.patch("/orders/:id/status", requireAdmin, async (req: AuthenticatedReques
   res.json({ data: updated[0] });
 });
 
+
+router.get("/customers", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const allCustomers = await db.select().from(customers).orderBy(desc(customers.createdAt));
+  const allOrders = await db.select({ customerId: orders.customerId }).from(orders);
+
+  const orderCounts: Record<string, number> = {};
+  for (const o of allOrders) {
+    if (o.customerId) {
+      orderCounts[o.customerId] = (orderCounts[o.customerId] || 0) + 1;
+    }
+  }
+
+  const data = allCustomers.map((c) => ({
+    id: c.id,
+    email: c.email,
+    name: c.name,
+    phone: c.phone,
+    createdAt: c.createdAt,
+    orderCount: orderCounts[c.id] || 0,
+  }));
+
+  res.json({ data });
+});
+
 export default router;

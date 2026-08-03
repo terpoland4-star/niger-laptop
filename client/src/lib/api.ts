@@ -317,3 +317,53 @@ export async function updateOrderStatus(
 
   return res.json();
 }
+
+// --- Admin: clients ---
+
+export interface AdminCustomer {
+  id: string;
+  email: string;
+  name: string;
+  phone: string | null;
+  createdAt: string;
+  orderCount: number;
+}
+
+export async function fetchAdminCustomers(token: string): Promise<{ data: AdminCustomer[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/customers`, {
+    headers: authHeaders(token),
+  });
+
+  if (!res.ok) throw new Error("Impossible de charger les clients");
+  return res.json();
+}
+
+// --- Suivi de commande (public) ---
+
+export interface OrderTrackingItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  thumbnail: string | null;
+}
+
+export interface OrderTrackingData {
+  orderNumber: string;
+  status: string;
+  total: number;
+  createdAt: string;
+  items: OrderTrackingItem[];
+}
+
+export async function trackOrder(orderNumber: string): Promise<{ data: OrderTrackingData }> {
+  const res = await fetch(`${API_BASE}/api/orders/track/${encodeURIComponent(orderNumber)}`);
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Commande non trouvée");
+  }
+
+  return res.json();
+}

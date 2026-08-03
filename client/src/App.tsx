@@ -13,6 +13,7 @@ import Conditions from "./pages/Conditions";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrders from "./pages/AdminOrders";
+import AdminCustomers from "./pages/AdminCustomers";
 import Compte from "./pages/Compte";
 
 
@@ -26,6 +27,7 @@ function Router() {
         <Route path={"/admin/login"} component={AdminLogin} />
       <Route path={"/admin"} component={AdminDashboard} />
         <Route path={"/admin/orders"} component={AdminOrders} />
+        <Route path={"/admin/customers"} component={AdminCustomers} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

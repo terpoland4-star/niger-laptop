@@ -179,6 +179,7 @@ export async function sendOrderStatusUpdateEmail(data: StatusUpdateData): Promis
           customer_name: data.customerName,
           status_label: STATUS_LABELS[data.status] ?? data.status,
           message: STATUS_MESSAGES[data.status] ?? "",
+          tracking_url: `${SITE_BASE_URL}/suivi/${data.orderNumber}`,
         },
       }),
     });

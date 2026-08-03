@@ -150,6 +150,32 @@ router.get("/orders/:id", async (req, res) => {
   res.json({ data: { ...order, items: JSON.parse(order.itemsJson) } });
 });
 
+const trackingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Trop de tentatives, réessayez dans quelques minutes." },
+});
+
+// GET /api/orders/track/:orderNumber - suivi public limité (sans infos sensibles)
+router.get("/orders/track/:orderNumber", trackingLimiter, async (req, res) => {
+  const result = await db.select().from(orders).where(eq(orders.orderNumber, req.params.orderNumber));
+  if (result.length === 0) {
+    return res.status(404).json({ error: "Commande non trouvée" });
+  }
+  const order = result[0];
+  res.json({
+    data: {
+      orderNumber: order.orderNumber,
+      status: order.status,
+      total: order.total,
+      createdAt: order.createdAt,
+      items: JSON.parse(order.itemsJson),
+    },
+  });
+});
+
 
 // PUT /api/cart/:phone - sauvegarder le panier
 router.put("/cart/:phone", cartLimiter, async (req, res) => {

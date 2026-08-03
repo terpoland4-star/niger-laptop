@@ -14,6 +14,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrders from "./pages/AdminOrders";
 import AdminCustomers from "./pages/AdminCustomers";
+import OrderTracking from "./pages/OrderTracking";
 import Compte from "./pages/Compte";
 
 
@@ -24,6 +25,7 @@ function Router() {
       <Route path={"/confidentialite"} component={Confidentialite} />
       <Route path={"/conditions"} component={Conditions} />
       <Route path={"/compte"} component={Compte} />
+        <Route path={"/suivi/:orderNumber"} component={OrderTracking} />
         <Route path={"/admin/login"} component={AdminLogin} />
       <Route path={"/admin"} component={AdminDashboard} />
         <Route path={"/admin/orders"} component={AdminOrders} />

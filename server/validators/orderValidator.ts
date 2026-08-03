@@ -1,8 +1,12 @@
 import { z } from "zod";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export const orderSchema = z.object({
   customerName: z.string().min(2, "Nom trop court"),
-  customerPhone: z.string().min(8, "Numéro de téléphone invalide"),
+  customerPhone: z.string().refine(
+    (val) => isValidPhoneNumber(val, "NE"),
+    { message: "Numéro de téléphone invalide" }
+  ),
   deliveryAddress: z.string().optional(),
   items: z.array(
     z.object({

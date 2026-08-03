@@ -54,6 +54,7 @@
     "framer-motion": "^12.23.22",
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.3",
+    "libphonenumber-js": "^1.13.10",
     "lucide-react": "^0.453.0",
     "multer": "^2.2.0",
     "nanoid": "^5.1.5",
@@ -109,7 +110,11 @@
     },
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
+      "better-sqlite3",
       "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
+      "better-sqlite3"
     ]
   }
 }

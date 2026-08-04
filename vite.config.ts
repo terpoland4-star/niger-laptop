@@ -2,10 +2,34 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 process.env.BROWSERSLIST_IGNORE_OLD_DATA = "true";
 
-const plugins = [react(), tailwindcss()];
+const plugins = [
+  react(),
+  tailwindcss(),
+  VitePWA({
+    strategies: "generateSW",
+    injectRegister: "auto",
+    manifest: false,
+    includeManifestIcons: false,
+    workbox: {
+      globPatterns: ["**/*.{js,css,html,ico,png,svg,webp}"],
+      navigateFallback: "/index.html",
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\.niger-laptops\.com\/api\/products/,
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "products-cache",
+            expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
+          },
+        },
+      ],
+    },
+  }),
+];
 
 export default defineConfig({
   plugins,

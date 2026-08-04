@@ -29,7 +29,7 @@ jobs:
       - name: 📂 Préparation pour GitHub Pages
         run: |
           mkdir -p _site
-          cp -r dist/public/* _site/
+          cp -r dist/public/. _site/
 
       - name: ⬆️ Upload de l'artefact
         uses: actions/upload-pages-artifact@v3

@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.niger_laptops.www.twa",
+        "sha256_cert_fingerprints": ["96:61:C5:C1:C6:99:60:7D:22:BD:51:2A:80:6D:64:4D:61:D1:2F:04:5F:88:8A:CB:37:77:C0:41:A6:C2:52:59"]
+      }
+    }]

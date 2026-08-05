@@ -120,5 +120,11 @@
       "better-sqlite3",
       "esbuild"
     ]
+  },
+  "lint-staged": {
+    "client/src/**/*.{ts,tsx}": [
+      "eslint --max-warnings=9999",
+      "prettier --write"
+    ]
   }
 }

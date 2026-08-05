@@ -12,7 +12,10 @@ export interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: { id: string; name: string; imageUrl?: string; price: number }, quantity?: number) => void;
+  addToCart: (
+    item: { id: string; name: string; imageUrl?: string; price: number },
+    quantity?: number
+  ) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   isInCart: (id: string) => boolean;
@@ -39,7 +42,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setCart(JSON.parse(stored));
       } catch {
         console.error("Failed to parse cart from localStorage");
-        toast.error("Votre panier a été réinitialisé suite à un problème technique.");
+        toast.error(
+          "Votre panier a été réinitialisé suite à un problème technique."
+        );
         localStorage.removeItem(CART_KEY);
       }
     }
@@ -52,11 +57,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [cart, isLoaded]);
 
-  const addToCart = (item: { id: string; name: string; imageUrl?: string; price: number }, quantity: number = 1) => {
-    setCart((prev) => {
-      const existing = prev.find((c) => c.id === item.id);
+  const addToCart = (
+    item: { id: string; name: string; imageUrl?: string; price: number },
+    quantity: number = 1
+  ) => {
+    setCart(prev => {
+      const existing = prev.find(c => c.id === item.id);
       if (existing) {
-        return prev.map((c) =>
+        return prev.map(c =>
           c.id === item.id ? { ...c, quantity: c.quantity + quantity } : c
         );
       }
@@ -65,7 +73,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((c) => c.id !== id));
+    setCart(prev => prev.filter(c => c.id !== id));
   };
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -73,22 +81,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeFromCart(id);
       return;
     }
-    setCart((prev) => prev.map((c) => (c.id === id ? { ...c, quantity } : c)));
+    setCart(prev => prev.map(c => (c.id === id ? { ...c, quantity } : c)));
   };
 
-  const isInCart = (id: string): boolean => cart.some((c) => c.id === id);
+  const isInCart = (id: string): boolean => cart.some(c => c.id === id);
 
   const clearCart = () => setCart([]);
 
   const saveCartToPhone = async (phone: string) => {
     try {
-      const res = await fetch(`https://api.niger-laptops.com/api/cart/${phone}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: cart }),
-      });
+      const res = await fetch(
+        `https://api.niger-laptops.com/api/cart/${phone}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: cart }),
+        }
+      );
       if (!res.ok) throw new Error();
-      toast.success("Panier sauvegardé. Utilisez ce numéro pour le récupérer sur un autre appareil.");
+      toast.success(
+        "Panier sauvegardé. Utilisez ce numéro pour le récupérer sur un autre appareil."
+      );
     } catch {
       toast.error("Impossible de sauvegarder le panier. Réessayez plus tard.");
     }
@@ -96,7 +109,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const loadCartFromPhone = async (phone: string) => {
     try {
-      const res = await fetch(`https://api.niger-laptops.com/api/cart/${phone}`);
+      const res = await fetch(
+        `https://api.niger-laptops.com/api/cart/${phone}`
+      );
       if (!res.ok) {
         toast.error("Aucun panier trouvé pour ce numéro.");
         return;
@@ -110,7 +125,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   return (
     <CartContext.Provider

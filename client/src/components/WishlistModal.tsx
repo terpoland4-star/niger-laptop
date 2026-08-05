@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X, Share2, Trash2 } from "lucide-react";
 import { WishlistItem } from "@/contexts/WishlistContext";
@@ -21,12 +26,12 @@ export const WishlistModal = ({
   onRemove,
   onClear,
   onOrderClick,
-  language = "fr"
+  language = "fr",
 }: WishlistModalProps) => {
   const handleShareWishlist = () => {
-    const wishlistItems = items.map((item) => ({
+    const wishlistItems = items.map(item => ({
       name: item.name,
-      imageUrl: item.imageUrl
+      imageUrl: item.imageUrl,
     }));
     openWishlistChat(wishlistItems);
   };
@@ -55,7 +60,7 @@ export const WishlistModal = ({
           <div className="space-y-4">
             {/* Wishlist Items */}
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {items.map((item) => (
+              {items.map(item => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between p-4 bg-secondary rounded-lg border border-border hover:border-primary transition-colors"
@@ -69,7 +74,9 @@ export const WishlistModal = ({
                       />
                     )}
                     <div>
-                      <p className="font-semibold text-foreground">{item.name}</p>
+                      <p className="font-semibold text-foreground">
+                        {item.name}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {language === "en" ? "Added" : "Ajouté"}{" "}
                         {new Date(item.addedAt).toLocaleDateString(

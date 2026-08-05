@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, X, Heart, ShoppingCart, Moon, Sun, Search, User } from "lucide-react";
+import {
+  Menu,
+  X,
+  Heart,
+  ShoppingCart,
+  Moon,
+  Sun,
+  Search,
+  User,
+} from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
@@ -23,7 +32,7 @@ export const Header = ({
   onCartClick,
   onSearchChange,
   language = "fr",
-  onLanguageChange
+  onLanguageChange,
 }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,37 +49,67 @@ export const Header = ({
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
-            <img src="/logolap.png" alt="Niger Laptops" className="h-10 w-auto" />
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
+          >
+            <img
+              src="/logolap.png"
+              alt="Niger Laptops"
+              className="h-10 w-auto"
+            />
             <div className="hidden sm:flex flex-col">
-              <span className="font-display font-bold text-foreground text-sm">Niger Laptops</span>
-              <span className="text-xs text-muted-foreground">Expert Informatique</span>
+              <span className="font-display font-bold text-foreground text-sm">
+                Niger Laptops
+              </span>
+              <span className="text-xs text-muted-foreground">
+                Expert Informatique
+              </span>
             </div>
           </Link>
 
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-md relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
             <Input
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder={language === "en" ? "Search products..." : "Rechercher un produit..."}
+              placeholder={
+                language === "en"
+                  ? "Search products..."
+                  : "Rechercher un produit..."
+              }
               className="pl-9"
             />
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 shrink-0">
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link
+              href="/"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               {language === "en" ? "Home" : "Accueil"}
             </Link>
-            <a href="#catalog" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#catalog"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               {language === "en" ? "Catalog" : "Catalogue"}
             </a>
-            <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#about"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               {language === "en" ? "About" : "À propos"}
             </a>
-            <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
+            <a
+              href="#contact"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
               {language === "en" ? "Contact" : "Contact"}
             </a>
           </nav>
@@ -92,7 +131,9 @@ export const Header = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onLanguageChange?.(language === "en" ? "fr" : "en")}
+              onClick={() =>
+                onLanguageChange?.(language === "en" ? "fr" : "en")
+              }
               className="hidden sm:flex"
             >
               {language === "en" ? "FR" : "EN"}
@@ -160,11 +201,18 @@ export const Header = ({
 
         {/* Mobile Search Bar */}
         <div className="md:hidden pb-3 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <Input
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder={language === "en" ? "Search products..." : "Rechercher un produit..."}
+            placeholder={
+              language === "en"
+                ? "Search products..."
+                : "Rechercher un produit..."
+            }
             className="pl-9"
           />
         </div>
@@ -173,22 +221,36 @@ export const Header = ({
         {isMenuOpen && (
           <nav className="lg:hidden pb-4 border-t border-border">
             <div className="flex flex-col gap-2 pt-4">
-              <Link href="/" className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors">
+              <Link
+                href="/"
+                className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
+              >
                 {language === "en" ? "Home" : "Accueil"}
               </Link>
-              <a href="#catalog" className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors">
+              <a
+                href="#catalog"
+                className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
+              >
                 {language === "en" ? "Catalog" : "Catalogue"}
               </a>
-              <a href="#about" className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors">
+              <a
+                href="#about"
+                className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
+              >
                 {language === "en" ? "About" : "À propos"}
               </a>
-              <a href="#contact" className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors">
+              <a
+                href="#contact"
+                className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
+              >
                 {language === "en" ? "Contact" : "Contact"}
               </a>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onLanguageChange?.(language === "en" ? "fr" : "en")}
+                onClick={() =>
+                  onLanguageChange?.(language === "en" ? "fr" : "en")
+                }
                 className="justify-start px-4"
               >
                 {language === "en" ? "Français" : "English"}

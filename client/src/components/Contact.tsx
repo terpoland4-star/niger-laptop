@@ -15,13 +15,15 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
     name: "",
     email: "",
     phone: "",
-    message: ""
+    message: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +34,7 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
       // For now, just log and show success message
       // In production, this would integrate with EmailJS
       console.log("Form submitted:", formData);
-      
+
       toast.success(
         language === "en"
           ? "Message sent successfully! We'll get back to you soon."
@@ -80,7 +82,10 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
           <div className="bg-card rounded-lg border border-border p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-foreground mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-semibold text-foreground mb-2"
+                >
                   {language === "en" ? "Full Name" : "Nom Complet"}
                 </label>
                 <Input
@@ -96,7 +101,10 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-foreground mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-foreground mb-2"
+                >
                   {language === "en" ? "Email" : "Email"}
                 </label>
                 <Input
@@ -105,15 +113,22 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder={language === "en" ? "your@email.com" : "votre@email.com"}
+                  placeholder={
+                    language === "en" ? "your@email.com" : "votre@email.com"
+                  }
                   required
                   className="w-full"
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-semibold text-foreground mb-2">
-                  {language === "en" ? "Phone (Optional)" : "Téléphone (Optionnel)"}
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-semibold text-foreground mb-2"
+                >
+                  {language === "en"
+                    ? "Phone (Optional)"
+                    : "Téléphone (Optionnel)"}
                 </label>
                 <Input
                   id="phone"
@@ -121,13 +136,18 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder={language === "en" ? "+227 XX XX XX XX" : "+227 XX XX XX XX"}
+                  placeholder={
+                    language === "en" ? "+227 XX XX XX XX" : "+227 XX XX XX XX"
+                  }
                   className="w-full"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-foreground mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-semibold text-foreground mb-2"
+                >
                   {language === "en" ? "Message" : "Message"}
                 </label>
                 <Textarea
@@ -135,7 +155,9 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder={language === "en" ? "Your message..." : "Votre message..."}
+                  placeholder={
+                    language === "en" ? "Your message..." : "Votre message..."
+                  }
                   required
                   className="w-full min-h-32"
                 />
@@ -152,8 +174,8 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                     ? "Sending..."
                     : "Envoi en cours..."
                   : language === "en"
-                  ? "Send Message"
-                  : "Envoyer le Message"}
+                    ? "Send Message"
+                    : "Envoyer le Message"}
               </Button>
             </form>
           </div>
@@ -227,7 +249,9 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                     rel="noopener noreferrer"
                     className="text-primary hover:underline text-sm mt-2 inline-block"
                   >
-                    {language === "en" ? "View on Google Maps" : "Voir sur Google Maps"}
+                    {language === "en"
+                      ? "View on Google Maps"
+                      : "Voir sur Google Maps"}
                   </a>
                 </div>
               </div>
@@ -244,10 +268,14 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                     {language === "en" ? "Hours" : "Horaires"}
                   </h3>
                   <p className="text-muted-foreground">
-                    {language === "en" ? "Monday - Friday: 9:00 AM - 6:00 PM" : "Lundi - Vendredi: 9h00 - 18h00"}
+                    {language === "en"
+                      ? "Monday - Friday: 9:00 AM - 6:00 PM"
+                      : "Lundi - Vendredi: 9h00 - 18h00"}
                   </p>
                   <p className="text-muted-foreground">
-                    {language === "en" ? "Saturday: 10:00 AM - 4:00 PM" : "Samedi: 10h00 - 16h00"}
+                    {language === "en"
+                      ? "Saturday: 10:00 AM - 4:00 PM"
+                      : "Samedi: 10h00 - 16h00"}
                   </p>
                 </div>
               </div>
@@ -269,10 +297,16 @@ export const Contact = ({ language = "fr" }: ContactProps) => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 px-4 rounded-lg transition-all duration-200"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.946 1.23 9.879 9.879 0 006.802 15.655c1.54 0 3.062-.4 4.413-1.162l.031.02 3.899.236-3.861-3.861.02.031c.76-1.351 1.162-2.873 1.162-4.413a9.879 9.879 0 00-7.516-9.515z" />
                 </svg>
-                {language === "en" ? "Chat on WhatsApp" : "Discutez sur WhatsApp"}
+                {language === "en"
+                  ? "Chat on WhatsApp"
+                  : "Discutez sur WhatsApp"}
               </a>
             </div>
           </div>

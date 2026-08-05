@@ -36,7 +36,7 @@ export const useProducts = (language: "en" | "fr" = "fr") => {
         const { data } = await res.json();
         if (cancelled) return;
 
-        const mapped: Product[] = (data as ApiProduct[]).map((p) => ({
+        const mapped: Product[] = (data as ApiProduct[]).map(p => ({
           id: p.id,
           nameFr: p.nameFr,
           nameEn: p.nameEn,
@@ -45,21 +45,27 @@ export const useProducts = (language: "en" | "fr" = "fr") => {
           price: p.price,
           oldPrice: p.oldPrice,
           image: p.thumbnail,
-          description: language === "en" ? p.descriptionEn ?? undefined : p.descriptionFr ?? undefined,
+          description:
+            language === "en"
+              ? (p.descriptionEn ?? undefined)
+              : (p.descriptionFr ?? undefined),
           stockQuantity: p.stockQuantity,
           featured: p.featured,
           rating: p.rating,
         }));
         setProducts(mapped);
       } catch {
-        if (!cancelled) setError("Impossible de charger les produits. Réessayez plus tard.");
+        if (!cancelled)
+          setError("Impossible de charger les produits. Réessayez plus tard.");
       } finally {
         if (!cancelled) setIsLoading(false);
       }
     };
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [language]);
 
   return { products, isLoading, error };

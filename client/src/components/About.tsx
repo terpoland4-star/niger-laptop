@@ -11,29 +11,29 @@ export const About = ({ language = "fr" }: AboutProps) => {
       titleEn: "Quality Verified",
       titleFr: "Qualité Vérifiée",
       descEn: "Every product is carefully inspected and tested",
-      descFr: "Chaque produit est minutieusement inspecté et testé"
+      descFr: "Chaque produit est minutieusement inspecté et testé",
     },
     {
       icon: Zap,
       titleEn: "Fast Service",
       titleFr: "Service Rapide",
       descEn: "Quick responses and efficient support",
-      descFr: "Réponses rapides et support efficace"
+      descFr: "Réponses rapides et support efficace",
     },
     {
       icon: Shield,
       titleEn: "Trusted Expert",
       titleFr: "Expert de Confiance",
       descEn: "Years of expertise in the tech market",
-      descFr: "Des années d'expertise sur le marché informatique"
+      descFr: "Des années d'expertise sur le marché informatique",
     },
     {
       icon: Users,
       titleEn: "Local Presence",
       titleFr: "Présence Locale",
       descEn: "Based in Niamey, serving Niger",
-      descFr: "Basé à Niamey, servant le Niger"
-    }
+      descFr: "Basé à Niamey, servant le Niger",
+    },
   ];
 
   return (
@@ -78,7 +78,9 @@ export const About = ({ language = "fr" }: AboutProps) => {
         <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-8 border border-primary/20">
           <div className="max-w-3xl mx-auto">
             <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-              {language === "en" ? "About Niger Laptops" : "À Propos de Niger Laptops"}
+              {language === "en"
+                ? "About Niger Laptops"
+                : "À Propos de Niger Laptops"}
             </h3>
             <p className="text-muted-foreground mb-4 leading-relaxed">
               {language === "en"

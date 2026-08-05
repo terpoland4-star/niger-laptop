@@ -15,10 +15,12 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="font-display font-bold text-foreground mb-4">Niger Laptops</h3>
+            <h3 className="font-display font-bold text-foreground mb-4">
+              Niger Laptops
+            </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              {language === "en" 
-                ? "Your trusted tech expert in Niger" 
+              {language === "en"
+                ? "Your trusted tech expert in Niger"
                 : "Votre expert informatique de confiance au Niger"}
             </p>
             <div className="flex gap-3">
@@ -50,17 +52,26 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#catalog" className="text-muted-foreground hover:text-primary transition-colors">
+                <a
+                  href="#catalog"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   {language === "en" ? "Catalog" : "Catalogue"}
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">
+                <a
+                  href="#about"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   {language === "en" ? "About Us" : "À propos"}
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
+                <a
+                  href="#contact"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   {language === "en" ? "Contact" : "Contact"}
                 </a>
               </li>
@@ -73,9 +84,15 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
               {language === "en" ? "Developed by" : "Développé par"}
             </h4>
             <div className="text-sm space-y-2">
-              <p className="font-medium text-foreground">{company.developer.name}</p>
-              <p className="text-muted-foreground">{company.developer.company}</p>
-              <p className="text-xs text-muted-foreground">{company.developer.address}</p>
+              <p className="font-medium text-foreground">
+                {company.developer.name}
+              </p>
+              <p className="text-muted-foreground">
+                {company.developer.company}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {company.developer.address}
+              </p>
               <a
                 href={`tel:${company.developer.phone}`}
                 className="text-primary hover:underline text-xs"
@@ -96,10 +113,16 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
                 : `© ${currentYear} Niger Laptops. Tous droits réservés.`}
             </p>
             <div className="flex gap-4">
-              <Link href="/confidentialite" className="hover:text-primary transition-colors">
+              <Link
+                href="/confidentialite"
+                className="hover:text-primary transition-colors"
+              >
                 {language === "en" ? "Privacy" : "Confidentialité"}
               </Link>
-              <Link href="/conditions" className="hover:text-primary transition-colors">
+              <Link
+                href="/conditions"
+                className="hover:text-primary transition-colors"
+              >
                 {language === "en" ? "Terms" : "Conditions"}
               </Link>
             </div>

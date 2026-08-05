@@ -5,7 +5,7 @@ import "./index.css";
 
 // Register Service Worker for PWA
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js").catch((error) => {
+  navigator.serviceWorker.register("/service-worker.js").catch(error => {
     console.error("Service Worker registration failed:", error);
   });
 }

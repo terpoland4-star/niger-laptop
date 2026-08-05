@@ -35,7 +35,7 @@ function LoginForm() {
           id="login-email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           required
           autoComplete="username"
         />
@@ -46,7 +46,7 @@ function LoginForm() {
           id="login-password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           required
           autoComplete="current-password"
         />
@@ -85,7 +85,12 @@ function RegisterForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="register-name">Nom complet</Label>
-        <Input id="register-name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <Input
+          id="register-name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          required
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="register-email">Email</Label>
@@ -93,14 +98,18 @@ function RegisterForm() {
           id="register-email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           required
           autoComplete="username"
         />
       </div>
       <div className="space-y-2">
         <Label htmlFor="register-phone">Téléphone (optionnel)</Label>
-        <Input id="register-phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        <Input
+          id="register-phone"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="register-password">Mot de passe</Label>
@@ -108,7 +117,7 @@ function RegisterForm() {
           id="register-password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           required
           minLength={6}
           autoComplete="new-password"
@@ -139,8 +148,10 @@ function OrderHistory() {
   useEffect(() => {
     if (!token) return;
     getMyOrders(token)
-      .then((res) => setOrders(res.data))
-      .catch((err) => setError(err instanceof Error ? err.message : "Erreur de chargement"))
+      .then(res => setOrders(res.data))
+      .catch(err =>
+        setError(err instanceof Error ? err.message : "Erreur de chargement")
+      )
       .finally(() => setIsLoading(false));
   }, [token]);
 
@@ -158,17 +169,23 @@ function OrderHistory() {
 
       <div>
         <h3 className="font-display text-lg mb-3">Mes commandes</h3>
-        {isLoading && <p className="text-sm text-muted-foreground">Chargement...</p>}
+        {isLoading && (
+          <p className="text-sm text-muted-foreground">Chargement...</p>
+        )}
         {error && <p className="text-sm text-destructive">{error}</p>}
         {!isLoading && orders.length === 0 && (
-          <p className="text-sm text-muted-foreground">Aucune commande pour le moment.</p>
+          <p className="text-sm text-muted-foreground">
+            Aucune commande pour le moment.
+          </p>
         )}
         <div className="space-y-3">
-          {orders.map((order) => (
+          {orders.map(order => (
             <Card key={order.id}>
               <CardContent className="pt-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-sm">{order.orderNumber}</span>
+                  <span className="font-medium text-sm">
+                    {order.orderNumber}
+                  </span>
                   <span className="text-xs px-2 py-1 rounded bg-muted">
                     {STATUS_LABELS[order.status] ?? order.status}
                   </span>
@@ -176,7 +193,9 @@ function OrderHistory() {
                 <p className="text-sm text-muted-foreground">
                   {new Date(order.createdAt).toLocaleDateString("fr-FR")}
                 </p>
-                <p className="font-semibold mt-1">{order.total.toLocaleString("fr-FR")} FCFA</p>
+                <p className="font-semibold mt-1">
+                  {order.total.toLocaleString("fr-FR")} FCFA
+                </p>
               </CardContent>
             </Card>
           ))}

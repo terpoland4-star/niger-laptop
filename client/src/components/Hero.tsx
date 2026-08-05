@@ -21,7 +21,9 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
         <div className="flex-1 max-w-2xl">
           <div className="inline-block mb-6 px-4 py-2 bg-primary/10 rounded-full animate-badge-float">
             <span className="text-sahel-blue font-semibold text-sm">
-              {language === "en" ? "Welcome to Niger Laptops" : "Bienvenue chez Niger Laptops"}
+              {language === "en"
+                ? "Welcome to Niger Laptops"
+                : "Bienvenue chez Niger Laptops"}
             </span>
           </div>
 
@@ -62,10 +64,14 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
               </div>
               <div>
                 <p className="font-semibold text-sm text-foreground">
-                  {language === "en" ? "Quality Guaranteed" : "Qualité Garantie"}
+                  {language === "en"
+                    ? "Quality Guaranteed"
+                    : "Qualité Garantie"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {language === "en" ? "All products verified" : "Tous les produits vérifiés"}
+                  {language === "en"
+                    ? "All products verified"
+                    : "Tous les produits vérifiés"}
                 </p>
               </div>
             </div>
@@ -79,7 +85,9 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
                   {language === "en" ? "Expert Support" : "Support Expert"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {language === "en" ? "Always available" : "Toujours disponible"}
+                  {language === "en"
+                    ? "Always available"
+                    : "Toujours disponible"}
                 </p>
               </div>
             </div>
@@ -116,7 +124,9 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
             />
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-end pb-6">
               <p className="text-sm font-medium text-muted-foreground bg-background/80 px-3 py-1 rounded-full">
-                {language === "en" ? "Wide Product Range" : "Large choix de produits"}
+                {language === "en"
+                  ? "Wide Product Range"
+                  : "Large choix de produits"}
               </p>
             </div>
           </div>
@@ -129,8 +139,18 @@ export const Hero = ({ language = "fr", onCatalogClick }: HeroProps) => {
           <span className="text-xs font-medium">
             {language === "en" ? "Scroll to explore" : "Défilez pour explorer"}
           </span>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
           </svg>
         </div>
       </div>

@@ -18,7 +18,9 @@ interface WishlistContextType {
 
 const WISHLIST_KEY = "niger-laptops-wishlist";
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined
+);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
@@ -45,19 +47,19 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }, [wishlist, isLoaded]);
 
   const addToWishlist = (item: WishlistItem) => {
-    setWishlist((prev) => {
-      const exists = prev.some((w) => w.id === item.id);
+    setWishlist(prev => {
+      const exists = prev.some(w => w.id === item.id);
       if (exists) return prev;
       return [...prev, { ...item, addedAt: Date.now() }];
     });
   };
 
   const removeFromWishlist = (id: string) => {
-    setWishlist((prev) => prev.filter((w) => w.id !== id));
+    setWishlist(prev => prev.filter(w => w.id !== id));
   };
 
   const isInWishlist = (id: string): boolean => {
-    return wishlist.some((w) => w.id === id);
+    return wishlist.some(w => w.id === id);
   };
 
   const clearWishlist = () => {
@@ -66,7 +68,14 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <WishlistContext.Provider
-      value={{ wishlist, addToWishlist, removeFromWishlist, isInWishlist, clearWishlist, isLoaded }}
+      value={{
+        wishlist,
+        addToWishlist,
+        removeFromWishlist,
+        isInWishlist,
+        clearWishlist,
+        isLoaded,
+      }}
     >
       {children}
     </WishlistContext.Provider>

@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,7 +28,12 @@ interface OrderModalProps {
   language?: "en" | "fr";
 }
 
-export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderModalProps) => {
+export const OrderModal = ({
+  isOpen,
+  onClose,
+  items,
+  language = "fr",
+}: OrderModalProps) => {
   const { isAuthenticated, token, loginWithToken } = useAuth();
 
   const [customerName, setCustomerName] = useState("");
@@ -75,15 +85,18 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
           customerName,
           customerPhone,
           deliveryAddress: deliveryAddress || undefined,
-          items: items.map((item) => ({
+          items: items.map(item => ({
             productId: String(item.id),
             quantity: item.quantity ?? 1,
           })),
           ...(shouldCreateAccount
-            ? { createAccountEmail: accountEmail, createAccountPassword: accountPassword }
+            ? {
+                createAccountEmail: accountEmail,
+                createAccountPassword: accountPassword,
+              }
             : {}),
         },
-        isAuthenticated ? token ?? undefined : undefined
+        isAuthenticated ? (token ?? undefined) : undefined
       );
 
       // Si un compte vient d'être créé pour cette commande, on connecte
@@ -106,8 +119,8 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
         err instanceof Error
           ? err.message
           : language === "en"
-          ? "Something went wrong. Please try again."
-          : "Une erreur est survenue. Merci de réessayer."
+            ? "Something went wrong. Please try again."
+            : "Une erreur est survenue. Merci de réessayer."
       );
     } finally {
       setIsSubmitting(false);
@@ -165,7 +178,7 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
               <Input
                 required
                 value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
+                onChange={e => setCustomerName(e.target.value)}
                 placeholder={language === "en" ? "Your name" : "Votre nom"}
               />
             </div>
@@ -178,18 +191,20 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
                 required
                 type="tel"
                 value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
+                onChange={e => setCustomerPhone(e.target.value)}
                 placeholder="+227 XX XX XX XX"
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === "en" ? "Delivery Address (optional)" : "Adresse de livraison (facultatif)"}
+                {language === "en"
+                  ? "Delivery Address (optional)"
+                  : "Adresse de livraison (facultatif)"}
               </label>
               <Input
                 value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
+                onChange={e => setDeliveryAddress(e.target.value)}
                 placeholder={language === "en" ? "Address" : "Adresse"}
               />
             </div>
@@ -200,9 +215,14 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
                   <Checkbox
                     id="wantAccount"
                     checked={wantAccount}
-                    onCheckedChange={(checked) => setWantAccount(checked === true)}
+                    onCheckedChange={checked =>
+                      setWantAccount(checked === true)
+                    }
                   />
-                  <label htmlFor="wantAccount" className="text-sm font-medium cursor-pointer">
+                  <label
+                    htmlFor="wantAccount"
+                    className="text-sm font-medium cursor-pointer"
+                  >
                     {language === "en"
                       ? "Create an account to track my orders"
                       : "Créer un compte pour suivre mes commandes"}
@@ -219,8 +239,12 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
                         required={wantAccount}
                         type="email"
                         value={accountEmail}
-                        onChange={(e) => setAccountEmail(e.target.value)}
-                        placeholder={language === "en" ? "you@example.com" : "vous@exemple.com"}
+                        onChange={e => setAccountEmail(e.target.value)}
+                        placeholder={
+                          language === "en"
+                            ? "you@example.com"
+                            : "vous@exemple.com"
+                        }
                       />
                     </div>
                     <div className="space-y-2">
@@ -232,8 +256,12 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
                         type="password"
                         minLength={6}
                         value={accountPassword}
-                        onChange={(e) => setAccountPassword(e.target.value)}
-                        placeholder={language === "en" ? "At least 6 characters" : "6 caractères minimum"}
+                        onChange={e => setAccountPassword(e.target.value)}
+                        placeholder={
+                          language === "en"
+                            ? "At least 6 characters"
+                            : "6 caractères minimum"
+                        }
                         autoComplete="new-password"
                       />
                     </div>
@@ -242,9 +270,7 @@ export const OrderModal = ({ isOpen, onClose, items, language = "fr" }: OrderMod
               </div>
             )}
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button
               type="submit"

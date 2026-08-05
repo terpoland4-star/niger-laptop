@@ -1,5 +1,18 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { registerCustomer, loginCustomer, getMe, Customer, RegisterPayload, CustomerAuthPayload } from "@/lib/api";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import {
+  registerCustomer,
+  loginCustomer,
+  getMe,
+  Customer,
+  RegisterPayload,
+  CustomerAuthPayload,
+} from "@/lib/api";
 
 interface AuthContextType {
   customer: Customer | null;
@@ -30,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setCustomer(JSON.parse(storedCustomer));
       // Rafraîchit les infos en arrière-plan pour rester à jour, sans bloquer l'UI.
       getMe(storedToken)
-        .then((res) => {
+        .then(res => {
           setCustomer(res.data);
           localStorage.setItem(STORAGE_CUSTOMER_KEY, JSON.stringify(res.data));
         })
@@ -52,23 +65,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCustomer(newCustomer);
   }, []);
 
-  const register = useCallback(async (payload: RegisterPayload) => {
-    const res = await registerCustomer(payload);
-    persist(res.data.token, res.data.customer);
-  }, [persist]);
+  const register = useCallback(
+    async (payload: RegisterPayload) => {
+      const res = await registerCustomer(payload);
+      persist(res.data.token, res.data.customer);
+    },
+    [persist]
+  );
 
-  const login = useCallback(async (payload: CustomerAuthPayload) => {
-    const res = await loginCustomer(payload);
-    persist(res.data.token, res.data.customer);
-  }, [persist]);
+  const login = useCallback(
+    async (payload: CustomerAuthPayload) => {
+      const res = await loginCustomer(payload);
+      persist(res.data.token, res.data.customer);
+    },
+    [persist]
+  );
 
   // Utilisé quand un token est déjà émis ailleurs (ex: création de compte
   // implicite lors d'une commande via OrderModal) : on récupère juste le
   // profil client associé et on persiste la session.
-  const loginWithToken = useCallback(async (newToken: string) => {
-    const res = await getMe(newToken);
-    persist(newToken, res.data);
-  }, [persist]);
+  const loginWithToken = useCallback(
+    async (newToken: string) => {
+      const res = await getMe(newToken);
+      persist(newToken, res.data);
+    },
+    [persist]
+  );
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
@@ -79,7 +101,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ customer, token, isLoading, isAuthenticated: !!token, register, login, loginWithToken, logout }}
+      value={{
+        customer,
+        token,
+        isLoading,
+        isAuthenticated: !!token,
+        register,
+        login,
+        loginWithToken,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

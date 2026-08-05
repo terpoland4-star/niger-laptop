@@ -1,9 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { AdminOrder, OrderStatus, fetchAdminOrders, updateOrderStatus } from "@/lib/api";
+import {
+  AdminOrder,
+  OrderStatus,
+  fetchAdminOrders,
+  updateOrderStatus,
+} from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -12,11 +24,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { OrderDetailDialog, STATUS_LABELS } from "@/components/OrderDetailDialog";
+import {
+  OrderDetailDialog,
+  STATUS_LABELS,
+} from "@/components/OrderDetailDialog";
 
-const STATUS_OPTIONS: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+const STATUS_OPTIONS: OrderStatus[] = [
+  "pending",
+  "confirmed",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
 
-const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+const STATUS_VARIANTS: Record<
+  string,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
   pending: "outline",
   confirmed: "secondary",
   shipped: "secondary",
@@ -25,7 +49,12 @@ const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | 
 };
 
 export default function AdminOrders() {
-  const { token, admin, isLoading: authLoading, isAuthenticated } = useAdminAuth();
+  const {
+    token,
+    admin,
+    isLoading: authLoading,
+    isAuthenticated,
+  } = useAdminAuth();
   const [, navigate] = useLocation();
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +83,10 @@ export default function AdminOrders() {
     if (isAuthenticated) loadOrders();
   }, [isAuthenticated, loadOrders]);
 
-  const handleQuickStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+  const handleQuickStatusChange = async (
+    orderId: string,
+    newStatus: OrderStatus
+  ) => {
     if (!token) return;
     setUpdatingId(orderId);
     try {
@@ -72,14 +104,26 @@ export default function AdminOrders() {
       <header className="border-b border-border px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <h1 className="font-display text-xl font-bold">Commandes</h1>
-          <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>← Produits</Button>
-          <Button variant="ghost" size="sm" onClick={() => navigate("/admin/customers")}>Clients →</Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+            ← Produits
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/admin/customers")}
+          >
+            Clients →
+          </Button>
         </div>
-        <span className="text-sm text-muted-foreground truncate">{admin?.email}</span>
+        <span className="text-sm text-muted-foreground truncate">
+          {admin?.email}
+        </span>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <h2 className="font-display text-lg font-semibold mb-6">Commandes ({orders.length})</h2>
+        <h2 className="font-display text-lg font-semibold mb-6">
+          Commandes ({orders.length})
+        </h2>
 
         {isLoading ? (
           <p className="text-muted-foreground">Chargement...</p>
@@ -97,35 +141,50 @@ export default function AdminOrders() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((o) => (
+              {orders.map(o => (
                 <TableRow key={o.id}>
                   <TableCell className="font-medium">{o.orderNumber}</TableCell>
                   <TableCell>{o.customerName}</TableCell>
                   <TableCell>{o.customerPhone}</TableCell>
                   <TableCell>{o.total.toLocaleString("fr-FR")} FCFA</TableCell>
-                  <TableCell>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</TableCell>
+                  <TableCell>
+                    {new Date(o.createdAt).toLocaleDateString("fr-FR")}
+                  </TableCell>
                   <TableCell>
                     <Select
                       value={o.status}
-                      onValueChange={(value) => handleQuickStatusChange(o.id, value as OrderStatus)}
+                      onValueChange={value =>
+                        handleQuickStatusChange(o.id, value as OrderStatus)
+                      }
                       disabled={updatingId === o.id}
                     >
                       <SelectTrigger className="w-[130px]">
                         <SelectValue>
-                          <Badge variant={STATUS_VARIANTS[o.status] ?? "outline"}>
+                          <Badge
+                            variant={STATUS_VARIANTS[o.status] ?? "outline"}
+                          >
                             {STATUS_LABELS[o.status] ?? o.status}
                           </Badge>
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {STATUS_OPTIONS.map((s) => (
-                          <SelectItem key={s} value={s}>{STATUS_LABELS[s]}</SelectItem>
+                        {STATUS_OPTIONS.map(s => (
+                          <SelectItem key={s} value={s}>
+                            {STATUS_LABELS[s]}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="sm" onClick={() => { setSelectedOrder(o); setDialogOpen(true); }}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedOrder(o);
+                        setDialogOpen(true);
+                      }}
+                    >
                       Détails
                     </Button>
                   </TableCell>

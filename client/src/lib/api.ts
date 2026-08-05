@@ -24,7 +24,10 @@ export interface OrderResponse {
   newAccountToken?: string;
 }
 
-export async function createOrder(payload: CreateOrderPayload, token?: string): Promise<OrderResponse> {
+export async function createOrder(
+  payload: CreateOrderPayload,
+  token?: string
+): Promise<OrderResponse> {
   const res = await fetch(`${API_BASE}/api/orders`, {
     method: "POST",
     headers: {
@@ -68,7 +71,9 @@ export interface CustomerAuthResponse {
   };
 }
 
-export async function registerCustomer(payload: RegisterPayload): Promise<CustomerAuthResponse> {
+export async function registerCustomer(
+  payload: RegisterPayload
+): Promise<CustomerAuthResponse> {
   const res = await fetch(`${API_BASE}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -83,7 +88,9 @@ export async function registerCustomer(payload: RegisterPayload): Promise<Custom
   return res.json();
 }
 
-export async function loginCustomer(payload: CustomerAuthPayload): Promise<CustomerAuthResponse> {
+export async function loginCustomer(
+  payload: CustomerAuthPayload
+): Promise<CustomerAuthResponse> {
   const res = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -120,12 +127,15 @@ export interface CustomerOrder {
   customerId: string | null;
 }
 
-export async function getMyOrders(token: string): Promise<{ data: CustomerOrder[] }> {
+export async function getMyOrders(
+  token: string
+): Promise<{ data: CustomerOrder[] }> {
   const res = await fetch(`${API_BASE}/api/auth/orders`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  if (!res.ok) throw new Error("Impossible de charger l'historique des commandes");
+  if (!res.ok)
+    throw new Error("Impossible de charger l'historique des commandes");
   return res.json();
 }
 
@@ -143,7 +153,9 @@ export interface AdminLoginResponse {
   };
 }
 
-export async function adminLogin(payload: AdminLoginPayload): Promise<AdminLoginResponse> {
+export async function adminLogin(
+  payload: AdminLoginPayload
+): Promise<AdminLoginResponse> {
   const res = await fetch(`${API_BASE}/api/admin/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -287,7 +299,9 @@ export interface AdminOrder {
   customerId: string | null;
 }
 
-export async function fetchAdminOrders(token: string): Promise<{ data: AdminOrder[] }> {
+export async function fetchAdminOrders(
+  token: string
+): Promise<{ data: AdminOrder[] }> {
   const res = await fetch(`${API_BASE}/api/admin/orders`, {
     headers: authHeaders(token),
   });
@@ -296,7 +310,8 @@ export async function fetchAdminOrders(token: string): Promise<{ data: AdminOrde
   return res.json();
 }
 
-export type OrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+export type OrderStatus =
+  "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
 
 export async function updateOrderStatus(
   token: string,
@@ -329,7 +344,9 @@ export interface AdminCustomer {
   orderCount: number;
 }
 
-export async function fetchAdminCustomers(token: string): Promise<{ data: AdminCustomer[] }> {
+export async function fetchAdminCustomers(
+  token: string
+): Promise<{ data: AdminCustomer[] }> {
   const res = await fetch(`${API_BASE}/api/admin/customers`, {
     headers: authHeaders(token),
   });
@@ -357,8 +374,12 @@ export interface OrderTrackingData {
   items: OrderTrackingItem[];
 }
 
-export async function trackOrder(orderNumber: string): Promise<{ data: OrderTrackingData }> {
-  const res = await fetch(`${API_BASE}/api/orders/track/${encodeURIComponent(orderNumber)}`);
+export async function trackOrder(
+  orderNumber: string
+): Promise<{ data: OrderTrackingData }> {
+  const res = await fetch(
+    `${API_BASE}/api/orders/track/${encodeURIComponent(orderNumber)}`
+  );
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));

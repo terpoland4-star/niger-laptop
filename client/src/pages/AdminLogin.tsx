@@ -32,7 +32,9 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="font-display text-2xl">Administration</CardTitle>
+          <CardTitle className="font-display text-2xl">
+            Administration
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -42,7 +44,7 @@ export default function AdminLogin() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 required
                 autoComplete="username"
               />
@@ -53,7 +55,7 @@ export default function AdminLogin() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
               />

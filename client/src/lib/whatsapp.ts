@@ -9,7 +9,7 @@ export const generateWhatsAppLink = (
   const message = imageUrl
     ? `Bonjour Niger Laptops, je suis intéressé par: ${productName}\n\nImage: ${imageUrl}`
     : `Bonjour Niger Laptops, je suis intéressé par: ${productName}`;
-  
+
   const encoded = encodeURIComponent(message);
   return `https://wa.me/${cleanPhone}?text=${encoded}`;
 };
@@ -19,7 +19,7 @@ export const generateWishlistWhatsAppLink = (
   phoneNumber: string = company.whatsapp.defaultNumber
 ): string => {
   const cleanPhone = phoneNumber.replace(/\D/g, "");
-  
+
   let message = "Bonjour Niger Laptops, voici ma liste d'intérêt:\n\n";
   products.forEach((product, index) => {
     message += `${index + 1}. ${product.name}`;
@@ -28,7 +28,7 @@ export const generateWishlistWhatsAppLink = (
     }
     message += "\n";
   });
-  
+
   const encoded = encodeURIComponent(message);
   return `https://wa.me/${cleanPhone}?text=${encoded}`;
 };

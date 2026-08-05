@@ -12,21 +12,30 @@ export default function Confidentialite() {
       <Header language={language} onLanguageChange={setLanguage} />
 
       <main className="flex-1 container mx-auto px-4 py-16 max-w-3xl">
-        <Link href="/" className="text-sm text-primary hover:underline mb-6 inline-block">
+        <Link
+          href="/"
+          className="text-sm text-primary hover:underline mb-6 inline-block"
+        >
           {language === "en" ? "← Back to home" : "← Retour à l'accueil"}
         </Link>
 
         <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-          {language === "en" ? "Privacy Policy" : "Politique de Confidentialité"}
+          {language === "en"
+            ? "Privacy Policy"
+            : "Politique de Confidentialité"}
         </h1>
         <p className="text-sm text-muted-foreground mb-10">
-          {language === "en" ? "Last updated: July 2026" : "Dernière mise à jour : juillet 2026"}
+          {language === "en"
+            ? "Last updated: July 2026"
+            : "Dernière mise à jour : juillet 2026"}
         </p>
 
         <div className="space-y-8 leading-relaxed text-foreground">
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "1. Data Controller" : "1. Responsable du traitement"}
+              {language === "en"
+                ? "1. Data Controller"
+                : "1. Responsable du traitement"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -37,7 +46,9 @@ export default function Confidentialite() {
 
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "2. Data We Collect" : "2. Données collectées"}
+              {language === "en"
+                ? "2. Data We Collect"
+                : "2. Données collectées"}
             </h2>
             <p className="text-muted-foreground mb-2">
               {language === "en"
@@ -46,16 +57,28 @@ export default function Confidentialite() {
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1">
               <li>{language === "en" ? "Full name" : "Nom complet"}</li>
-              <li>{language === "en" ? "Phone number" : "Numéro de téléphone"}</li>
+              <li>
+                {language === "en" ? "Phone number" : "Numéro de téléphone"}
+              </li>
               <li>{language === "en" ? "Email address" : "Adresse email"}</li>
-              <li>{language === "en" ? "Delivery address (if provided)" : "Adresse de livraison (si fournie)"}</li>
-              <li>{language === "en" ? "Order and cart contents" : "Contenu des commandes et du panier"}</li>
+              <li>
+                {language === "en"
+                  ? "Delivery address (if provided)"
+                  : "Adresse de livraison (si fournie)"}
+              </li>
+              <li>
+                {language === "en"
+                  ? "Order and cart contents"
+                  : "Contenu des commandes et du panier"}
+              </li>
             </ul>
           </section>
 
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "3. Purpose of Processing" : "3. Finalité du traitement"}
+              {language === "en"
+                ? "3. Purpose of Processing"
+                : "3. Finalité du traitement"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -66,7 +89,9 @@ export default function Confidentialite() {
 
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "4. Data Recipients" : "4. Destinataires des données"}
+              {language === "en"
+                ? "4. Data Recipients"
+                : "4. Destinataires des données"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -77,7 +102,9 @@ export default function Confidentialite() {
 
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "5. Retention Period" : "5. Durée de conservation"}
+              {language === "en"
+                ? "5. Retention Period"
+                : "5. Durée de conservation"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -110,7 +137,10 @@ export default function Confidentialite() {
               {language === "en"
                 ? "To exercise these rights, contact us at:"
                 : "Pour exercer ces droits, contactez-nous à :"}{" "}
-              <a href={`mailto:${company.email[0]}`} className="text-primary hover:underline">
+              <a
+                href={`mailto:${company.email[0]}`}
+                className="text-primary hover:underline"
+              >
                 {company.email[0]}
               </a>
             </p>

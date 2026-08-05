@@ -11,7 +11,10 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Annulée",
 };
 
-const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+const STATUS_VARIANTS: Record<
+  string,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
   pending: "outline",
   confirmed: "secondary",
   shipped: "secondary",
@@ -30,17 +33,23 @@ export default function OrderTracking() {
     setIsLoading(true);
     setError(null);
     trackOrder(orderNumber)
-      .then((res) => setOrder(res.data))
-      .catch((err) => setError(err instanceof Error ? err.message : "Commande non trouvée"))
+      .then(res => setOrder(res.data))
+      .catch(err =>
+        setError(err instanceof Error ? err.message : "Commande non trouvée")
+      )
       .finally(() => setIsLoading(false));
   }, [orderNumber]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex items-start justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">
-        <h1 className="font-display text-2xl font-bold text-center">Suivi de commande</h1>
+        <h1 className="font-display text-2xl font-bold text-center">
+          Suivi de commande
+        </h1>
 
-        {isLoading && <p className="text-center text-muted-foreground">Chargement...</p>}
+        {isLoading && (
+          <p className="text-center text-muted-foreground">Chargement...</p>
+        )}
 
         {error && !isLoading && (
           <p className="text-center text-destructive">{error}</p>
@@ -49,20 +58,28 @@ export default function OrderTracking() {
         {order && !isLoading && (
           <div className="border rounded-lg p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <span className="font-mono font-semibold">{order.orderNumber}</span>
+              <span className="font-mono font-semibold">
+                {order.orderNumber}
+              </span>
               <Badge variant={STATUS_VARIANTS[order.status] ?? "outline"}>
                 {STATUS_LABELS[order.status] ?? order.status}
               </Badge>
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Commande passée le {new Date(order.createdAt).toLocaleDateString("fr-FR")}
+              Commande passée le{" "}
+              {new Date(order.createdAt).toLocaleDateString("fr-FR")}
             </p>
 
             <div className="border-t pt-3 space-y-2">
-              {order.items.map((item) => (
-                <div key={item.productId} className="flex justify-between text-sm">
-                  <span>{item.productName} x{item.quantity}</span>
+              {order.items.map(item => (
+                <div
+                  key={item.productId}
+                  className="flex justify-between text-sm"
+                >
+                  <span>
+                    {item.productName} x{item.quantity}
+                  </span>
                   <span>{item.lineTotal.toLocaleString("fr-FR")} FCFA</span>
                 </div>
               ))}

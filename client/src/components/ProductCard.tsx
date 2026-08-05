@@ -19,12 +19,13 @@ export const ProductCard = ({
   onWishlistToggle,
   onAddToCart,
   onOrderNow,
-  language = "fr"
+  language = "fr",
 }: ProductCardProps) => {
   const productName = language === "en" ? product.nameEn : product.nameFr;
-  const conditionLabel = language === "en"
-    ? conditions[product.condition].en
-    : conditions[product.condition].fr;
+  const conditionLabel =
+    language === "en"
+      ? conditions[product.condition].en
+      : conditions[product.condition].fr;
 
   const handleWhatsApp = () => {
     openWhatsAppChat(productName, product.image);
@@ -42,7 +43,9 @@ export const ProductCard = ({
     onOrderNow?.(product);
   };
 
-  const formattedPrice = new Intl.NumberFormat(language === "en" ? "en-US" : "fr-FR").format(product.price);
+  const formattedPrice = new Intl.NumberFormat(
+    language === "en" ? "en-US" : "fr-FR"
+  ).format(product.price);
 
   return (
     <div className="group relative h-full flex flex-col bg-card rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-border">
@@ -95,7 +98,9 @@ export const ProductCard = ({
           <div className="text-sm font-semibold text-primary">
             {product.price > 0
               ? `${formattedPrice} FCFA`
-              : language === "en" ? "Price on Request" : "Prix sur demande"}
+              : language === "en"
+                ? "Price on Request"
+                : "Prix sur demande"}
           </div>
         </div>
 

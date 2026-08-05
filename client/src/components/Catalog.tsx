@@ -12,40 +12,58 @@ interface CatalogProps {
   onOrderNow?: (product: Product) => void;
 }
 
-export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrderNow }: CatalogProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | Product["category"]>("all");
+export const Catalog = ({
+  language = "fr",
+  searchQuery = "",
+  onAddToCart,
+  onOrderNow,
+}: CatalogProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<
+    "all" | Product["category"]
+  >("all");
   const { products, isLoading, error } = useProducts(language);
-  const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } =
+    useWishlist();
 
   const filteredProducts = useMemo(() => {
     let result = products;
 
     if (selectedCategory !== "all") {
-      result = result.filter((p) => p.category === selectedCategory);
+      result = result.filter(p => p.category === selectedCategory);
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
-      result = result.filter((p) => {
+      result = result.filter(p => {
         const name = (language === "en" ? p.nameEn : p.nameFr).toLowerCase();
         const description = (p.description || "").toLowerCase();
         const categoryLabel = categories[p.category][language].toLowerCase();
-        return name.includes(q) || description.includes(q) || categoryLabel.includes(q);
+        return (
+          name.includes(q) ||
+          description.includes(q) ||
+          categoryLabel.includes(q)
+        );
       });
     }
 
     return result;
   }, [products, selectedCategory, searchQuery, language]);
 
-  const categoryList: Array<{ key: "all" | Product["category"]; label: string }> = [
-    { key: "all", label: language === "en" ? "All Products" : "Tous les produits" },
+  const categoryList: Array<{
+    key: "all" | Product["category"];
+    label: string;
+  }> = [
+    {
+      key: "all",
+      label: language === "en" ? "All Products" : "Tous les produits",
+    },
     { key: "computers", label: categories.computers[language] },
     { key: "storage", label: categories.storage[language] },
-    { key: "accessories", label: categories.accessories[language] }
+    { key: "accessories", label: categories.accessories[language] },
   ];
 
   const handleWishlistToggle = (productId: string) => {
-    const product = products.find((p) => p.id === productId);
+    const product = products.find(p => p.id === productId);
     if (!product) return;
 
     if (isInWishlist(productId)) {
@@ -55,7 +73,7 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
         id: productId,
         name: language === "en" ? product.nameEn : product.nameFr,
         imageUrl: product.image,
-        addedAt: Date.now()
+        addedAt: Date.now(),
       });
     }
   };
@@ -75,7 +93,7 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categoryList.map((cat) => (
+          {categoryList.map(cat => (
             <Button
               key={cat.key}
               onClick={() => setSelectedCategory(cat.key)}
@@ -94,7 +112,9 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
         {isLoading && (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
-              {language === "en" ? "Loading products..." : "Chargement des produits..."}
+              {language === "en"
+                ? "Loading products..."
+                : "Chargement des produits..."}
             </p>
           </div>
         )}
@@ -108,7 +128,7 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
         {!isLoading && !error && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
+              {filteredProducts.map(product => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -124,7 +144,9 @@ export const Catalog = ({ language = "fr", searchQuery = "", onAddToCart, onOrde
             {filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">
-                  {language === "en" ? "No products found" : "Aucun produit trouvé"}
+                  {language === "en"
+                    ? "No products found"
+                    : "Aucun produit trouvé"}
                 </p>
               </div>
             )}

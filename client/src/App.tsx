@@ -21,7 +21,14 @@ const Compte = lazy(() => import("./pages/Compte"));
 
 function PageLoader() {
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "50vh",
+      }}
+    >
       <span>Chargement...</span>
     </div>
   );

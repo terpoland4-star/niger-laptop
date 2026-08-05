@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Minus, Plus, Trash2, Save, Download } from "lucide-react";
@@ -30,10 +35,12 @@ export const CartModal = ({
   onSaveToPhone,
   onLoadFromPhone,
   totalPrice,
-  language = "fr"
+  language = "fr",
 }: CartModalProps) => {
   const [phone, setPhone] = useState("");
-  const formattedTotal = new Intl.NumberFormat(language === "en" ? "en-US" : "fr-FR").format(totalPrice);
+  const formattedTotal = new Intl.NumberFormat(
+    language === "en" ? "en-US" : "fr-FR"
+  ).format(totalPrice);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -47,7 +54,9 @@ export const CartModal = ({
         {items.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground mb-4">
-              {language === "en" ? "Your cart is empty" : "Votre panier est vide"}
+              {language === "en"
+                ? "Your cart is empty"
+                : "Votre panier est vide"}
             </p>
             <Button onClick={onClose} variant="outline">
               {language === "en" ? "Continue Shopping" : "Continuer vos achats"}
@@ -56,7 +65,7 @@ export const CartModal = ({
         ) : (
           <div className="space-y-4">
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {items.map((item) => (
+              {items.map(item => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between p-4 bg-secondary rounded-lg border border-border hover:border-primary transition-colors"
@@ -70,10 +79,15 @@ export const CartModal = ({
                       />
                     )}
                     <div className="flex-1">
-                      <p className="font-semibold text-foreground text-sm">{item.name}</p>
+                      <p className="font-semibold text-foreground text-sm">
+                        {item.name}
+                      </p>
                       {item.price > 0 && (
                         <p className="text-xs text-muted-foreground">
-                          {new Intl.NumberFormat(language === "en" ? "en-US" : "fr-FR").format(item.price)} FCFA
+                          {new Intl.NumberFormat(
+                            language === "en" ? "en-US" : "fr-FR"
+                          ).format(item.price)}{" "}
+                          FCFA
                         </p>
                       )}
                     </div>
@@ -81,15 +95,21 @@ export const CartModal = ({
 
                   <div className="flex items-center gap-2 mx-3">
                     <button
-                      onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        onUpdateQuantity(item.id, item.quantity - 1)
+                      }
                       className="p-1 rounded-full hover:bg-primary/10 transition-colors"
                       aria-label="Decrease quantity"
                     >
                       <Minus size={16} />
                     </button>
-                    <span className="w-6 text-center font-semibold text-sm">{item.quantity}</span>
+                    <span className="w-6 text-center font-semibold text-sm">
+                      {item.quantity}
+                    </span>
                     <button
-                      onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        onUpdateQuantity(item.id, item.quantity + 1)
+                      }
                       className="p-1 rounded-full hover:bg-primary/10 transition-colors"
                       aria-label="Increase quantity"
                     >
@@ -149,7 +169,7 @@ export const CartModal = ({
           <Input
             type="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={e => setPhone(e.target.value)}
             placeholder="+227 XX XX XX XX"
           />
           <div className="flex gap-2">

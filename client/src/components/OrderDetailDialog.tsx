@@ -27,7 +27,13 @@ export const STATUS_LABELS: Record<string, string> = {
   cancelled: "Annulée",
 };
 
-const STATUS_OPTIONS: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+const STATUS_OPTIONS: OrderStatus[] = [
+  "pending",
+  "confirmed",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
 
 interface OrderItem {
   productId: string;
@@ -46,7 +52,13 @@ interface OrderDetailDialogProps {
   onUpdated: () => void;
 }
 
-export function OrderDetailDialog({ open, onOpenChange, order, token, onUpdated }: OrderDetailDialogProps) {
+export function OrderDetailDialog({
+  open,
+  onOpenChange,
+  order,
+  token,
+  onUpdated,
+}: OrderDetailDialogProps) {
   const [status, setStatus] = useState<OrderStatus>("pending");
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +78,10 @@ export function OrderDetailDialog({ open, onOpenChange, order, token, onUpdated 
   try {
     items = JSON.parse(order.itemsJson);
   } catch {
-    items = [];
+    console.error(
+      "[OrderDetailDialog] Échec du parsing itemsJson pour la commande",
+      order.orderNumber
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,10 +110,22 @@ export function OrderDetailDialog({ open, onOpenChange, order, token, onUpdated 
 
         <div className="space-y-4">
           <div className="text-sm space-y-1">
-            <p><span className="text-muted-foreground">Client :</span> {order.customerName}</p>
-            <p><span className="text-muted-foreground">Téléphone :</span> {order.customerPhone}</p>
-            <p><span className="text-muted-foreground">Adresse :</span> {order.deliveryAddress || "Non renseignée"}</p>
-            <p><span className="text-muted-foreground">Date :</span> {new Date(order.createdAt).toLocaleString("fr-FR")}</p>
+            <p>
+              <span className="text-muted-foreground">Client :</span>{" "}
+              {order.customerName}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Téléphone :</span>{" "}
+              {order.customerPhone}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Adresse :</span>{" "}
+              {order.deliveryAddress || "Non renseignée"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Date :</span>{" "}
+              {new Date(order.createdAt).toLocaleString("fr-FR")}
+            </p>
             <p className="flex items-center gap-2">
               <span className="text-muted-foreground">Statut actuel :</span>
               <Badge>{STATUS_LABELS[order.status] ?? order.status}</Badge>
@@ -106,9 +133,14 @@ export function OrderDetailDialog({ open, onOpenChange, order, token, onUpdated 
           </div>
 
           <div className="border-t pt-3 space-y-2">
-            {items.map((item) => (
-              <div key={item.productId} className="flex justify-between text-sm">
-                <span>{item.productName} x{item.quantity}</span>
+            {items.map(item => (
+              <div
+                key={item.productId}
+                className="flex justify-between text-sm"
+              >
+                <span>
+                  {item.productName} x{item.quantity}
+                </span>
                 <span>{item.lineTotal.toLocaleString("fr-FR")} FCFA</span>
               </div>
             ))}
@@ -121,13 +153,18 @@ export function OrderDetailDialog({ open, onOpenChange, order, token, onUpdated 
           <form onSubmit={handleSubmit} className="border-t pt-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="status">Changer le statut</Label>
-              <Select value={status} onValueChange={(value) => setStatus(value as OrderStatus)}>
+              <Select
+                value={status}
+                onValueChange={value => setStatus(value as OrderStatus)}
+              >
                 <SelectTrigger id="status">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {STATUS_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>{STATUS_LABELS[s]}</SelectItem>
+                  {STATUS_OPTIONS.map(s => (
+                    <SelectItem key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -135,14 +172,29 @@ export function OrderDetailDialog({ open, onOpenChange, order, token, onUpdated 
 
             <div className="space-y-2">
               <Label htmlFor="note">Note (optionnel)</Label>
-              <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Ex: colis parti ce matin" />
+              <Textarea
+                id="note"
+                value={note}
+                onChange={e => setNote(e.target.value)}
+                rows={2}
+                placeholder="Ex: colis parti ce matin"
+              />
             </div>
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Fermer</Button>
-              <Button type="submit" disabled={isSubmitting || status === order.status && !note}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Fermer
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || (status === order.status && !note)}
+              >
                 {isSubmitting ? "Mise à jour..." : "Mettre à jour"}
               </Button>
             </DialogFooter>

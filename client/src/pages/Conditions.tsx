@@ -12,21 +12,30 @@ export default function Conditions() {
       <Header language={language} onLanguageChange={setLanguage} />
 
       <main className="flex-1 container mx-auto px-4 py-16 max-w-3xl">
-        <Link href="/" className="text-sm text-primary hover:underline mb-6 inline-block">
+        <Link
+          href="/"
+          className="text-sm text-primary hover:underline mb-6 inline-block"
+        >
           {language === "en" ? "← Back to home" : "← Retour à l'accueil"}
         </Link>
 
         <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-          {language === "en" ? "Terms & Conditions" : "Conditions Générales de Vente et d'Utilisation"}
+          {language === "en"
+            ? "Terms & Conditions"
+            : "Conditions Générales de Vente et d'Utilisation"}
         </h1>
         <p className="text-sm text-muted-foreground mb-10">
-          {language === "en" ? "Last updated: July 2026" : "Dernière mise à jour : juillet 2026"}
+          {language === "en"
+            ? "Last updated: July 2026"
+            : "Dernière mise à jour : juillet 2026"}
         </p>
 
         <div className="space-y-8 leading-relaxed text-foreground">
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "1. Seller Identification" : "1. Identification du vendeur"}
+              {language === "en"
+                ? "1. Seller Identification"
+                : "1. Identification du vendeur"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -92,7 +101,9 @@ export default function Conditions() {
 
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "7. Returns & Warranty" : "7. Retours et garantie"}
+              {language === "en"
+                ? "7. Returns & Warranty"
+                : "7. Retours et garantie"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -114,7 +125,9 @@ export default function Conditions() {
 
           <section>
             <h2 className="font-display text-xl font-bold mb-3">
-              {language === "en" ? "9. Applicable Law & Jurisdiction" : "9. Loi applicable et juridiction"}
+              {language === "en"
+                ? "9. Applicable Law & Jurisdiction"
+                : "9. Loi applicable et juridiction"}
             </h2>
             <p className="text-muted-foreground">
               {language === "en"
@@ -128,8 +141,13 @@ export default function Conditions() {
               {language === "en" ? "10. Contact" : "10. Contact"}
             </h2>
             <p className="text-muted-foreground">
-              {language === "en" ? "For any question regarding these terms, contact us at:" : "Pour toute question relative à ces conditions, contactez-nous à :"}{" "}
-              <a href={`mailto:${company.email[0]}`} className="text-primary hover:underline">
+              {language === "en"
+                ? "For any question regarding these terms, contact us at:"
+                : "Pour toute question relative à ces conditions, contactez-nous à :"}{" "}
+              <a
+                href={`mailto:${company.email[0]}`}
+                className="text-primary hover:underline"
+              >
                 {company.email[0]}
               </a>
             </p>

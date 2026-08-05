@@ -18,7 +18,9 @@ export default function Home() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [orderItems, setOrderItems] = useState<Array<{ id: string; name: string; imageUrl?: string; quantity?: number }>>([]);
+  const [orderItems, setOrderItems] = useState<
+    Array<{ id: string; name: string; imageUrl?: string; quantity?: number }>
+  >([]);
 
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const {
@@ -30,7 +32,7 @@ export default function Home() {
     saveCartToPhone,
     loadCartFromPhone,
     totalItems,
-    totalPrice
+    totalPrice,
   } = useCart();
 
   const handleCatalogClick = () => {
@@ -49,28 +51,44 @@ export default function Home() {
       id: product.id,
       name: language === "en" ? product.nameEn : product.nameFr,
       imageUrl: product.image,
-      price: product.price
+      price: product.price,
     });
   };
 
   const handleOrderNowSingle = (product: Product) => {
-    setOrderItems([{
-      id: product.id,
-      name: language === "en" ? product.nameEn : product.nameFr,
-      imageUrl: product.image,
-      quantity: 1
-    }]);
+    setOrderItems([
+      {
+        id: product.id,
+        name: language === "en" ? product.nameEn : product.nameFr,
+        imageUrl: product.image,
+        quantity: 1,
+      },
+    ]);
     setIsOrderOpen(true);
   };
 
   const handleOrderFromWishlist = () => {
-    setOrderItems(wishlist.map((w) => ({ id: w.id, name: w.name, imageUrl: w.imageUrl, quantity: 1 })));
+    setOrderItems(
+      wishlist.map(w => ({
+        id: w.id,
+        name: w.name,
+        imageUrl: w.imageUrl,
+        quantity: 1,
+      }))
+    );
     setIsWishlistOpen(false);
     setIsOrderOpen(true);
   };
 
   const handleOrderFromCart = () => {
-    setOrderItems(cart.map((c) => ({ id: c.id, name: c.name, imageUrl: c.imageUrl, quantity: c.quantity })));
+    setOrderItems(
+      cart.map(c => ({
+        id: c.id,
+        name: c.name,
+        imageUrl: c.imageUrl,
+        quantity: c.quantity,
+      }))
+    );
     setIsCartOpen(false);
     setIsOrderOpen(true);
   };

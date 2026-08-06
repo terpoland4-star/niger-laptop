@@ -47,6 +47,9 @@ export const ProductCard = ({
     language === "en" ? "en-US" : "fr-FR"
   ).format(product.price);
 
+  const isOutOfStock =
+    typeof product.stockQuantity === "number" && product.stockQuantity <= 0;
+
   return (
     <div className="group relative h-full flex flex-col bg-card rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-border">
       {/* Image Container */}
@@ -62,6 +65,14 @@ export const ProductCard = ({
         <div className="absolute top-3 right-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
           {conditionLabel}
         </div>
+
+        {/* Stock Badge */}
+        {typeof product.stockQuantity === "number" &&
+          product.stockQuantity <= 0 && (
+            <div className="absolute bottom-3 left-3 bg-destructive text-destructive-foreground px-3 py-1 rounded-full text-xs font-semibold">
+              {language === "en" ? "Out of stock" : "Rupture de stock"}
+            </div>
+          )}
 
         {/* Wishlist Button */}
         <button
@@ -110,14 +121,16 @@ export const ProductCard = ({
             <Button
               onClick={handleAddToCart}
               variant="outline"
-              className="flex-1 border-primary text-primary hover:bg-primary/10 font-semibold py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-xs"
+              disabled={isOutOfStock}
+              className="flex-1 border-primary text-primary hover:bg-primary/10 font-semibold py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart size={16} />
               {language === "en" ? "Add to Cart" : "Ajouter au panier"}
             </Button>
             <Button
               onClick={handleOrderNow}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 rounded-lg transition-all duration-200 text-xs"
+              disabled={isOutOfStock}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 rounded-lg transition-all duration-200 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {language === "en" ? "Buy Now" : "Acheter maintenant"}
             </Button>

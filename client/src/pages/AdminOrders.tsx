@@ -152,102 +152,108 @@ export default function AdminOrders() {
         {isLoading ? (
           <p className="text-muted-foreground">Chargement...</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>N° Commande</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Paiement</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.map(o => (
-                <TableRow key={o.id}>
-                  <TableCell className="font-medium">{o.orderNumber}</TableCell>
-                  <TableCell>{o.customerName}</TableCell>
-                  <TableCell>{o.customerPhone}</TableCell>
-                  <TableCell>{o.total.toLocaleString("fr-FR")} FCFA</TableCell>
-                  <TableCell>
-                    {new Date(o.createdAt).toLocaleDateString("fr-FR")}
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={o.status}
-                      onValueChange={value =>
-                        handleQuickStatusChange(o.id, value as OrderStatus)
-                      }
-                      disabled={updatingId === o.id}
-                    >
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue>
-                          <Badge
-                            variant={STATUS_VARIANTS[o.status] ?? "outline"}
-                          >
-                            {STATUS_LABELS[o.status] ?? o.status}
-                          </Badge>
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {STATUS_OPTIONS.map(s => (
-                          <SelectItem key={s} value={s}>
-                            {STATUS_LABELS[s]}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    {o.isPaid ? (
-                      <div className="flex flex-col gap-1">
-                        <Badge
-                          variant="default"
-                          className="bg-green-600 hover:bg-green-600 w-fit"
-                        >
-                          Payé
-                        </Badge>
-                        {o.receiptUrl && (
-                          <a
-                            href={o.receiptUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-primary underline"
-                          >
-                            Voir le reçu
-                          </a>
-                        )}
-                      </div>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleMarkAsPaid(o)}
-                        disabled={markingPaidId === o.id}
-                      >
-                        {markingPaidId === o.id ? "..." : "Marquer payé"}
-                      </Button>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedOrder(o);
-                        setDialogOpen(true);
-                      }}
-                    >
-                      Détails
-                    </Button>
-                  </TableCell>
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>N° Commande</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Téléphone</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Paiement</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {orders.map(o => (
+                  <TableRow key={o.id}>
+                    <TableCell className="font-medium">
+                      {o.orderNumber}
+                    </TableCell>
+                    <TableCell>{o.customerName}</TableCell>
+                    <TableCell>{o.customerPhone}</TableCell>
+                    <TableCell>
+                      {o.total.toLocaleString("fr-FR")} FCFA
+                    </TableCell>
+                    <TableCell>
+                      {new Date(o.createdAt).toLocaleDateString("fr-FR")}
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={o.status}
+                        onValueChange={value =>
+                          handleQuickStatusChange(o.id, value as OrderStatus)
+                        }
+                        disabled={updatingId === o.id}
+                      >
+                        <SelectTrigger className="w-[130px]">
+                          <SelectValue>
+                            <Badge
+                              variant={STATUS_VARIANTS[o.status] ?? "outline"}
+                            >
+                              {STATUS_LABELS[o.status] ?? o.status}
+                            </Badge>
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {STATUS_OPTIONS.map(s => (
+                            <SelectItem key={s} value={s}>
+                              {STATUS_LABELS[s]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      {o.isPaid ? (
+                        <div className="flex flex-col gap-1">
+                          <Badge
+                            variant="default"
+                            className="bg-green-600 hover:bg-green-600 w-fit"
+                          >
+                            Payé
+                          </Badge>
+                          {o.receiptUrl && (
+                            <a
+                              href={o.receiptUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary underline"
+                            >
+                              Voir le reçu
+                            </a>
+                          )}
+                        </div>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleMarkAsPaid(o)}
+                          disabled={markingPaidId === o.id}
+                        >
+                          {markingPaidId === o.id ? "..." : "Marquer payé"}
+                        </Button>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedOrder(o);
+                          setDialogOpen(true);
+                        }}
+                      >
+                        Détails
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </main>
 

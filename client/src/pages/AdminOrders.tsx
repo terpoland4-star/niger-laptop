@@ -6,6 +6,7 @@ import {
   OrderStatus,
   fetchAdminOrders,
   updateOrderStatus,
+  markOrderAsPaid,
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -97,6 +98,21 @@ export default function AdminOrders() {
     }
   };
 
+  const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
+
+  const handleMarkAsPaid = async (orderId: string) => {
+    if (!token) return;
+    setMarkingPaidId(orderId);
+    try {
+      await markOrderAsPaid(token, orderId);
+      await loadOrders();
+    } catch (err) {
+      console.error("[AdminOrders] Échec du marquage comme payé:", err);
+    } finally {
+      setMarkingPaidId(null);
+    }
+  };
+
   if (authLoading || !isAuthenticated) return null;
 
   return (
@@ -137,6 +153,7 @@ export default function AdminOrders() {
                 <TableHead>Total</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead>Paiement</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -175,6 +192,37 @@ export default function AdminOrders() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </TableCell>
+                  <TableCell>
+                    {o.isPaid ? (
+                      <div className="flex flex-col gap-1">
+                        <Badge
+                          variant="default"
+                          className="bg-green-600 hover:bg-green-600 w-fit"
+                        >
+                          Payé
+                        </Badge>
+                        {o.receiptUrl && (
+                          <a
+                            href={o.receiptUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary underline"
+                          >
+                            Voir le reçu
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleMarkAsPaid(o.id)}
+                        disabled={markingPaidId === o.id}
+                      >
+                        {markingPaidId === o.id ? "..." : "Marquer payé"}
+                      </Button>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Button

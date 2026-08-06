@@ -27,6 +27,8 @@ export const orders = sqliteTable("orders", {
   itemsJson: text("items_json").notNull(),
   createdAt: text("created_at").notNull(),
   customerId: text("customer_id"),
+  isPaid: integer("is_paid", { mode: "boolean" }).default(false),
+  paidAt: text("paid_at"),
 });
 
 export const customers = sqliteTable("customers", {

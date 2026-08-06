@@ -3,6 +3,13 @@ export const company = {
   tagline: "Votre expert informatique au Niger",
   taglineEn: "Your tech expert in Niger",
 
+  // Informations légales (utilisées sur les CGV, la confidentialité, et les reçus)
+  legal: {
+    ownerName: "Zakariyaou Talatou Zoubeirou",
+    rccm: "NE-NIM-01-2024-A10-00573",
+    nif: "117816/P",
+  },
+
   // Contact Information
   address:
     "Cité Sonuci, sur la latérite de chez Seyni Omar, en face de Nita et Amana, Niamey (Niger)",

@@ -297,6 +297,9 @@ export interface AdminOrder {
   itemsJson: string;
   createdAt: string;
   customerId: string | null;
+  isPaid: boolean;
+  paidAt: string | null;
+  receiptUrl?: string;
 }
 
 export async function fetchAdminOrders(
@@ -328,6 +331,23 @@ export async function updateOrderStatus(
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
     throw new Error(error.error || "Échec de la mise à jour du statut");
+  }
+
+  return res.json();
+}
+
+export async function markOrderAsPaid(
+  token: string,
+  id: string
+): Promise<{ data: AdminOrder }> {
+  const res = await fetch(`${API_BASE}/api/admin/orders/${id}/mark-paid`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec du marquage comme payé");
   }
 
   return res.json();

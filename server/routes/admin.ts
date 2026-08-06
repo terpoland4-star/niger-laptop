@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "../db/index";
 import { admins, products, productHistory, orders, customers, orderStatusHistory } from "../db/schema";
 import { sendOrderStatusUpdateEmail } from "../lib/notifications";
+import { generateReceiptPdf } from "../lib/receipt";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -268,6 +269,56 @@ router.patch("/orders/:id/status", requireAdmin, async (req: AuthenticatedReques
 
   const updated = await db.select().from(orders).where(eq(orders.id, orderId));
   res.json({ data: updated[0] });
+});
+
+router.patch("/orders/:id/mark-paid", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const orderId = req.params.id;
+  const existing = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (existing.length === 0) {
+    return res.status(404).json({ error: "Commande non trouvée" });
+  }
+
+  const order = existing[0];
+
+  if (order.isPaid) {
+    return res.status(400).json({ error: "Cette commande est déjà marquée comme payée" });
+  }
+
+  const paidAt = new Date().toISOString();
+
+  let receiptPath: string;
+  try {
+    const items = JSON.parse(order.itemsJson);
+    receiptPath = generateReceiptPdf({
+      orderNumber: order.orderNumber,
+      customerName: order.customerName,
+      customerPhone: order.customerPhone,
+      deliveryAddress: order.deliveryAddress,
+      total: order.total,
+      items,
+      paidAt,
+    });
+  } catch (err) {
+    console.error("[orders] Échec génération du reçu PDF:", err);
+    return res.status(500).json({ error: "Erreur lors de la génération du reçu" });
+  }
+
+  await db
+    .update(orders)
+    .set({ isPaid: true, paidAt })
+    .where(eq(orders.id, orderId));
+
+  await db.insert(orderStatusHistory).values({
+    id: randomUUID(),
+    orderId,
+    status: order.status,
+    note: "Commande marquée comme payée, reçu généré",
+    changedBy: req.admin!.id,
+    createdAt: paidAt,
+  });
+
+  const updatedOrder = await db.select().from(orders).where(eq(orders.id, orderId));
+  res.json({ data: { ...updatedOrder[0], receiptUrl: `/${receiptPath}` } });
 });
 
 

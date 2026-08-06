@@ -188,6 +188,7 @@ export async function sendReceiptEmail(data: ReceiptEmailData): Promise<void> {
           status_label: "✅ Paiement reçu",
           message: `Nous avons bien reçu votre paiement de ${data.total.toLocaleString("fr-FR")} FCFA. Cliquez sur le bouton ci-dessous pour télécharger votre reçu.`,
           tracking_url: data.receiptUrl,
+          button_label: "Télécharger le reçu (PDF)",
         },
       }),
     });
@@ -230,6 +231,7 @@ export async function sendOrderStatusUpdateEmail(data: StatusUpdateData): Promis
           status_label: STATUS_LABELS[data.status] ?? data.status,
           message: STATUS_MESSAGES[data.status] ?? "",
           tracking_url: `${SITE_BASE_URL}/suivi/${data.orderNumber}`,
+          button_label: "Suivre ma commande",
         },
       }),
     });

@@ -42,6 +42,30 @@ export const openWhatsAppChat = (
   window.open(link, "_blank");
 };
 
+export const generateReceiptWhatsAppLink = (
+  orderNumber: string,
+  receiptUrl: string,
+  phoneNumber: string
+): string => {
+  const cleanPhone = phoneNumber.replace(/\D/g, "");
+  const message = `Bonjour, voici votre reçu de paiement pour la commande ${orderNumber} chez Niger Laptops :\n${receiptUrl}\n\nMerci pour votre confiance !`;
+  const encoded = encodeURIComponent(message);
+  return `https://wa.me/${cleanPhone}?text=${encoded}`;
+};
+
+export const openReceiptWhatsApp = (
+  orderNumber: string,
+  receiptUrl: string,
+  phoneNumber: string
+): void => {
+  const link = generateReceiptWhatsAppLink(
+    orderNumber,
+    receiptUrl,
+    phoneNumber
+  );
+  window.open(link, "_blank");
+};
+
 export const openWishlistChat = (
   products: Array<{ name: string; imageUrl?: string }>,
   phoneNumber?: string

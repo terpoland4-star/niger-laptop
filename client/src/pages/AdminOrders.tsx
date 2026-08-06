@@ -8,6 +8,7 @@ import {
   updateOrderStatus,
   markOrderAsPaid,
 } from "@/lib/api";
+import { openReceiptWhatsApp } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -100,12 +101,19 @@ export default function AdminOrders() {
 
   const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
 
-  const handleMarkAsPaid = async (orderId: string) => {
+  const handleMarkAsPaid = async (order: AdminOrder) => {
     if (!token) return;
-    setMarkingPaidId(orderId);
+    setMarkingPaidId(order.id);
     try {
-      await markOrderAsPaid(token, orderId);
+      const { data } = await markOrderAsPaid(token, order.id);
       await loadOrders();
+      if (data.receiptUrl) {
+        openReceiptWhatsApp(
+          order.orderNumber,
+          data.receiptUrl,
+          order.customerPhone
+        );
+      }
     } catch (err) {
       console.error("[AdminOrders] Échec du marquage comme payé:", err);
     } finally {
@@ -217,7 +225,7 @@ export default function AdminOrders() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleMarkAsPaid(o.id)}
+                        onClick={() => handleMarkAsPaid(o)}
                         disabled={markingPaidId === o.id}
                       >
                         {markingPaidId === o.id ? "..." : "Marquer payé"}

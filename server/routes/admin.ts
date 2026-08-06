@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "../db/index";
 import { admins, products, productHistory, orders, customers, orderStatusHistory } from "../db/schema";
-import { sendOrderStatusUpdateEmail } from "../lib/notifications";
+import { sendOrderStatusUpdateEmail, sendReceiptEmail } from "../lib/notifications";
 import { generateReceiptPdf } from "../lib/receipt";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -317,8 +317,26 @@ router.patch("/orders/:id/mark-paid", requireAdmin, async (req: AuthenticatedReq
     createdAt: paidAt,
   });
 
+  const API_BASE_URL = "https://api.niger-laptops.com";
+  const absoluteReceiptUrl = `${API_BASE_URL}/${receiptPath}`;
+
+  if (order.customerId) {
+    const customerResult = await db.select().from(customers).where(eq(customers.id, order.customerId));
+    if (customerResult.length > 0 && customerResult[0].email) {
+      sendReceiptEmail({
+        orderNumber: order.orderNumber,
+        customerName: order.customerName,
+        toEmail: customerResult[0].email,
+        receiptUrl: absoluteReceiptUrl,
+        total: order.total,
+      }).catch((err) => console.error("[orders] Erreur envoi email reçu:", err));
+    } else {
+      console.log(`[orders] Pas d'email pour la commande ${order.orderNumber}, envoi du reçu par email ignoré`);
+    }
+  }
+
   const updatedOrder = await db.select().from(orders).where(eq(orders.id, orderId));
-  res.json({ data: { ...updatedOrder[0], receiptUrl: `/${receiptPath}` } });
+  res.json({ data: { ...updatedOrder[0], receiptUrl: absoluteReceiptUrl } });
 });
 
 

@@ -149,6 +149,56 @@ const STATUS_MESSAGES: Record<string, string> = {
   cancelled: "Votre commande a été annulée. N'hésitez pas à nous contacter pour plus d'informations.",
 };
 
+interface ReceiptEmailData {
+  orderNumber: string;
+  customerName: string;
+  toEmail: string;
+  receiptUrl: string;
+  total: number;
+}
+
+export async function sendReceiptEmail(data: ReceiptEmailData): Promise<void> {
+  // Réutilise le template de suivi de statut (EMAILJS_STATUS_TEMPLATE_ID),
+  // faute de pouvoir créer un template dédié sur ce compte EmailJS.
+  // Le bouton du template affichera "Suivre ma commande" (texte fixe du
+  // template) mais pointera vers le reçu PDF — clarifié par le message.
+  const serviceId = process.env.EMAILJS_SERVICE_ID;
+  const templateId = process.env.EMAILJS_STATUS_TEMPLATE_ID;
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+  const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+
+  if (!serviceId || !templateId || !privateKey || !publicKey) {
+    console.error("[notifications] Config EmailJS (reçu) incomplète, email ignoré");
+    return;
+  }
+
+  try {
+    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: serviceId,
+        template_id: templateId,
+        user_id: publicKey,
+        accessToken: privateKey,
+        template_params: {
+          to_email: data.toEmail,
+          order_number: data.orderNumber,
+          customer_name: data.customerName,
+          status_label: "✅ Paiement reçu",
+          message: `Nous avons bien reçu votre paiement de ${data.total.toLocaleString("fr-FR")} FCFA. Cliquez sur le bouton ci-dessous pour télécharger votre reçu.`,
+          tracking_url: data.receiptUrl,
+        },
+      }),
+    });
+    if (!res.ok) {
+      console.error(`[notifications] EmailJS (reçu) a répondu ${res.status} pour ${data.toEmail}: ${await res.text()}`);
+    }
+  } catch (err) {
+    console.error(`[notifications] Échec envoi email reçu à ${data.toEmail}:`, err);
+  }
+}
+
 export async function sendOrderStatusUpdateEmail(data: StatusUpdateData): Promise<void> {
   if (!data.toEmail) {
     console.log(`[notifications] toEmail vide pour la commande ${data.orderNumber}, envoi ignoré`);

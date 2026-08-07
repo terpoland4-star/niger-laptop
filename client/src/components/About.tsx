@@ -83,8 +83,12 @@ export const About = ({ language = "fr" }: AboutProps) => {
         </div>
 
         {/* Company Info */}
-        <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-8 border border-primary/20">
-          <div className="max-w-3xl mx-auto">
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-8 border border-primary/20 card-interactive card-gradient-border">
+          <LogoWatermark
+            className="inset-0 w-full h-full object-contain z-0"
+            opacity={0.06}
+          />
+          <div className="relative z-10 max-w-3xl mx-auto">
             <h3 className="font-display text-2xl font-bold text-foreground mb-4">
               {language === "en"
                 ? "About Niger Laptops"

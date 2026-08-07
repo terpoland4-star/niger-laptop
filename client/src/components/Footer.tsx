@@ -1,6 +1,7 @@
 import { company } from "@/data/company";
 import { MapPin, Facebook } from "lucide-react";
 import { Link } from "wouter";
+import { LogoWatermark } from "@/components/LogoWatermark";
 
 interface FooterProps {
   language?: "en" | "fr";
@@ -10,8 +11,12 @@ export const Footer = ({ language = "fr" }: FooterProps) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-card border-t border-border mt-16">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-card border-t border-border mt-16 relative overflow-hidden">
+      <LogoWatermark
+        className="inset-0 w-full h-full object-contain z-0"
+        opacity={0.05}
+      />
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Company Info */}
           <div>

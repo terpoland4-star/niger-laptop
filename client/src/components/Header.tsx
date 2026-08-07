@@ -14,6 +14,7 @@ import {
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
+import { LogoWatermark } from "@/components/LogoWatermark";
 
 interface HeaderProps {
   wishlistCount?: number;
@@ -45,8 +46,31 @@ export const Header = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card border-b border-border shadow-sm">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50 w-full bg-card border-b border-border shadow-sm relative">
+      <LogoWatermark
+        className="inset-0 w-full h-full object-contain z-0"
+        opacity={0.05}
+      />
+
+      {/* Floating Welcome Card */}
+      <div className="hidden lg:flex absolute top-full left-4 mt-2 z-40 items-center gap-2 px-3 py-2 rounded-xl bg-card/80 backdrop-blur-sm border border-border shadow-lg animate-badge-float">
+        <img
+          src="/logolap.png"
+          alt=""
+          aria-hidden="true"
+          className="h-6 w-auto"
+        />
+        <div className="flex flex-col leading-tight">
+          <span className="text-xs font-semibold text-foreground">
+            Bienvenue
+          </span>
+          <span className="text-[10px] text-muted-foreground">
+            Wa Koubeyni · Barka da zuwa
+          </span>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link

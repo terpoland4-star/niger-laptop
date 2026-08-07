@@ -1,4 +1,5 @@
 import { CheckCircle2, Zap, Shield, Users } from "lucide-react";
+import { LogoWatermark } from "@/components/LogoWatermark";
 
 interface AboutProps {
   language?: "en" | "fr";
@@ -37,7 +38,14 @@ export const About = ({ language = "fr" }: AboutProps) => {
   ];
 
   return (
-    <section id="about" className="py-16 bg-card border-t border-border">
+    <section
+      id="about"
+      className="py-16 bg-card border-t border-border relative overflow-hidden"
+    >
+      <LogoWatermark
+        className="inset-0 w-full h-full object-contain z-0"
+        opacity={0.08}
+      />
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { categories, Product } from "@/lib/productLabels";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/contexts/WishlistContext";
 
@@ -110,12 +111,10 @@ export const Catalog = ({
         </div>
 
         {isLoading && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">
-              {language === "en"
-                ? "Loading products..."
-                : "Chargement des produits..."}
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <ProductCardSkeleton key={idx} />
+            ))}
           </div>
         )}
 

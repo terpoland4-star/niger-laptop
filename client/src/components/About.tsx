@@ -1,5 +1,6 @@
 import { CheckCircle2, Zap, Shield, Users } from "lucide-react";
 import { LogoWatermark } from "@/components/LogoWatermark";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 interface AboutProps {
   language?: "en" | "fr";
@@ -64,20 +65,19 @@ export const About = ({ language = "fr" }: AboutProps) => {
           {features.map((feature, idx) => {
             const Icon = feature.icon;
             return (
-              <div
-                key={idx}
-                className="p-6 bg-background rounded-lg border border-border hover:border-primary hover:shadow-lg transition-all duration-300"
-              >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Icon size={24} className="text-primary" />
+              <ScrollReveal key={idx} delay={idx * 0.08}>
+                <div className="p-6 bg-background rounded-lg border border-border card-interactive card-gradient-border h-full">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Icon size={24} className="text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-foreground mb-2">
+                    {language === "en" ? feature.titleEn : feature.titleFr}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "en" ? feature.descEn : feature.descFr}
+                  </p>
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">
-                  {language === "en" ? feature.titleEn : feature.titleFr}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {language === "en" ? feature.descEn : feature.descFr}
-                </p>
-              </div>
+              </ScrollReveal>
             );
           })}
         </div>

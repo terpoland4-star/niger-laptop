@@ -51,7 +51,7 @@ export const ProductCard = ({
     typeof product.stockQuantity === "number" && product.stockQuantity <= 0;
 
   return (
-    <div className="group relative h-full flex flex-col bg-card rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-border">
+    <div className="group relative h-full flex flex-col bg-card rounded-lg overflow-hidden border border-border card-interactive card-gradient-border">
       {/* Image Container */}
       <div className="relative w-full aspect-square bg-secondary overflow-hidden">
         <img

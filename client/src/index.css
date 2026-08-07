@@ -205,27 +205,3 @@
     }
   }
 }
-@keyframes logo-oscillate {
-  0%, 100% { transform: rotate(-4deg); }
-  50% { transform: rotate(4deg); }
-}
-
-@keyframes badge-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-.animate-logo-oscillate {
-  animation: logo-oscillate 4s ease-in-out infinite;
-}
-
-.animate-badge-float {
-  animation: badge-float 3s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-logo-oscillate,
-  .animate-badge-float {
-    animation: none !important;
-  }
-}

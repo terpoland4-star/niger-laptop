@@ -1,0 +1,71 @@
+@keyframes logo-oscillate {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-logo-oscillate {
+  animation: logo-oscillate 4s ease-in-out infinite;
+}
+
+.animate-badge-float {
+  animation: badge-float 3s ease-in-out infinite;
+}
+
+/* Cartes animées — hover avec ombre en couches + léger scale */
+.card-interactive {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.card-interactive:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 12px 24px -8px rgba(0, 0, 0, 0.18);
+}
+
+/* Bordure dégradée sahel — liseré autour des cartes */
+.card-gradient-border {
+  position: relative;
+}
+
+.card-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    var(--color-sahel-orange),
+    var(--color-sahel-sand)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.card-gradient-border:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-logo-oscillate,
+  .animate-badge-float,
+  .card-interactive {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

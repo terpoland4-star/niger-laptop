@@ -4,6 +4,15 @@ import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerClose,
+} from "@/components/ui/drawer";
+import { SlidersHorizontal } from "lucide-react";
 import { useWishlist } from "@/contexts/WishlistContext";
 
 interface CatalogProps {
@@ -25,6 +34,7 @@ export const Catalog = ({
   const [sortBy, setSortBy] = useState<
     "default" | "price-asc" | "price-desc" | "rating"
   >("default");
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const { products, isLoading, error } = useProducts(language);
   const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } =
     useWishlist();
@@ -75,6 +85,21 @@ export const Catalog = ({
     { key: "accessories", label: categories.accessories[language] },
   ];
 
+  const sortOptions: Array<{ key: typeof sortBy; label: string }> = [
+    { key: "default", label: language === "en" ? "Sort by" : "Trier par" },
+    {
+      key: "price-asc",
+      label: language === "en" ? "Price: Low to High" : "Prix croissant",
+    },
+    {
+      key: "price-desc",
+      label: language === "en" ? "Price: High to Low" : "Prix décroissant",
+    },
+    { key: "rating", label: language === "en" ? "Top Rated" : "Mieux notés" },
+  ];
+
+  const hasActiveFilters = selectedCategory !== "all" || sortBy !== "default";
+
   const handleWishlistToggle = (productId: string) => {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -91,6 +116,43 @@ export const Catalog = ({
     }
   };
 
+  const CategoryButtons = ({ large = false }: { large?: boolean }) => (
+    <div className="flex flex-wrap gap-2">
+      {categoryList.map(cat => (
+        <Button
+          key={cat.key}
+          onClick={() => setSelectedCategory(cat.key)}
+          variant={selectedCategory === cat.key ? "default" : "outline"}
+          className={`rounded-full transition-all duration-200 ${
+            large ? "px-6 py-3 text-sm" : "px-4 py-1.5 text-xs"
+          } ${
+            selectedCategory === cat.key
+              ? "bg-primary text-primary-foreground"
+              : "border-2 border-border hover:border-primary"
+          }`}
+        >
+          {cat.label}
+        </Button>
+      ))}
+    </div>
+  );
+
+  const SortSelect = ({ large = false }: { large?: boolean }) => (
+    <select
+      value={sortBy}
+      onChange={e => setSortBy(e.target.value as typeof sortBy)}
+      className={`border border-border rounded-lg bg-card text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring/50 transition-all duration-200 ${
+        large ? "text-sm px-3 py-3 w-full" : "text-xs px-3 py-1.5"
+      }`}
+    >
+      {sortOptions.map(opt => (
+        <option key={opt.key} value={opt.key}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+  );
+
   return (
     <section id="catalog" className="py-16 bg-background">
       <div className="container mx-auto px-4">
@@ -105,50 +167,67 @@ export const Catalog = ({
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3 mb-6">
-          {categoryList.map(cat => (
-            <Button
-              key={cat.key}
-              onClick={() => setSelectedCategory(cat.key)}
-              variant={selectedCategory === cat.key ? "default" : "outline"}
-              className={`rounded-full px-6 py-2 transition-all duration-200 ${
-                selectedCategory === cat.key
-                  ? "bg-primary text-primary-foreground"
-                  : "border-2 border-border hover:border-primary"
-              }`}
-            >
-              {cat.label}
-            </Button>
-          ))}
+        {/* Desktop — barre condensée sticky sous le header */}
+        <div className="hidden md:flex sticky top-16 z-40 bg-background/95 backdrop-blur-sm justify-between items-center gap-4 py-3 mb-8 border-b border-border">
+          <CategoryButtons />
+          <div className="flex items-center gap-3 shrink-0">
+            <p className="text-xs text-muted-foreground whitespace-nowrap">
+              {language === "en"
+                ? `${filteredProducts.length} of ${products.length}`
+                : `${filteredProducts.length} sur ${products.length}`}
+            </p>
+            <SortSelect />
+          </div>
         </div>
 
-        {!isLoading && !error && (
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-8">
-            <p className="text-sm text-muted-foreground">
-              {language === "en"
-                ? `Showing ${filteredProducts.length} of ${products.length} products`
-                : `Affichage de ${filteredProducts.length} sur ${products.length} produits`}
-            </p>
-            <select
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value as typeof sortBy)}
-              className="text-sm border border-border rounded-lg px-3 py-2 bg-card text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring/50 transition-all duration-200"
-            >
-              <option value="default">
-                {language === "en" ? "Sort by" : "Trier par"}
-              </option>
-              <option value="price-asc">
-                {language === "en" ? "Price: Low to High" : "Prix croissant"}
-              </option>
-              <option value="price-desc">
-                {language === "en" ? "Price: High to Low" : "Prix décroissant"}
-              </option>
-              <option value="rating">
-                {language === "en" ? "Top Rated" : "Mieux notés"}
-              </option>
-            </select>
-          </div>
-        )}
+        {/* Mobile — bouton fixe en bas, ouvre le drawer filtres */}
+        <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+          <Drawer
+            open={isFilterDrawerOpen}
+            onOpenChange={setIsFilterDrawerOpen}
+          >
+            <DrawerTrigger asChild>
+              <Button className="rounded-full px-5 py-3 shadow-lg flex items-center gap-2 bg-primary text-primary-foreground">
+                <SlidersHorizontal size={16} />
+                {language === "en" ? "Filters & Sort" : "Filtres & Tri"}
+                {hasActiveFilters && (
+                  <span className="w-2 h-2 rounded-full bg-white" />
+                )}
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>
+                  {language === "en" ? "Filters & Sort" : "Filtres & Tri"}
+                </DrawerTitle>
+              </DrawerHeader>
+              <div className="px-4 pb-4 flex flex-col gap-4">
+                <div>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    {language === "en" ? "Category" : "Catégorie"}
+                  </p>
+                  <CategoryButtons large />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    {language === "en" ? "Sort by" : "Trier par"}
+                  </p>
+                  <SortSelect large />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  {language === "en"
+                    ? `${filteredProducts.length} of ${products.length} products`
+                    : `${filteredProducts.length} sur ${products.length} produits`}
+                </p>
+                <DrawerClose asChild>
+                  <Button className="w-full">
+                    {language === "en" ? "Apply" : "Appliquer"}
+                  </Button>
+                </DrawerClose>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
 
         {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -166,7 +245,7 @@ export const Catalog = ({
 
         {!isLoading && !error && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20 md:pb-0">
               {filteredProducts.map(product => (
                 <ProductCard
                   key={product.id}

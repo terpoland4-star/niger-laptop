@@ -114,25 +114,25 @@ export const Header = ({
           <nav className="hidden lg:flex items-center gap-6 shrink-0">
             <Link
               href="/"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="relative text-sm font-medium hover:text-primary transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
             >
               {language === "en" ? "Home" : "Accueil"}
             </Link>
             <a
               href="#catalog"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="relative text-sm font-medium hover:text-primary transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
             >
               {language === "en" ? "Catalog" : "Catalogue"}
             </a>
             <a
               href="#about"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="relative text-sm font-medium hover:text-primary transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
             >
               {language === "en" ? "About" : "À propos"}
             </a>
             <a
               href="#contact"
-              className="text-sm font-medium hover:text-primary transition-colors"
+              className="relative text-sm font-medium hover:text-primary transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
             >
               {language === "en" ? "Contact" : "Contact"}
             </a>

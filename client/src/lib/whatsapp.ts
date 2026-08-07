@@ -66,6 +66,15 @@ export const openReceiptWhatsApp = (
   window.open(link, "_blank");
 };
 
+export const generateContactWhatsAppLink = (
+  phoneNumber: string,
+  message: string
+): string => {
+  const cleanPhone = phoneNumber.replace(/\D/g, "");
+  const encoded = encodeURIComponent(message);
+  return `https://wa.me/${cleanPhone}?text=${encoded}`;
+};
+
 export const openWishlistChat = (
   products: Array<{ name: string; imageUrl?: string }>,
   phoneNumber?: string

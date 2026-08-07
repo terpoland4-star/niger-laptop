@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { categories, Product } from "@/lib/productLabels";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/ProductCard";
@@ -35,7 +35,22 @@ export const Catalog = ({
     "default" | "price-asc" | "price-desc" | "rating"
   >("default");
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const { products, isLoading, error } = useProducts(language);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSectionVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
   const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } =
     useWishlist();
 
@@ -154,7 +169,7 @@ export const Catalog = ({
   );
 
   return (
-    <section id="catalog" className="py-16 bg-background">
+    <section id="catalog" ref={sectionRef} className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -181,7 +196,13 @@ export const Catalog = ({
         </div>
 
         {/* Mobile — bouton fixe en bas, ouvre le drawer filtres */}
-        <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+        <div
+          className={`md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            isSectionVisible
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 translate-y-4 pointer-events-none"
+          }`}
+        >
           <Drawer
             open={isFilterDrawerOpen}
             onOpenChange={setIsFilterDrawerOpen}

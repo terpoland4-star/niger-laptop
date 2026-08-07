@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Catalog } from "@/components/Catalog";
+import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
@@ -107,6 +108,12 @@ export default function Home() {
 
       <main className="flex-1">
         <Hero language={language} onCatalogClick={handleCatalogClick} />
+
+        <FeaturedCarousel
+          language={language}
+          onAddToCart={handleAddToCart}
+          onOrderNow={handleOrderNowSingle}
+        />
 
         <Catalog
           language={language}

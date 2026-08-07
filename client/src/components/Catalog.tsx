@@ -22,6 +22,9 @@ export const Catalog = ({
   const [selectedCategory, setSelectedCategory] = useState<
     "all" | Product["category"]
   >("all");
+  const [sortBy, setSortBy] = useState<
+    "default" | "price-asc" | "price-desc" | "rating"
+  >("default");
   const { products, isLoading, error } = useProducts(language);
   const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } =
     useWishlist();
@@ -47,8 +50,17 @@ export const Catalog = ({
       });
     }
 
-    return result;
-  }, [products, selectedCategory, searchQuery, language]);
+    const sorted = [...result];
+    if (sortBy === "price-asc") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "price-desc") {
+      sorted.sort((a, b) => b.price - a.price);
+    } else if (sortBy === "rating") {
+      sorted.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    }
+
+    return sorted;
+  }, [products, selectedCategory, searchQuery, language, sortBy]);
 
   const categoryList: Array<{
     key: "all" | Product["category"];
@@ -93,7 +105,7 @@ export const Catalog = ({
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
           {categoryList.map(cat => (
             <Button
               key={cat.key}
@@ -109,6 +121,34 @@ export const Catalog = ({
             </Button>
           ))}
         </div>
+
+        {!isLoading && !error && (
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-8">
+            <p className="text-sm text-muted-foreground">
+              {language === "en"
+                ? `Showing ${filteredProducts.length} of ${products.length} products`
+                : `Affichage de ${filteredProducts.length} sur ${products.length} produits`}
+            </p>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as typeof sortBy)}
+              className="text-sm border border-border rounded-lg px-3 py-2 bg-card text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring/50 transition-all duration-200"
+            >
+              <option value="default">
+                {language === "en" ? "Sort by" : "Trier par"}
+              </option>
+              <option value="price-asc">
+                {language === "en" ? "Price: Low to High" : "Prix croissant"}
+              </option>
+              <option value="price-desc">
+                {language === "en" ? "Price: High to Low" : "Prix décroissant"}
+              </option>
+              <option value="rating">
+                {language === "en" ? "Top Rated" : "Mieux notés"}
+              </option>
+            </select>
+          </div>
+        )}
 
         {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -149,14 +189,6 @@ export const Catalog = ({
                 </p>
               </div>
             )}
-
-            <div className="text-center mt-12 text-muted-foreground">
-              <p className="text-sm">
-                {language === "en"
-                  ? `Showing ${filteredProducts.length} of ${products.length} products`
-                  : `Affichage de ${filteredProducts.length} sur ${products.length} produits`}
-              </p>
-            </div>
           </>
         )}
       </div>

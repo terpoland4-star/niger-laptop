@@ -51,15 +51,20 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sahel-green: var(--sahel-green);
   --color-sahel-blue: var(--sahel-blue);
+  --color-sahel-sand: var(--sahel-sand);
+  --color-sahel-orange: var(--sahel-orange);
+  --color-sahel-earth: var(--sahel-earth);
+  --color-sahel-dark: var(--sahel-dark);
+  --color-sahel-light: var(--sahel-light);
 }
 
 :root {
   /* Sahel Color Palette */
-  --color-sahel-sand: oklch(0.85 0.08 70);
-  --color-sahel-orange: oklch(0.65 0.18 40);
-  --color-sahel-earth: oklch(0.25 0.04 60);
-  --color-sahel-light: oklch(0.95 0.02 70);
-  --color-sahel-dark: oklch(0.15 0.02 60);
+  --sahel-sand: oklch(0.85 0.08 70);
+  --sahel-orange: oklch(0.65 0.18 40);
+  --sahel-earth: oklch(0.25 0.04 60);
+  --sahel-light: oklch(0.95 0.02 70);
+  --sahel-dark: oklch(0.15 0.02 60);
   --sahel-green: oklch(0.50 0.14 135);
   --sahel-blue: oklch(0.538 0.135 254);
   
@@ -102,10 +107,11 @@
 
 .dark {
   /* Sahel Dark Mode */
-  --color-sahel-sand: oklch(0.25 0.04 60);
-  --color-sahel-orange: oklch(0.72 0.15 40);
-  --color-sahel-light: oklch(0.15 0.02 60);
-  --color-sahel-dark: oklch(0.95 0.02 70);
+  --sahel-sand: oklch(0.25 0.04 60);
+  --sahel-orange: oklch(0.72 0.15 40);
+  --sahel-earth: oklch(0.85 0.03 70);
+  --sahel-light: oklch(0.15 0.02 60);
+  --sahel-dark: oklch(0.95 0.02 70);
   --sahel-green: oklch(0.62 0.13 135);
   --sahel-blue: oklch(0.715 0.102 249);
   

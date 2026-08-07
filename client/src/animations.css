@@ -43,8 +43,8 @@
   border-radius: inherit;
   background: linear-gradient(
     135deg,
-    var(--color-sahel-orange),
-    var(--color-sahel-sand)
+    var(--sahel-orange),
+    var(--sahel-sand)
   );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Catalog } from "@/components/Catalog";
@@ -6,12 +6,19 @@ import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
-import { WishlistModal } from "@/components/WishlistModal";
-import { CartModal } from "@/components/CartModal";
-import { OrderModal } from "@/components/OrderModal";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import { Product } from "@/lib/productLabels";
+
+const WishlistModal = lazy(() =>
+  import("@/components/WishlistModal").then(m => ({ default: m.WishlistModal }))
+);
+const CartModal = lazy(() =>
+  import("@/components/CartModal").then(m => ({ default: m.CartModal }))
+);
+const OrderModal = lazy(() =>
+  import("@/components/OrderModal").then(m => ({ default: m.OrderModal }))
+);
 
 export default function Home() {
   const [language, setLanguage] = useState<"en" | "fr">("fr");
@@ -128,36 +135,44 @@ export default function Home() {
 
       <Footer language={language} />
 
-      <WishlistModal
-        isOpen={isWishlistOpen}
-        onClose={() => setIsWishlistOpen(false)}
-        items={wishlist}
-        onRemove={removeFromWishlist}
-        onClear={clearWishlist}
-        onOrderClick={handleOrderFromWishlist}
-        language={language}
-      />
+      <Suspense fallback={null}>
+        {isWishlistOpen && (
+          <WishlistModal
+            isOpen={isWishlistOpen}
+            onClose={() => setIsWishlistOpen(false)}
+            items={wishlist}
+            onRemove={removeFromWishlist}
+            onClear={clearWishlist}
+            onOrderClick={handleOrderFromWishlist}
+            language={language}
+          />
+        )}
 
-      <CartModal
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cart}
-        onRemove={removeFromCart}
-        onUpdateQuantity={updateQuantity}
-        onClear={clearCart}
-        onOrderClick={handleOrderFromCart}
-        onSaveToPhone={saveCartToPhone}
-        onLoadFromPhone={loadCartFromPhone}
-        totalPrice={totalPrice}
-        language={language}
-      />
+        {isCartOpen && (
+          <CartModal
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            items={cart}
+            onRemove={removeFromCart}
+            onUpdateQuantity={updateQuantity}
+            onClear={clearCart}
+            onOrderClick={handleOrderFromCart}
+            onSaveToPhone={saveCartToPhone}
+            onLoadFromPhone={loadCartFromPhone}
+            totalPrice={totalPrice}
+            language={language}
+          />
+        )}
 
-      <OrderModal
-        isOpen={isOrderOpen}
-        onClose={() => setIsOrderOpen(false)}
-        items={orderItems}
-        language={language}
-      />
+        {isOrderOpen && (
+          <OrderModal
+            isOpen={isOrderOpen}
+            onClose={() => setIsOrderOpen(false)}
+            items={orderItems}
+            language={language}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

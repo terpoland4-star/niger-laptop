@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "wouter";
 import { LogoWatermark } from "@/components/LogoWatermark";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   wishlistCount?: number;
@@ -37,8 +38,16 @@ export const Header = ({
 }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -46,7 +55,12 @@ export const Header = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card border-b border-border shadow-sm relative">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full bg-card border-b border-border relative transition-shadow duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        isScrolled ? "shadow-md" : "shadow-sm"
+      )}
+    >
       <LogoWatermark
         className="inset-0 w-full h-full object-contain z-0"
         opacity={0.05}

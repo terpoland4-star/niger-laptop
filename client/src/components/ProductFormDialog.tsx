@@ -239,6 +239,42 @@ export function ProductFormDialog({
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4 items-end">
+            <div className="space-y-2">
+              <Label htmlFor="oldPrice">Ancien prix (FCFA) — optionnel</Label>
+              <Input
+                id="oldPrice"
+                type="number"
+                placeholder="Laisser vide si pas en promo"
+                value={form.oldPrice ?? ""}
+                onChange={e =>
+                  setForm({
+                    ...form,
+                    oldPrice: e.target.value
+                      ? Number(e.target.value)
+                      : undefined,
+                  })
+                }
+              />
+              <p className="text-xs text-muted-foreground">
+                Renseigné + supérieur au prix actuel = badge "Promo" dans le
+                carousel.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 pb-6">
+              <input
+                id="featured"
+                type="checkbox"
+                checked={form.featured ?? false}
+                onChange={e => setForm({ ...form, featured: e.target.checked })}
+                className="h-4 w-4 rounded border-border"
+              />
+              <Label htmlFor="featured" className="cursor-pointer">
+                Produit vedette
+              </Label>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="descriptionFr">Description (FR)</Label>
             <Textarea

@@ -6,6 +6,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
 import { Product } from "@/lib/productLabels";
@@ -29,6 +31,10 @@ export const FeaturedCarousel = ({
     );
   }, [products]);
 
+  const autoplayRef = useRef(
+    Autoplay({ delay: 3500, stopOnInteraction: false, stopOnMouseEnter: true })
+  );
+
   if (isLoading || highlighted.length === 0) return null;
 
   return (
@@ -40,7 +46,11 @@ export const FeaturedCarousel = ({
           </h2>
         </div>
 
-        <Carousel opts={{ align: "start", loop: true }} className="w-full">
+        <Carousel
+          opts={{ align: "start", loop: true }}
+          plugins={[autoplayRef.current]}
+          className="w-full"
+        >
           <CarouselContent className="-ml-4">
             {highlighted.map(product => {
               const isPromo =

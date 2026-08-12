@@ -18,6 +18,7 @@ const AdminOrders = lazy(() => import("./pages/AdminOrders"));
 const AdminCustomers = lazy(() => import("./pages/AdminCustomers"));
 const OrderTracking = lazy(() => import("./pages/OrderTracking"));
 const Compte = lazy(() => import("./pages/Compte"));
+const Product = lazy(() => import("./pages/Product"));
 
 function PageLoader() {
   return (
@@ -43,6 +44,7 @@ function Router() {
         <Route path={"/conditions"} component={Conditions} />
         <Route path={"/compte"} component={Compte} />
         <Route path={"/suivi/:orderNumber"} component={OrderTracking} />
+        <Route path={"/produit/:id"} component={Product} />
         <Route path={"/admin/login"} component={AdminLogin} />
         <Route path={"/admin"} component={AdminDashboard} />
         <Route path={"/admin/orders"} component={AdminOrders} />

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart } from "lucide-react";
 import { openWhatsAppChat } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
 
 interface ProductCardProps {
   product: Product;
@@ -52,14 +54,19 @@ export const ProductCard = ({
 
   return (
     <div className="group relative h-full flex flex-col bg-card rounded-lg overflow-hidden border border-border card-interactive card-gradient-border">
-      {/* Image Container */}
-      <div className="relative w-full aspect-square bg-secondary overflow-hidden">
-        <img
-          src={product.image}
-          alt={productName}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          loading="lazy"
-        />
+      {/* Image Container — cliquable vers la page produit */}
+      <Link href={`/produit/${product.id}`} className="block relative">
+        <motion.div
+          layoutId={`product-image-${product.id}`}
+          className="relative w-full aspect-square bg-secondary overflow-hidden"
+        >
+          <img
+            src={product.image}
+            alt={productName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+        </motion.div>
 
         {/* Condition Badge */}
         <div className="absolute top-3 right-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
@@ -74,9 +81,13 @@ export const ProductCard = ({
             </div>
           )}
 
-        {/* Wishlist Button */}
+        {/* Wishlist Button — n'ouvre pas la page produit */}
         <button
-          onClick={handleWishlist}
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleWishlist();
+          }}
           className="absolute top-3 left-3 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition-all duration-200 hover:scale-110"
           aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
         >
@@ -88,7 +99,7 @@ export const ProductCard = ({
             )}
           />
         </button>
-      </div>
+      </Link>
 
       {/* Content Container */}
       <div className="flex-1 flex flex-col p-4">

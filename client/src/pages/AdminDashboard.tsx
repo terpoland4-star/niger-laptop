@@ -32,6 +32,14 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(
     null
   );
+  const [conditionFilter, setConditionFilter] = useState<
+    "all" | "new" | "used"
+  >("all");
+
+  const filteredProducts =
+    conditionFilter === "all"
+      ? products
+      : products.filter(p => p.condition === conditionFilter);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -87,18 +95,35 @@ export default function AdminDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <h2 className="font-display text-lg font-semibold">
-            Produits ({products.length})
+            Produits ({filteredProducts.length})
           </h2>
-          <Button
-            onClick={() => {
-              setEditingProduct(null);
-              setDialogOpen(true);
-            }}
-          >
-            + Nouveau produit
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-md border border-border overflow-hidden">
+              {(["all", "new", "used"] as const).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setConditionFilter(f)}
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                    conditionFilter === f
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-transparent hover:bg-accent"
+                  }`}
+                >
+                  {f === "all" ? "Tous" : f === "new" ? "Neuf" : "Occasion"}
+                </button>
+              ))}
+            </div>
+            <Button
+              onClick={() => {
+                setEditingProduct(null);
+                setDialogOpen(true);
+              }}
+            >
+              + Nouveau produit
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (
@@ -116,7 +141,7 @@ export default function AdminDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map(p => (
+              {filteredProducts.map(p => (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.nameFr}</TableCell>
                   <TableCell>{p.category}</TableCell>

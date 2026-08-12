@@ -170,6 +170,11 @@ export async function adminLogin(
   return res.json();
 }
 
+export interface ProductSpec {
+  key: string;
+  value: string;
+}
+
 export interface AdminProduct {
   id: string;
   nameFr: string;
@@ -184,6 +189,7 @@ export interface AdminProduct {
   descriptionFr: string | null;
   descriptionEn: string | null;
   stockQuantity: number;
+  specs: ProductSpec[];
 }
 
 export interface ProductPayload {
@@ -198,6 +204,7 @@ export interface ProductPayload {
   descriptionFr?: string;
   descriptionEn?: string;
   stockQuantity?: number;
+  specs?: ProductSpec[];
 }
 
 function authHeaders(token: string) {

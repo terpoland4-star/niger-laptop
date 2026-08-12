@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import {
   AdminProduct,
   ProductPayload,
+  ProductSpec,
   createProduct,
   updateProduct,
   uploadProductImage,
 } from "@/lib/api";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +57,7 @@ const emptyForm: ProductPayload = {
   descriptionEn: "",
   stockQuantity: 0,
   featured: false,
+  specs: [],
 };
 
 export function ProductFormDialog({
@@ -82,6 +85,7 @@ export function ProductFormDialog({
         descriptionEn: product.descriptionEn ?? "",
         stockQuantity: product.stockQuantity,
         featured: product.featured,
+        specs: product.specs ?? [],
       });
     } else {
       setForm(emptyForm);
@@ -90,16 +94,39 @@ export function ProductFormDialog({
     setError(null);
   }, [product, open]);
 
+  const specs = form.specs ?? [];
+
+  const addSpec = () => {
+    setForm({ ...form, specs: [...specs, { key: "", value: "" }] });
+  };
+
+  const updateSpec = (
+    index: number,
+    field: keyof ProductSpec,
+    value: string
+  ) => {
+    const next = specs.map((s, i) =>
+      i === index ? { ...s, [field]: value } : s
+    );
+    setForm({ ...form, specs: next });
+  };
+
+  const removeSpec = (index: number) => {
+    setForm({ ...form, specs: specs.filter((_, i) => i !== index) });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
     try {
+      const cleanedSpecs = specs.filter(s => s.key.trim() && s.value.trim());
+      const payload = { ...form, specs: cleanedSpecs };
       let productId = product?.id;
       if (product) {
-        await updateProduct(token, product.id, form);
+        await updateProduct(token, product.id, payload);
       } else {
-        const res = await createProduct(token, form);
+        const res = await createProduct(token, payload);
         productId = res.data.id;
       }
       if (imageFile && productId) {
@@ -222,6 +249,52 @@ export function ProductFormDialog({
               }
               rows={3}
             />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>Caractéristiques techniques</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addSpec}
+              >
+                <Plus size={14} className="mr-1" /> Ajouter
+              </Button>
+            </div>
+            {specs.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Aucune caractéristique — ex: RAM, Processeur, Stockage...
+              </p>
+            )}
+            <div className="space-y-2">
+              {specs.map((spec, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <Input
+                    placeholder="Clé (ex: RAM)"
+                    value={spec.key}
+                    onChange={e => updateSpec(idx, "key", e.target.value)}
+                    className="flex-1"
+                  />
+                  <Input
+                    placeholder="Valeur (ex: 16 Go)"
+                    value={spec.value}
+                    onChange={e => updateSpec(idx, "value", e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeSpec(idx)}
+                    aria-label="Supprimer cette caractéristique"
+                  >
+                    <Trash2 size={16} className="text-destructive" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">

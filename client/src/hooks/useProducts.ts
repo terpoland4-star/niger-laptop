@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Product } from "@/lib/productLabels";
+import { getImageUrl } from "@/lib/utils";
 
 interface ApiProduct {
   id: string;
@@ -44,7 +45,7 @@ export const useProducts = (language: "en" | "fr" = "fr") => {
           condition: p.condition as Product["condition"],
           price: p.price,
           oldPrice: p.oldPrice,
-          image: p.thumbnail,
+          image: getImageUrl(p.thumbnail),
           description:
             language === "en"
               ? (p.descriptionEn ?? undefined)

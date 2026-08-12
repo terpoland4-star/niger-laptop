@@ -78,6 +78,9 @@ const productSchema = z.object({
   descriptionFr: z.string().optional(),
   descriptionEn: z.string().optional(),
   stockQuantity: z.number().int().min(0).optional(),
+  specs: z
+    .array(z.object({ key: z.string().min(1), value: z.string().min(1) }))
+    .optional(),
 });
 
 router.post("/products", requireAdmin, async (req: AuthenticatedRequest, res) => {
@@ -87,7 +90,12 @@ router.post("/products", requireAdmin, async (req: AuthenticatedRequest, res) =>
   }
 
   const id = randomUUID();
-  const productData = { id, ...parsed.data };
+  const { specs, ...rest } = parsed.data;
+  const productData = {
+    id,
+    ...rest,
+    specs: specs ? JSON.stringify(specs) : null,
+  };
 
   await db.insert(products).values(productData);
 
@@ -121,7 +129,13 @@ router.put("/products/:id", requireAdmin, async (req: AuthenticatedRequest, res)
     return res.status(400).json({ error: "Aucun champ à mettre à jour" });
   }
 
-  await db.update(products).set(parsed.data).where(eq(products.id, productId));
+  const { specs, ...restUpdate } = parsed.data;
+  const updateData = {
+    ...restUpdate,
+    ...(specs !== undefined ? { specs: JSON.stringify(specs) } : {}),
+  };
+
+  await db.update(products).set(updateData).where(eq(products.id, productId));
 
   await db.insert(productHistory).values({
     id: randomUUID(),

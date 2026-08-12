@@ -22,6 +22,13 @@ const cartLimiter = rateLimit({
 });
 
 // GET /api/products - liste tous les produits (avec recherche optionnelle)
+function parseProductSpecs<T extends { specs: string | null }>(product: T) {
+  return {
+    ...product,
+    specs: product.specs ? JSON.parse(product.specs) : [],
+  };
+}
+
 router.get("/products", async (req, res) => {
   const search = req.query.search as string | undefined;
 
@@ -35,7 +42,10 @@ router.get("/products", async (req, res) => {
     result = await db.select().from(products);
   }
 
-  res.json({ data: result, pagination: { page: 1, totalPages: 1, total: result.length } });
+  res.json({
+    data: result.map(parseProductSpecs),
+    pagination: { page: 1, totalPages: 1, total: result.length },
+  });
 });
 
 // GET /api/products/:id - un seul produit
@@ -44,7 +54,7 @@ router.get("/products/:id", async (req, res) => {
   if (result.length === 0) {
     return res.status(404).json({ error: "Produit non trouvé" });
   }
-  res.json({ data: result[0] });
+  res.json({ data: parseProductSpecs(result[0]) });
 });
 
 // POST /api/orders - créer une commande

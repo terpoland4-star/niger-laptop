@@ -14,6 +14,7 @@ export const products = sqliteTable("products", {
   descriptionFr: text("description_fr"),
   descriptionEn: text("description_en"),
   stockQuantity: integer("stock_quantity").default(0),
+  specs: text("specs"),
 });
 
 export const orders = sqliteTable("orders", {

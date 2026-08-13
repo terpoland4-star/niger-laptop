@@ -292,7 +292,7 @@ export const Catalog = ({
                       {items.map(product => (
                         <div
                           key={product.id}
-                          className="shrink-0 w-[200px] sm:w-[220px] snap-start"
+                          className="shrink-0 w-[270px] sm:w-[290px] snap-start"
                         >
                           <ProductCard
                             product={product}

@@ -29,7 +29,15 @@ import {
 
 const CATEGORIES = [
   { value: "computers", label: "Ordinateurs" },
+  { value: "components", label: "Composants" },
   { value: "storage", label: "Stockage" },
+  { value: "peripherals", label: "Périphériques" },
+  { value: "monitors", label: "Écrans" },
+  { value: "networking", label: "Réseau" },
+  { value: "printers", label: "Imprimantes" },
+  { value: "gaming", label: "Gaming" },
+  { value: "phones_tablets", label: "Téléphones & Tablettes" },
+  { value: "software", label: "Logiciels" },
   { value: "accessories", label: "Accessoires" },
 ];
 

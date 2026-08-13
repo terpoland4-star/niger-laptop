@@ -65,9 +65,22 @@ router.post("/login", loginLimiter, async (req, res) => {
 const productSchema = z.object({
   nameFr: z.string().min(1),
   nameEn: z.string().min(1),
-  category: z.enum(["computers", "storage", "accessories"], {
-    message: "Catégorie invalide (computers, storage ou accessories attendu)",
-  }),
+  category: z.enum(
+    [
+      "computers",
+      "components",
+      "storage",
+      "peripherals",
+      "monitors",
+      "networking",
+      "printers",
+      "gaming",
+      "phones_tablets",
+      "software",
+      "accessories",
+    ],
+    { message: "Catégorie invalide" }
+  ),
   condition: z.enum(["new", "used"], {
     message: "État invalide (new ou used attendu)",
   }),

@@ -98,9 +98,10 @@ export const Catalog = ({
       key: "all",
       label: language === "en" ? "All Products" : "Tous les produits",
     },
-    { key: "computers", label: categories.computers[language] },
-    { key: "storage", label: categories.storage[language] },
-    { key: "accessories", label: categories.accessories[language] },
+    ...(Object.keys(categories) as Array<Product["category"]>).map(key => ({
+      key,
+      label: categories[key][language],
+    })),
   ];
 
   const sortOptions: Array<{ key: typeof sortBy; label: string }> = [

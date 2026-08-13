@@ -69,3 +69,12 @@
     transform: none !important;
   }
 }
+
+/* Masque la scrollbar sur les rangées horizontales (catalogue par catégorie) */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

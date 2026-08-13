@@ -87,6 +87,9 @@ export const Catalog = ({
     return sorted;
   }, [products, selectedCategory, searchQuery, language, sortBy]);
 
+  const browseMode =
+    selectedCategory === "all" && !searchQuery.trim() && sortBy === "default";
+
   const categoryList: Array<{
     key: "all" | Product["category"];
     label: string;
@@ -264,7 +267,50 @@ export const Catalog = ({
           </div>
         )}
 
-        {!isLoading && !error && (
+        {!isLoading && !error && browseMode && (
+          <div className="space-y-12 pb-20 md:pb-0">
+            {categoryList
+              .filter(c => c.key !== "all")
+              .map(cat => {
+                const items = products.filter(p => p.category === cat.key);
+                if (items.length === 0) return null;
+                return (
+                  <div key={cat.key}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-display text-xl font-semibold text-foreground">
+                        {cat.label}
+                      </h3>
+                      <button
+                        onClick={() => setSelectedCategory(cat.key)}
+                        className="text-sm text-primary hover:underline shrink-0"
+                      >
+                        {language === "en" ? "View all" : "Voir tout"}
+                      </button>
+                    </div>
+                    <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+                      {items.map(product => (
+                        <div
+                          key={product.id}
+                          className="shrink-0 w-[200px] sm:w-[220px] snap-start"
+                        >
+                          <ProductCard
+                            product={product}
+                            isInWishlist={isInWishlist(product.id)}
+                            onWishlistToggle={handleWishlistToggle}
+                            onAddToCart={onAddToCart}
+                            onOrderNow={onOrderNow}
+                            language={language}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        )}
+
+        {!isLoading && !error && !browseMode && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-20 md:pb-0">
               {filteredProducts.map(product => (

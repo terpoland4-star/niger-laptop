@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { Catalog } from "@/components/Catalog";
 import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 import { BackToTop } from "@/components/BackToTop";
+import { ScrollToBottom } from "@/components/ScrollToBottom";
 import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
@@ -137,6 +138,7 @@ export default function Home() {
       <Footer language={language} />
 
       <BackToTop />
+      <ScrollToBottom />
 
       <Suspense fallback={null}>
         {isWishlistOpen && (

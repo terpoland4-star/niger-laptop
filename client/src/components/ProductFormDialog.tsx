@@ -38,6 +38,12 @@ const CATEGORIES = [
   { value: "gaming", label: "Gaming" },
   { value: "phones_tablets", label: "Téléphones & Tablettes" },
   { value: "software", label: "Logiciels" },
+  { value: "photography", label: "Photo & Vidéo" },
+  { value: "power", label: "Onduleurs & Énergie" },
+  { value: "office_equipment", label: "Bureautique" },
+  { value: "communication", label: "Communication & Navigation" },
+  { value: "audio", label: "Audio" },
+  { value: "wearables", label: "Montres connectées" },
   { value: "accessories", label: "Accessoires" },
 ];
 

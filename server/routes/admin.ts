@@ -77,6 +77,12 @@ const productSchema = z.object({
       "gaming",
       "phones_tablets",
       "software",
+      "photography",
+      "power",
+      "office_equipment",
+      "communication",
+      "audio",
+      "wearables",
       "accessories",
     ],
     { message: "Catégorie invalide" }

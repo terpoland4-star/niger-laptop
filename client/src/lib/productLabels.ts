@@ -9,6 +9,12 @@ export type ProductCategory =
   | "gaming"
   | "phones_tablets"
   | "software"
+  | "photography"
+  | "power"
+  | "office_equipment"
+  | "communication"
+  | "audio"
+  | "wearables"
   | "accessories";
 
 export interface Product {
@@ -37,6 +43,15 @@ export const categories: Record<ProductCategory, { en: string; fr: string }> = {
   gaming: { en: "Gaming", fr: "Gaming" },
   phones_tablets: { en: "Phones & Tablets", fr: "Téléphones & Tablettes" },
   software: { en: "Software", fr: "Logiciels" },
+  photography: { en: "Photo & Video", fr: "Photo & Vidéo" },
+  power: { en: "Power & Energy", fr: "Onduleurs & Énergie" },
+  office_equipment: { en: "Office Equipment", fr: "Bureautique" },
+  communication: {
+    en: "Communication & Navigation",
+    fr: "Communication & Navigation",
+  },
+  audio: { en: "Audio", fr: "Audio" },
+  wearables: { en: "Smartwatches", fr: "Montres connectées" },
   accessories: { en: "Accessories", fr: "Accessoires" },
 };
 

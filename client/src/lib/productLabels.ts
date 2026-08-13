@@ -15,6 +15,7 @@ export type ProductCategory =
   | "communication"
   | "audio"
   | "wearables"
+  | "cash_handling"
   | "accessories";
 
 export interface Product {
@@ -52,6 +53,10 @@ export const categories: Record<ProductCategory, { en: string; fr: string }> = {
   },
   audio: { en: "Audio", fr: "Audio" },
   wearables: { en: "Smartwatches", fr: "Montres connectées" },
+  cash_handling: {
+    en: "Cash Handling & POS",
+    fr: "Caisse & Comptage de billets",
+  },
   accessories: { en: "Accessories", fr: "Accessoires" },
 };
 

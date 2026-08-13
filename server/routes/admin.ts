@@ -83,6 +83,7 @@ const productSchema = z.object({
       "communication",
       "audio",
       "wearables",
+      "cash_handling",
       "accessories",
     ],
     { message: "Catégorie invalide" }

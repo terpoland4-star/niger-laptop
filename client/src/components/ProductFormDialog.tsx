@@ -44,6 +44,7 @@ const CATEGORIES = [
   { value: "communication", label: "Communication & Navigation" },
   { value: "audio", label: "Audio" },
   { value: "wearables", label: "Montres connectées" },
+  { value: "cash_handling", label: "Caisse & Comptage de billets" },
   { value: "accessories", label: "Accessoires" },
 ];
 

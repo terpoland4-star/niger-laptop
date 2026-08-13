@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "wouter";
 import { trackOrder, OrderTrackingData } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
+import { BackButton } from "@/components/BackButton";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "En attente",
@@ -43,6 +44,7 @@ export default function OrderTracking() {
   return (
     <div className="min-h-screen bg-background text-foreground flex items-start justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">
+        <BackButton />
         <h1 className="font-display text-2xl font-bold text-center">
           Suivi de commande
         </h1>

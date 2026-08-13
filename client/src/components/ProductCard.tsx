@@ -133,10 +133,13 @@ export const ProductCard = ({
               onClick={handleAddToCart}
               variant="outline"
               disabled={isOutOfStock}
-              className="flex-1 border-primary text-primary hover:bg-primary/10 font-semibold py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={
+                language === "en" ? "Add to Cart" : "Ajouter au panier"
+              }
+              title={language === "en" ? "Add to Cart" : "Ajouter au panier"}
+              className="shrink-0 border-primary text-primary hover:bg-primary/10 rounded-lg transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed w-10 h-10 p-0"
             >
               <ShoppingCart size={16} />
-              {language === "en" ? "Add to Cart" : "Ajouter au panier"}
             </Button>
             <Button
               onClick={handleOrderNow}

@@ -11,7 +11,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import { randomUUID } from "crypto";
-import { requireAdmin, AuthenticatedRequest } from "../middleware/auth";
+import { requireAdmin, requireEditor, AuthenticatedRequest } from "../middleware/auth";
 
 const router = Router();
 
@@ -170,7 +170,7 @@ router.put("/products/:id", requireAdmin, async (req: AuthenticatedRequest, res)
   res.json({ data: updated[0] });
 });
 
-router.get("/products/:id/history", requireAdmin, async (req: AuthenticatedRequest, res) => {
+router.get("/products/:id/history", requireAdmin, requireEditor, async (req: AuthenticatedRequest, res) => {
   const productId = req.params.id;
   const history = await db
     .select()

@@ -26,3 +26,10 @@ export function requireAdmin(req: AuthenticatedRequest, res: Response, next: Nex
     return res.status(401).json({ error: "Token invalide ou expiré" });
   }
 }
+
+export function requireEditor(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  if (req.admin?.role !== "admin") {
+    return res.status(403).json({ error: "Accès réservé aux administrateurs principaux" });
+  }
+  next();
+}

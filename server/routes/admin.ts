@@ -30,6 +30,11 @@ const resetRequestLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Trop de demandes, réessayez plus tard." },
+  keyGenerator: (req) => {
+    const ip = req.ip ?? "unknown";
+    const email = typeof req.body?.email === "string" ? req.body.email.toLowerCase().trim() : "";
+    return email ? `${ip}:${email}` : ip;
+  },
 });
 
 const loginSchema = z.object({

@@ -14,7 +14,7 @@ export const company = {
   address:
     "Cité Sonuci, sur la latérite de chez Seyni Omar, en face de Nita et Amana, Niamey (Niger)",
   phone: ["+227 91 12 78 70", "+227 88 39 81 07"],
-  email: ["moctarhamadine54@gmail.com", "zoubeirou.zakariya@niger-laptops.com"],
+  email: ["zakariyaou@niger-laptops.com", "tech_support@niger-laptops.com"],
 
   // Social Media
   facebook: "https://www.facebook.com/100063546250480",

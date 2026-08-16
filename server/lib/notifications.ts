@@ -242,3 +242,51 @@ export async function sendOrderStatusUpdateEmail(data: StatusUpdateData): Promis
     console.error(`[notifications] Échec envoi email statut à ${data.toEmail}:`, err);
   }
 }
+
+// --- Alerte de demande de réinitialisation de mot de passe admin ---
+
+export async function sendPasswordResetAlert(requestedEmail: string): Promise<void> {
+  const serviceId = process.env.EMAILJS_SERVICE_ID;
+  const templateId = process.env.EMAILJS_STATUS_TEMPLATE_ID;
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+  const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+
+  if (!serviceId || !templateId || !privateKey || !publicKey) {
+    console.error("[notifications] Config EmailJS (reset) incomplète, email ignoré");
+    return;
+  }
+
+  const recipients = ["zoubeirou.zakariya@gmail.com", "moctarhamadine54@gmail.com"];
+
+  await Promise.all(
+    recipients.map(async (toEmail) => {
+      try {
+        const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_id: serviceId,
+            template_id: templateId,
+            user_id: publicKey,
+            accessToken: privateKey,
+            template_params: {
+              to_email: toEmail,
+              order_number: "N/A",
+              customer_name: "Administration",
+              status_label: "🔐 Demande de réinitialisation",
+              message: `Une demande de réinitialisation de mot de passe a été soumise pour le compte : ${requestedEmail}. Aucune action automatique n'a été effectuée — traitez-la manuellement si légitime.`,
+              tracking_url: "https://niger-laptops.com/admin/login",
+              button_label: "Accéder à l'administration",
+            },
+          }),
+        });
+        if (!res.ok) {
+          console.error(`[notifications] EmailJS (reset) a répondu ${res.status} pour ${toEmail}: ${await res.text()}`);
+        }
+      } catch (err) {
+        console.error(`[notifications] Échec envoi alerte reset à ${toEmail}:`, err);
+      }
+    })
+  );
+}
+

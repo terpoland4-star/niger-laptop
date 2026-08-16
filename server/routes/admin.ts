@@ -12,6 +12,7 @@ import multer from "multer";
 import path from "path";
 import { randomUUID } from "crypto";
 import { requireAdmin, requireEditor, AuthenticatedRequest } from "../middleware/auth";
+import { sendPasswordResetAlert } from "../lib/notifications";
 
 const router = Router();
 
@@ -21,6 +22,14 @@ const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Trop de tentatives de connexion, réessayez dans 15 minutes." },
+});
+
+const resetRequestLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Trop de demandes, réessayez plus tard." },
 });
 
 const loginSchema = z.object({
@@ -60,6 +69,22 @@ router.post("/login", loginLimiter, async (req, res) => {
   );
 
   res.json({ data: { token, admin: { id: admin.id, email: admin.email, role: admin.role } } });
+});
+
+const resetRequestSchema = z.object({ email: z.string().email() });
+
+router.post("/password-reset-request", resetRequestLimiter, async (req, res) => {
+  const parsed = resetRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Email invalide" });
+  }
+
+  // Toujours la même réponse, que le compte existe ou non — évite l'énumération de comptes
+  sendPasswordResetAlert(parsed.data.email).catch((err) =>
+    console.error("[admin] Échec alerte reset:", err)
+  );
+
+  res.json({ data: { message: "Si ce compte existe, une demande a été transmise à l'administrateur." } });
 });
 
 const productSchema = z.object({

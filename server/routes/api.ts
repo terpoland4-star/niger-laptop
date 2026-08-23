@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { products, orders, carts, customers } from "../db/schema";
-import { eq, like, or } from "drizzle-orm";
+import { products, orders, carts, customers, deliveries, agentLocations } from "../db/schema";
+import { eq, like, or, and, ne } from "drizzle-orm";
 import { orderSchema } from "../validators/orderValidator";
 import { randomUUID } from "crypto";
 import rateLimit from "express-rate-limit";
@@ -175,6 +175,24 @@ router.get("/orders/track/:orderNumber", trackingLimiter, async (req, res) => {
     return res.status(404).json({ error: "Commande non trouvée" });
   }
   const order = result[0];
+
+  let delivery: { status: string; location: { lat: number; lng: number; updatedAt: string } | null } | null = null;
+  const [activeDelivery] = await db
+    .select()
+    .from(deliveries)
+    .where(and(eq(deliveries.orderId, order.id), ne(deliveries.status, "delivered")));
+
+  if (activeDelivery) {
+    const [loc] = await db
+      .select()
+      .from(agentLocations)
+      .where(eq(agentLocations.agentId, activeDelivery.agentId));
+    delivery = {
+      status: activeDelivery.status,
+      location: loc ? { lat: loc.lat, lng: loc.lng, updatedAt: loc.updatedAt } : null,
+    };
+  }
+
   res.json({
     data: {
       orderNumber: order.orderNumber,
@@ -182,6 +200,7 @@ router.get("/orders/track/:orderNumber", trackingLimiter, async (req, res) => {
       total: order.total,
       createdAt: order.createdAt,
       items: JSON.parse(order.itemsJson),
+      delivery,
     },
   });
 });

@@ -8,6 +8,7 @@ import apiRouter from "./routes/api";
 import adminRouter from "./routes/admin";
 import accountingRouter from "./routes/accounting";
 import customerAuthRouter from "./routes/customerAuth";
+import agentRouter from "./routes/agent";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
 
@@ -31,6 +32,7 @@ async function startServer() {
   app.use("/api/admin", adminRouter);
   app.use("/api/admin/accounting", accountingRouter);
   app.use("/api/auth", customerAuthRouter);
+  app.use("/api/agent", agentRouter);
   app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
   const staticPath =

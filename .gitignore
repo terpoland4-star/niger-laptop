@@ -53,3 +53,4 @@ server/db/*.db-journal
 uploads/
 *.backup-*
 *.bak-*
+*.bak2-*

@@ -393,12 +393,18 @@ export interface OrderTrackingItem {
   thumbnail: string | null;
 }
 
+export interface OrderTrackingDelivery {
+  status: string;
+  location: { lat: number; lng: number; updatedAt: string } | null;
+}
+
 export interface OrderTrackingData {
   orderNumber: string;
   status: string;
   total: number;
   createdAt: string;
   items: OrderTrackingItem[];
+  delivery: OrderTrackingDelivery | null;
 }
 
 export async function trackOrder(
@@ -593,5 +599,174 @@ export async function fetchAccountingDashboard(
     { headers: authHeaders(token) }
   );
   if (!res.ok) throw new Error("Impossible de charger le tableau de bord");
+  return res.json();
+}
+
+// --- Livreurs (agent) ---
+
+export interface AgentLoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface AgentLoginResponse {
+  data: {
+    token: string;
+    agent: { id: string; email: string; name: string };
+  };
+}
+
+export async function agentLogin(
+  payload: AgentLoginPayload
+): Promise<AgentLoginResponse> {
+  const res = await fetch(`${API_BASE}/api/agent/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la connexion");
+  }
+  return res.json();
+}
+
+export interface AgentDelivery {
+  id: string;
+  orderId: string;
+  agentId: string;
+  status: "assigned" | "picked_up" | "en_route" | "delivered";
+  startedAt: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
+  order: AdminOrder | null;
+}
+
+export async function fetchAgentDeliveries(
+  token: string
+): Promise<{ data: AgentDelivery[] }> {
+  const res = await fetch(`${API_BASE}/api/agent/deliveries`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Impossible de charger les courses");
+  return res.json();
+}
+
+export async function updateDeliveryStatus(
+  token: string,
+  id: string,
+  status: "picked_up" | "en_route" | "delivered"
+): Promise<{ ok: boolean }> {
+  const res = await fetch(`${API_BASE}/api/agent/deliveries/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la mise à jour");
+  }
+  return res.json();
+}
+
+export async function pingAgentLocation(
+  token: string,
+  lat: number,
+  lng: number
+): Promise<{ ok: boolean }> {
+  const res = await fetch(`${API_BASE}/api/agent/location`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify({ lat, lng }),
+  });
+  if (!res.ok) throw new Error("Échec de l'envoi de la position");
+  return res.json();
+}
+
+// --- Admin: livreurs & livraisons ---
+
+export interface AgentLocation {
+  lat: number;
+  lng: number;
+  updatedAt: string;
+}
+
+export interface AdminDeliveryAgent {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  active: boolean;
+  createdAt: string;
+  location: AgentLocation | null;
+}
+
+export async function fetchAgents(
+  token: string
+): Promise<{ data: AdminDeliveryAgent[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/agents`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Impossible de charger les livreurs");
+  return res.json();
+}
+
+export interface CreateAgentPayload {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
+export async function createAgent(
+  token: string,
+  payload: CreateAgentPayload
+): Promise<{ data: AdminDeliveryAgent }> {
+  const res = await fetch(`${API_BASE}/api/admin/agents`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la création du livreur");
+  }
+  return res.json();
+}
+
+export interface AdminDelivery {
+  id: string;
+  orderId: string;
+  agentId: string;
+  status: string;
+  startedAt: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
+}
+
+export async function fetchAdminDeliveries(
+  token: string
+): Promise<{ data: AdminDelivery[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/deliveries`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Impossible de charger les livraisons");
+  return res.json();
+}
+
+export async function assignDelivery(
+  token: string,
+  orderId: string,
+  agentId: string
+): Promise<{ data: AdminDelivery }> {
+  const res = await fetch(`${API_BASE}/api/admin/deliveries`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify({ orderId, agentId }),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de l'assignation");
+  }
   return res.json();
 }

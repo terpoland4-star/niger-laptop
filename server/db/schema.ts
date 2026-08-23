@@ -107,3 +107,30 @@ export const purchases = sqliteTable("purchases", {
   createdBy: text("created_by"),
   createdAt: text("created_at").notNull(),
 });
+
+export const deliveryAgents = sqliteTable("delivery_agents", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  active: integer("active", { mode: "boolean" }).default(true),
+  createdAt: text("created_at").notNull(),
+});
+
+export const deliveries = sqliteTable("deliveries", {
+  id: text("id").primaryKey(),
+  orderId: text("order_id").notNull(),
+  agentId: text("agent_id").notNull(),
+  status: text("status").notNull().default("assigned"),
+  startedAt: text("started_at"),
+  deliveredAt: text("delivered_at"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const agentLocations = sqliteTable("agent_locations", {
+  agentId: text("agent_id").primaryKey(),
+  lat: real("lat").notNull(),
+  lng: real("lng").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});

@@ -138,6 +138,13 @@ export default function AdminOrders() {
           >
             Clients →
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/admin/deliveries")}
+          >
+            Livraisons →
+          </Button>
         </div>
         <span className="text-sm text-muted-foreground truncate">
           {admin?.email}

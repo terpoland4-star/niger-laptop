@@ -3,6 +3,7 @@ import { useParams } from "wouter";
 import { trackOrder, OrderTrackingData } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/BackButton";
+import { MapView } from "@/components/Map";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "En attente",
@@ -40,6 +41,21 @@ export default function OrderTracking() {
       )
       .finally(() => setIsLoading(false));
   }, [orderNumber]);
+
+  useEffect(() => {
+    if (
+      !orderNumber ||
+      !order?.delivery ||
+      order.delivery.status === "delivered"
+    )
+      return;
+    const interval = setInterval(() => {
+      trackOrder(orderNumber)
+        .then(res => setOrder(res.data))
+        .catch(() => {});
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [orderNumber, order?.delivery?.status]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex items-start justify-center px-4 py-12">
@@ -90,6 +106,39 @@ export default function OrderTracking() {
                 <span>{order.total.toLocaleString("fr-FR")} FCFA</span>
               </div>
             </div>
+
+            {order.delivery && order.delivery.location && (
+              <div className="border-t pt-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Livreur en route</span>
+                  <span className="text-xs text-muted-foreground">
+                    Mis à jour à{" "}
+                    {new Date(
+                      order.delivery.location.updatedAt
+                    ).toLocaleTimeString("fr-FR")}
+                  </span>
+                </div>
+                <MapView
+                  initialCenter={{
+                    lat: order.delivery.location.lat,
+                    lng: order.delivery.location.lng,
+                  }}
+                  initialZoom={14}
+                  onMapReady={map => {
+                    if (!order.delivery?.location || !window.google) return;
+                    new window.google.maps.marker.AdvancedMarkerElement({
+                      map,
+                      position: {
+                        lat: order.delivery.location.lat,
+                        lng: order.delivery.location.lng,
+                      },
+                      title: "Livreur",
+                    });
+                  }}
+                  className="rounded-lg border border-border h-64"
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { admins, products, productHistory, orders, customers, orderStatusHistory } from "../db/schema";
+import { admins, products, productHistory, orders, customers, orderStatusHistory, deliveryAgents, deliveries, agentLocations } from "../db/schema";
 import { sendOrderStatusUpdateEmail, sendReceiptEmail } from "../lib/notifications";
 import { generateReceiptPdf } from "../lib/receipt";
 import { eq, desc } from "drizzle-orm";
@@ -427,4 +427,84 @@ router.get("/customers", requireAdmin, async (req: AuthenticatedRequest, res) =>
   res.json({ data });
 });
 
+
+// ---------- Livraisons ----------
+const createAgentSchema = z.object({
+  name: z.string().min(1),
+  phone: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+router.post("/agents", requireAdmin, requireEditor, async (req: AuthenticatedRequest, res) => {
+  const parsed = createAgentSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
+  }
+  const existing = await db.select().from(deliveryAgents).where(eq(deliveryAgents.email, parsed.data.email.toLowerCase().trim()));
+  if (existing.length > 0) {
+    return res.status(409).json({ error: "Un livreur avec cet email existe déjà" });
+  }
+  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+  const id = randomUUID();
+  const now = new Date().toISOString();
+  await db.insert(deliveryAgents).values({
+    id,
+    name: parsed.data.name,
+    phone: parsed.data.phone,
+    email: parsed.data.email.toLowerCase().trim(),
+    passwordHash,
+    active: true,
+    createdAt: now,
+  });
+  res.status(201).json({ data: { id, name: parsed.data.name, phone: parsed.data.phone, email: parsed.data.email, active: true, createdAt: now } });
+});
+
+router.get("/agents", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const allAgents = await db.select().from(deliveryAgents).orderBy(desc(deliveryAgents.createdAt));
+  const enriched = await Promise.all(
+    allAgents.map(async (a) => {
+      const [loc] = await db.select().from(agentLocations).where(eq(agentLocations.agentId, a.id));
+      return {
+        id: a.id,
+        name: a.name,
+        phone: a.phone,
+        email: a.email,
+        active: a.active,
+        createdAt: a.createdAt,
+        location: loc ? { lat: loc.lat, lng: loc.lng, updatedAt: loc.updatedAt } : null,
+      };
+    })
+  );
+  res.json({ data: enriched });
+});
+
+const assignDeliverySchema = z.object({
+  orderId: z.string().min(1),
+  agentId: z.string().min(1),
+});
+
+router.post("/deliveries", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const parsed = assignDeliverySchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
+  }
+  const id = randomUUID();
+  const now = new Date().toISOString();
+  await db.insert(deliveries).values({
+    id,
+    orderId: parsed.data.orderId,
+    agentId: parsed.data.agentId,
+    status: "assigned",
+    createdAt: now,
+  });
+  res.status(201).json({ data: { id, orderId: parsed.data.orderId, agentId: parsed.data.agentId, status: "assigned", createdAt: now } });
+});
+
+router.get("/deliveries", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const allDeliveries = await db.select().from(deliveries).orderBy(desc(deliveries.createdAt));
+  res.json({ data: allDeliveries });
+});
+
 export default router;
+

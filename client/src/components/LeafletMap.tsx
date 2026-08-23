@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
+import { useEffect } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { cn } from "@/lib/utils";
 
 // Fix default marker icons (Vite/bundler breaks Leaflet's default asset paths)
@@ -28,6 +29,23 @@ interface LeafletMapProps {
   heightClassName?: string;
 }
 
+// Leaflet computes its tile grid from the container's size at mount time.
+// If the container is inside a conditional block or a layout that settles
+// after mount, the map can render with a stale (often zero) size, leaving
+// the tiles blank. Forcing a resize check after mount and on updates fixes it.
+function MapResizeFix({ dependency }: { dependency: string }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [map, dependency]);
+
+  return null;
+}
+
 export function LeafletMap({
   className,
   center,
@@ -41,6 +59,9 @@ export function LeafletMap({
       zoom={zoom}
       className={cn("w-full rounded-lg", heightClassName, className)}
     >
+      <MapResizeFix
+        dependency={`${center.lat},${center.lng},${markers.length}`}
+      />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

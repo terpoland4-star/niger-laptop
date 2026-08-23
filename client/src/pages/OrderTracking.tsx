@@ -3,7 +3,7 @@ import { useParams } from "wouter";
 import { trackOrder, OrderTrackingData } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/BackButton";
-import { MapView } from "@/components/Map";
+import { LeafletMap } from "@/components/LeafletMap";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "En attente",
@@ -118,24 +118,22 @@ export default function OrderTracking() {
                     ).toLocaleTimeString("fr-FR")}
                   </span>
                 </div>
-                <MapView
-                  initialCenter={{
+                <LeafletMap
+                  center={{
                     lat: order.delivery.location.lat,
                     lng: order.delivery.location.lng,
                   }}
-                  initialZoom={14}
-                  onMapReady={map => {
-                    if (!order.delivery?.location || !window.google) return;
-                    new window.google.maps.marker.AdvancedMarkerElement({
-                      map,
-                      position: {
-                        lat: order.delivery.location.lat,
-                        lng: order.delivery.location.lng,
-                      },
-                      title: "Livreur",
-                    });
-                  }}
-                  className="rounded-lg border border-border h-64"
+                  zoom={14}
+                  markers={[
+                    {
+                      id: "livreur",
+                      lat: order.delivery.location.lat,
+                      lng: order.delivery.location.lng,
+                      label: "Livreur",
+                    },
+                  ]}
+                  heightClassName="h-64"
+                  className="border border-border"
                 />
               </div>
             )}

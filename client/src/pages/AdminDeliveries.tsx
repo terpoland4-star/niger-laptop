@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import {
@@ -11,7 +11,7 @@ import {
   AdminDeliveryAgent,
   AdminDelivery,
 } from "@/lib/api";
-import { MapView } from "@/components/Map";
+import { LeafletMap } from "@/components/LeafletMap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,11 +51,6 @@ export default function AdminDeliveries() {
     password: "",
   });
 
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<
-    Record<string, google.maps.marker.AdvancedMarkerElement>
-  >({});
-
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       navigate("/admin/login");
@@ -92,27 +87,6 @@ export default function AdminDeliveries() {
     }, 8000);
     return () => clearInterval(interval);
   }, [isAuthenticated, token]);
-
-  // Update map markers whenever agents change
-  useEffect(() => {
-    if (!mapInstance.current || !window.google) return;
-
-    for (const agent of agents) {
-      if (!agent.location) continue;
-      const position = { lat: agent.location.lat, lng: agent.location.lng };
-
-      if (markersRef.current[agent.id]) {
-        markersRef.current[agent.id].position = position;
-      } else {
-        markersRef.current[agent.id] =
-          new window.google.maps.marker.AdvancedMarkerElement({
-            map: mapInstance.current,
-            position,
-            title: agent.name,
-          });
-      }
-    }
-  }, [agents]);
 
   const deliveredOrderIds = new Set(
     adminDeliveries.filter(d => d.status !== "delivered").map(d => d.orderId)
@@ -181,13 +155,18 @@ export default function AdminDeliveries() {
               <h2 className="font-display text-lg font-semibold mb-3">
                 Livreurs en direct
               </h2>
-              <MapView
-                initialCenter={NIAMEY_CENTER}
-                initialZoom={13}
-                onMapReady={map => {
-                  mapInstance.current = map;
-                }}
-                className="rounded-lg border border-border"
+              <LeafletMap
+                center={NIAMEY_CENTER}
+                zoom={13}
+                markers={agents
+                  .filter(a => a.location)
+                  .map(a => ({
+                    id: a.id,
+                    lat: a.location!.lat,
+                    lng: a.location!.lng,
+                    label: a.name,
+                  }))}
+                className="border border-border"
               />
               <div className="flex flex-wrap gap-3 mt-3">
                 {agents.map(a => (

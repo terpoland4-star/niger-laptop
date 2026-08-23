@@ -76,6 +76,11 @@ export default function AdminDashboard() {
               Commandes →
             </Button>
           </Link>
+          <Link href="/admin/accounting">
+            <Button variant="ghost" size="sm">
+              Comptabilité →
+            </Button>
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground truncate">

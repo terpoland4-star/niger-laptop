@@ -16,6 +16,7 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminOrders = lazy(() => import("./pages/AdminOrders"));
 const AdminCustomers = lazy(() => import("./pages/AdminCustomers"));
+const AdminAccounting = lazy(() => import("./pages/AdminAccounting"));
 const OrderTracking = lazy(() => import("./pages/OrderTracking"));
 const Compte = lazy(() => import("./pages/Compte"));
 const Product = lazy(() => import("./pages/Product"));
@@ -49,6 +50,7 @@ function Router() {
         <Route path={"/admin"} component={AdminDashboard} />
         <Route path={"/admin/orders"} component={AdminOrders} />
         <Route path={"/admin/customers"} component={AdminCustomers} />
+        <Route path={"/admin/accounting"} component={AdminAccounting} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

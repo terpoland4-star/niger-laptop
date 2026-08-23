@@ -415,3 +415,183 @@ export async function trackOrder(
 
   return res.json();
 }
+
+// --- Admin: comptabilité ---
+
+export interface Expense {
+  id: string;
+  type: "charge" | "revenue";
+  category: string;
+  label: string;
+  amount: number;
+  date: string;
+  note: string | null;
+  createdBy: string | null;
+  createdAt: string;
+}
+
+export interface ExpensePayload {
+  type?: "charge" | "revenue";
+  category: string;
+  label: string;
+  amount: number;
+  date: string;
+  note?: string;
+}
+
+export async function fetchExpenses(
+  token: string
+): Promise<{ data: Expense[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/expenses`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Impossible de charger les charges");
+  return res.json();
+}
+
+export async function createExpense(
+  token: string,
+  payload: ExpensePayload
+): Promise<{ data: Expense }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/expenses`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la création de la charge");
+  }
+  return res.json();
+}
+
+export async function deleteExpense(
+  token: string,
+  id: string
+): Promise<{ ok: boolean }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/expenses/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la suppression");
+  }
+  return res.json();
+}
+
+export interface Supplier {
+  id: string;
+  name: string;
+  phone: string | null;
+  note: string | null;
+  createdAt: string;
+}
+
+export interface SupplierPayload {
+  name: string;
+  phone?: string;
+  note?: string;
+}
+
+export async function fetchSuppliers(
+  token: string
+): Promise<{ data: Supplier[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/suppliers`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Impossible de charger les fournisseurs");
+  return res.json();
+}
+
+export async function createSupplier(
+  token: string,
+  payload: SupplierPayload
+): Promise<{ data: Supplier }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/suppliers`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la création du fournisseur");
+  }
+  return res.json();
+}
+
+export interface Purchase {
+  id: string;
+  productId: string;
+  supplierId: string | null;
+  quantity: number;
+  unitCost: number;
+  totalCost: number;
+  date: string;
+  note: string | null;
+  createdBy: string | null;
+  createdAt: string;
+}
+
+export interface PurchasePayload {
+  productId: string;
+  supplierId?: string;
+  quantity: number;
+  unitCost: number;
+  date: string;
+  note?: string;
+}
+
+export async function fetchPurchases(
+  token: string
+): Promise<{ data: Purchase[] }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/purchases`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Impossible de charger les achats");
+  return res.json();
+}
+
+export async function createPurchase(
+  token: string,
+  payload: PurchasePayload
+): Promise<{ data: Purchase }> {
+  const res = await fetch(`${API_BASE}/api/admin/accounting/purchases`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de l'enregistrement de l'achat");
+  }
+  return res.json();
+}
+
+export interface AccountingDashboard {
+  period: { from: string | null; to: string | null };
+  revenueTotal: number;
+  revenueByChannel: Record<string, number>;
+  purchasesTotal: number;
+  expensesTotal: number;
+  expensesByCategory: Record<string, number>;
+  netBalance: number;
+  ordersCount: number;
+}
+
+export async function fetchAccountingDashboard(
+  token: string,
+  from?: string,
+  to?: string
+): Promise<{ data: AccountingDashboard }> {
+  const params = new URLSearchParams();
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
+  const qs = params.toString();
+  const res = await fetch(
+    `${API_BASE}/api/admin/accounting/dashboard${qs ? `?${qs}` : ""}`,
+    { headers: authHeaders(token) }
+  );
+  if (!res.ok) throw new Error("Impossible de charger le tableau de bord");
+  return res.json();
+}

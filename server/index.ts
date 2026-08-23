@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import apiRouter from "./routes/api";
 import adminRouter from "./routes/admin";
+import accountingRouter from "./routes/accounting";
 import customerAuthRouter from "./routes/customerAuth";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
@@ -28,6 +29,7 @@ async function startServer() {
   app.use(express.json());
   app.use("/api", apiRouter);
   app.use("/api/admin", adminRouter);
+  app.use("/api/admin/accounting", accountingRouter);
   app.use("/api/auth", customerAuthRouter);
   app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 

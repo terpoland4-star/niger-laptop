@@ -15,6 +15,7 @@ export const products = sqliteTable("products", {
   descriptionEn: text("description_en"),
   stockQuantity: integer("stock_quantity").default(0),
   specs: text("specs"),
+  costPrice: integer("cost_price"),
 });
 
 export const orders = sqliteTable("orders", {
@@ -30,6 +31,7 @@ export const orders = sqliteTable("orders", {
   customerId: text("customer_id"),
   isPaid: integer("is_paid", { mode: "boolean" }).default(false),
   paidAt: text("paid_at"),
+  channel: text("channel").notNull().default("site"),
 });
 
 export const customers = sqliteTable("customers", {
@@ -70,5 +72,38 @@ export const orderStatusHistory = sqliteTable("order_status_history", {
   status: text("status").notNull(),
   note: text("note"),
   changedBy: text("changed_by"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const expenses = sqliteTable("expenses", {
+  id: text("id").primaryKey(),
+  type: text("type").notNull().default("charge"),
+  category: text("category").notNull(),
+  label: text("label").notNull(),
+  amount: integer("amount").notNull(),
+  date: text("date").notNull(),
+  note: text("note"),
+  createdBy: text("created_by"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const suppliers = sqliteTable("suppliers", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  note: text("note"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const purchases = sqliteTable("purchases", {
+  id: text("id").primaryKey(),
+  productId: text("product_id").notNull(),
+  supplierId: text("supplier_id"),
+  quantity: integer("quantity").notNull(),
+  unitCost: integer("unit_cost").notNull(),
+  totalCost: integer("total_cost").notNull(),
+  date: text("date").notNull(),
+  note: text("note"),
+  createdBy: text("created_by"),
   createdAt: text("created_at").notNull(),
 });

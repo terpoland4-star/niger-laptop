@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAgentAuth } from "@/hooks/useAgentAuth";
+import { openTrackingWhatsApp } from "@/lib/whatsapp";
 import {
   fetchAgentDeliveries,
   updateDeliveryStatus,
@@ -136,6 +137,16 @@ export default function AgentDashboard() {
     const next = NEXT_STATUS[delivery.status];
     if (!next || !token) return;
     await updateDeliveryStatus(token, delivery.id, next);
+
+    if (next === "picked_up" && delivery.order) {
+      const trackingUrl = `https://niger-laptops.com/suivi/${delivery.order.orderNumber}`;
+      openTrackingWhatsApp(
+        delivery.order.orderNumber,
+        trackingUrl,
+        delivery.order.customerPhone
+      );
+    }
+
     loadDeliveries();
   };
 

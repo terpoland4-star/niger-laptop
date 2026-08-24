@@ -82,3 +82,27 @@ export const openWishlistChat = (
   const link = generateWishlistWhatsAppLink(products, phoneNumber);
   window.open(link, "_blank");
 };
+
+export const generateTrackingWhatsAppLink = (
+  orderNumber: string,
+  trackingUrl: string,
+  phoneNumber: string
+): string => {
+  const cleanPhone = phoneNumber.replace(/\D/g, "");
+  const message = `Bonjour, votre commande ${orderNumber} chez Niger Laptops est en cours de livraison ! Vous pouvez suivre le livreur en temps réel ici :\n${trackingUrl}\n\nMerci pour votre confiance !`;
+  const encoded = encodeURIComponent(message);
+  return `https://wa.me/${cleanPhone}?text=${encoded}`;
+};
+
+export const openTrackingWhatsApp = (
+  orderNumber: string,
+  trackingUrl: string,
+  phoneNumber: string
+): void => {
+  const link = generateTrackingWhatsAppLink(
+    orderNumber,
+    trackingUrl,
+    phoneNumber
+  );
+  window.open(link, "_blank");
+};

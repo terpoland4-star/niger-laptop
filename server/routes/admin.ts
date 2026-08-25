@@ -6,7 +6,7 @@ import { generateReceiptPdf } from "../lib/receipt";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -31,7 +31,7 @@ const resetRequestLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: "Trop de demandes, réessayez plus tard." },
   keyGenerator: (req) => {
-    const ip = req.ip ?? "unknown";
+    const ip = req.ip ? ipKeyGenerator(req.ip) : "unknown";
     const email = typeof req.body?.email === "string" ? req.body.email.toLowerCase().trim() : "";
     return email ? `${ip}:${email}` : ip;
   },

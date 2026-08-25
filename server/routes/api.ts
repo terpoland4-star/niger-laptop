@@ -244,4 +244,8 @@ router.get("/cart/:phone", cartLimiter, async (req, res) => {
   }
   res.json({ data: { items: JSON.parse(result[0].itemsJson), updatedAt: result[0].updatedAt } });
 });
+router.get("/test-sentry-error", (req, res) => {
+  throw new Error("Test Sentry — erreur volontaire pour vérification");
+});
+
 export default router;

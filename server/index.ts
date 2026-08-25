@@ -1,4 +1,5 @@
 import "dotenv/config";
+import * as Sentry from "@sentry/node";
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
@@ -11,6 +12,30 @@ import customerAuthRouter from "./routes/customerAuth";
 import agentRouter from "./routes/agent";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
+
+function scrub(obj: any) {
+  const sensitiveKeys = ["password", "apikey", "api_key", "token", "authorization", "secret"];
+  if (!obj || typeof obj !== "object") return obj;
+  for (const key of Object.keys(obj)) {
+    if (sensitiveKeys.some((k) => key.toLowerCase().includes(k))) {
+      obj[key] = "[Filtered]";
+    } else if (typeof obj[key] === "object") {
+      scrub(obj[key]);
+    }
+  }
+  return obj;
+}
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV || "development",
+  beforeSend(event) {
+    if (event.request) scrub(event.request);
+    if (event.extra) scrub(event.extra);
+    if (event.contexts) scrub(event.contexts);
+    return event;
+  },
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +66,8 @@ async function startServer() {
       : path.resolve(__dirname, "..", "dist", "public");
 
   app.use(express.static(staticPath));
+
+  Sentry.setupExpressErrorHandler(app);
 
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));

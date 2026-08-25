@@ -134,3 +134,19 @@ export const agentLocations = sqliteTable("agent_locations", {
   lng: real("lng").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
+
+export const nitaTransactions = sqliteTable("nita_transactions", {
+  id: text("id").primaryKey(),
+  orderId: text("order_id"),
+  requestId: text("request_id").notNull().unique(),
+  codeAchat: text("code_achat"),
+  montant: integer("montant").notNull(),
+  status: text("status").notNull().default("0"),
+  phoneClient: text("phone_client").notNull(),
+  adresseIp: text("adresse_ip"),
+  descriptionAchat: text("description_achat"),
+  rawResponse: text("raw_response"),
+  expiresAt: text("expires_at").notNull(),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at"),
+});

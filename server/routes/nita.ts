@@ -136,4 +136,51 @@ router.get("/orders/:id/nita-status", async (req, res) => {
   }
 });
 
+
+/**
+ * POST /api/nita/callback
+ * Reçoit la notification de NITA suite à un paiement.
+ * SÉCURITÉ : ce endpoint ne fait jamais confiance au contenu reçu pour
+ * marquer un paiement comme validé. Il ne sert que de déclencheur pour
+ * revérifier l'état réel via checkAchatStatus (source de vérité unique).
+ * La doc NITA ne fournit aucune signature/secret pour authentifier ces
+ * appels, donc on traite ce endpoint comme potentiellement non fiable.
+ */
+router.post("/nita/callback", async (req, res) => {
+  const codeAchat: string | undefined = req.body?.codeAchat;
+  const requestIdFromBody: string | undefined = req.body?.requestId;
+
+  if (!codeAchat && !requestIdFromBody) {
+    // Réponse 200 quand même : NITA ne doit pas retenter indéfiniment
+    // sur un appel malformé qui n'est de toute façon pas exploitable.
+    console.warn("[nita][callback] Callback reçu sans codeAchat ni requestId");
+    return res.status(200).json({ received: true });
+  }
+
+  const [transaction] = await db
+    .select()
+    .from(nitaTransactions)
+    .where(
+      codeAchat
+        ? eq(nitaTransactions.codeAchat, codeAchat)
+        : eq(nitaTransactions.requestId, requestIdFromBody!)
+    );
+
+  if (!transaction) {
+    console.warn("[nita][callback] Transaction introuvable pour", { codeAchat, requestIdFromBody });
+    return res.status(200).json({ received: true });
+  }
+
+  try {
+    const result = await syncNitaTransactionStatus(transaction.id, req.ip ?? "unknown");
+    console.log("[nita][callback] Statut synchronisé:", result);
+  } catch (err) {
+    // On log l'échec mais on répond quand même 200 : c'est NOUS qui
+    // réessaierons via le job de reconciliation, pas NITA qui doit retenter.
+    console.error("[nita][callback] Échec de synchronisation:", err);
+  }
+
+  res.status(200).json({ received: true });
+});
+
 export default router;

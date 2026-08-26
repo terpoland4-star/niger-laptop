@@ -1,0 +1,103 @@
+import { Router } from "express";
+import { db } from "../db/index";
+import { orders, nitaTransactions } from "../db/schema";
+import { eq, and, gt } from "drizzle-orm";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
+import { createNitaAchat } from "../services/nitaAchat";
+import { NitaApiError } from "../lib/nita";
+
+const router = Router();
+
+const payLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Trop de tentatives, réessayez dans une minute." },
+  keyGenerator: (req) => (req.ip ? ipKeyGenerator(req.ip) : "unknown"),
+});
+
+/**
+ * POST /api/orders/:id/pay-with-nita
+ * Déclenché quand le client choisit "Payer avec NITA" pour une commande
+ * déjà créée. Idempotent : si une référence active existe déjà pour cette
+ * commande, elle est renvoyée telle quelle plutôt que d'en créer une nouvelle.
+ */
+router.post("/orders/:id/pay-with-nita", payLimiter, async (req, res) => {
+  const orderId = req.params.id;
+
+  const [order] = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (!order) {
+    return res.status(404).json({ error: "Commande non trouvée" });
+  }
+
+  if (order.isPaid) {
+    return res.status(400).json({ error: "Cette commande est déjà payée" });
+  }
+
+  // Idempotence : réutiliser une référence active non expirée si elle existe
+  const nowIso = new Date().toISOString();
+  const [existing] = await db
+    .select()
+    .from(nitaTransactions)
+    .where(
+      and(
+        eq(nitaTransactions.orderId, orderId),
+        eq(nitaTransactions.status, "0"),
+        gt(nitaTransactions.expiresAt, nowIso)
+      )
+    );
+
+  if (existing) {
+    return res.json({
+      data: {
+        codeAchat: existing.codeAchat,
+        montant: existing.montant,
+        expiresAt: existing.expiresAt,
+        reused: true,
+      },
+    });
+  }
+
+  // Montant TOUJOURS recalculé depuis la commande en base, jamais depuis le body client
+  let items: { productName: string }[] = [];
+  try {
+    items = JSON.parse(order.itemsJson);
+  } catch {
+    items = [];
+  }
+  const descriptionAchat =
+    items.length > 0
+      ? items.map((i) => i.productName)
+      : [`Commande ${order.orderNumber}`];
+
+  try {
+    const record = await createNitaAchat({
+      descriptionAchat,
+      montantTransaction: order.total,
+      motifTransaction: `Achat commande ${order.orderNumber}`,
+      phoneClient: order.customerPhone,
+      adresseIp: req.ip ?? "unknown",
+      orderId: order.id,
+      urlCallback: process.env.NITA_CALLBACK_URL || undefined,
+      expiresInHours: 48,
+    });
+
+    res.status(201).json({
+      data: {
+        codeAchat: record.codeAchat,
+        montant: record.montant,
+        expiresAt: record.expiresAt,
+        reused: false,
+      },
+    });
+  } catch (err) {
+    if (err instanceof NitaApiError) {
+      console.error("[nita] Échec création achat:", err.message, err.raw);
+      return res.status(502).json({ error: "Le service de paiement NITA est momentanément indisponible. Réessayez dans un instant." });
+    }
+    throw err;
+  }
+});
+
+export default router;

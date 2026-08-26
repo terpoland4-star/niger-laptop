@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import apiRouter from "./routes/api";
 import adminRouter from "./routes/admin";
+import nitaRouter from "./routes/nita";
 import accountingRouter from "./routes/accounting";
 import customerAuthRouter from "./routes/customerAuth";
 import agentRouter from "./routes/agent";
@@ -54,6 +55,7 @@ async function startServer() {
 
   app.use(express.json());
   app.use("/api", apiRouter);
+  app.use("/api", nitaRouter);
   app.use("/api/admin", adminRouter);
   app.use("/api/admin/accounting", accountingRouter);
   app.use("/api/auth", customerAuthRouter);

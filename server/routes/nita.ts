@@ -1,6 +1,7 @@
 import { Router } from "express";
+import crypto from "crypto";
 import { db } from "../db/index";
-import { orders, nitaTransactions } from "../db/schema";
+import { orders, nitaTransactions, orderStatusHistory } from "../db/schema";
 import { eq, and, gt } from "drizzle-orm";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { createNitaAchat } from "../services/nitaAchat";
@@ -95,6 +96,89 @@ router.post("/orders/:id/pay-with-nita", payLimiter, async (req, res) => {
     if (err instanceof NitaApiError) {
       console.error("[nita] Échec création achat:", err.message, err.raw);
       return res.status(502).json({ error: "Le service de paiement NITA est momentanément indisponible. Réessayez dans un instant." });
+    }
+    throw err;
+  }
+});
+
+
+/**
+ * GET /api/orders/:id/nita-status
+ * Vérifie l'état réel du paiement auprès de NITA (jamais en se fiant
+ * uniquement à notre base) et synchronise orders + nita_transactions
+ * si le statut a changé.
+ */
+router.get("/orders/:id/nita-status", async (req, res) => {
+  const orderId = req.params.id;
+
+  const [order] = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (!order) {
+    return res.status(404).json({ error: "Commande non trouvée" });
+  }
+
+  const [transaction] = await db
+    .select()
+    .from(nitaTransactions)
+    .where(eq(nitaTransactions.orderId, orderId));
+
+  if (!transaction) {
+    return res.status(404).json({ error: "Aucune tentative de paiement NITA trouvée pour cette commande" });
+  }
+
+  // Déjà confirmé payé en base : pas besoin de rappeler NITA
+  if (transaction.status === "1") {
+    return res.json({
+      data: {
+        status: transaction.status,
+        codeAchat: transaction.codeAchat,
+        isPaid: true,
+      },
+    });
+  }
+
+  try {
+    const { checkAchatStatus } = await import("../lib/nita");
+    const response = await checkAchatStatus({
+      requestId: transaction.requestId,
+      adresseIp: req.ip ?? "unknown",
+    });
+
+    const data = (response as any)?.data ?? {};
+    const newStatus: string = data.code ?? transaction.status;
+    const now = new Date().toISOString();
+
+    await db
+      .update(nitaTransactions)
+      .set({ status: newStatus, rawResponse: JSON.stringify(response), updatedAt: now })
+      .where(eq(nitaTransactions.id, transaction.id));
+
+    if (newStatus === "1" && !order.isPaid) {
+      await db
+        .update(orders)
+        .set({ isPaid: true, paidAt: now, channel: "nita" })
+        .where(eq(orders.id, orderId));
+
+      await db.insert(orderStatusHistory).values({
+        id: crypto.randomUUID(),
+        orderId,
+        status: order.status,
+        note: `Paiement confirmé via NITA (codeAchat: ${transaction.codeAchat})`,
+        changedBy: null,
+        createdAt: now,
+      });
+    }
+
+    res.json({
+      data: {
+        status: newStatus,
+        codeAchat: transaction.codeAchat,
+        isPaid: newStatus === "1",
+      },
+    });
+  } catch (err) {
+    if (err instanceof NitaApiError) {
+      console.error("[nita] Échec vérification statut:", err.message, err.raw);
+      return res.status(502).json({ error: "Impossible de vérifier le statut du paiement pour le moment." });
     }
     throw err;
   }

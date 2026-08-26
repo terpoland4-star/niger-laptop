@@ -13,6 +13,7 @@ import customerAuthRouter from "./routes/customerAuth";
 import agentRouter from "./routes/agent";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
+import { expireNitaTransactions } from "./jobs/expireNitaTransactions";
 
 function scrub(obj: any) {
   const sensitiveKeys = ["password", "apikey", "api_key", "token", "authorization", "secret"];
@@ -79,6 +80,10 @@ async function startServer() {
 
   cron.schedule("0 3 * * *", () => {
     cleanupOldCarts().catch(console.error);
+  });
+
+  cron.schedule("0 * * * *", () => {
+    expireNitaTransactions().catch(console.error);
   });
 
   server.listen(port, () => {

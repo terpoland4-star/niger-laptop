@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle2 } from "lucide-react";
-import { createOrder } from "@/lib/api";
+import { createOrder, payWithNita, getNitaStatus } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { isValidPhoneNumber } from "libphonenumber-js";
@@ -45,6 +45,12 @@ export const OrderModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [nitaCode, setNitaCode] = useState<string | null>(null);
+  const [nitaExpiresAt, setNitaExpiresAt] = useState<string | null>(null);
+  const [nitaLoading, setNitaLoading] = useState(false);
+  const [nitaError, setNitaError] = useState<string | null>(null);
+  const [nitaPaid, setNitaPaid] = useState(false);
 
   const resetForm = () => {
     setCustomerName("");
@@ -55,12 +61,61 @@ export const OrderModal = ({
     setAccountPassword("");
     setError(null);
     setOrderNumber(null);
+    setOrderId(null);
+    setNitaCode(null);
+    setNitaExpiresAt(null);
+    setNitaError(null);
+    setNitaPaid(false);
   };
 
   const handleClose = () => {
     resetForm();
     onClose();
   };
+
+  const handlePayWithNita = async () => {
+    if (!orderId) return;
+    setNitaLoading(true);
+    setNitaError(null);
+    try {
+      const result = await payWithNita(orderId);
+      setNitaCode(result.data.codeAchat);
+      setNitaExpiresAt(result.data.expiresAt);
+    } catch (err) {
+      setNitaError(
+        err instanceof Error
+          ? err.message
+          : language === "en"
+            ? "Unable to generate payment code. Please try again."
+            : "Impossible de générer le code de paiement. Réessayez."
+      );
+    } finally {
+      setNitaLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!orderId || !nitaCode || nitaPaid) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const result = await getNitaStatus(orderId);
+        if (result.data.isPaid) {
+          setNitaPaid(true);
+          toast.success(
+            language === "en"
+              ? "Payment received! Thank you."
+              : "Paiement reçu ! Merci."
+          );
+        }
+      } catch {
+        // Échec silencieux : on retentera au prochain intervalle,
+        // pas besoin d'interrompre l'expérience utilisateur pour ça.
+      }
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [orderId, nitaCode, nitaPaid, language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +163,7 @@ export const OrderModal = ({
       }
 
       setOrderNumber(result.data.orderNumber);
+      setOrderId(result.data.id);
       toast.info(
         language === "en"
           ? "A delivery person will call you to confirm your address. You can track your order anytime."
@@ -159,6 +215,60 @@ export const OrderModal = ({
             >
               {language === "en" ? "Track your order" : "Suivre votre commande"}
             </a>
+
+            <div className="border-t border-border pt-4 space-y-3">
+              {nitaPaid ? (
+                <div className="flex items-center justify-center gap-2 text-green-600 font-semibold">
+                  <CheckCircle2 size={20} />
+                  {language === "en" ? "Payment received!" : "Paiement reçu !"}
+                </div>
+              ) : nitaCode ? (
+                <div className="space-y-2 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    {language === "en"
+                      ? "Pay at any NITA agency or via MYNITA with this code:"
+                      : "Payez dans une agence NITA ou via MYNITA avec ce code :"}
+                  </p>
+                  <p className="text-xl font-mono font-bold tracking-wide bg-muted rounded-md py-2">
+                    {nitaCode}
+                  </p>
+                  {nitaExpiresAt && (
+                    <p className="text-xs text-muted-foreground">
+                      {language === "en" ? "Valid until " : "Valable jusqu'au "}
+                      {new Date(nitaExpiresAt).toLocaleString(
+                        language === "en" ? "en-US" : "fr-FR"
+                      )}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground italic">
+                    {language === "en"
+                      ? "This page will update automatically once payment is confirmed."
+                      : "Cette page se mettra à jour automatiquement une fois le paiement confirmé."}
+                  </p>
+                </div>
+              ) : (
+                <Button
+                  onClick={handlePayWithNita}
+                  disabled={nitaLoading}
+                  className="w-full"
+                  variant="outline"
+                >
+                  {nitaLoading ? (
+                    <Loader2 className="animate-spin" size={18} />
+                  ) : language === "en" ? (
+                    "Pay with NITA"
+                  ) : (
+                    "Payer avec NITA"
+                  )}
+                </Button>
+              )}
+              {nitaError && (
+                <p className="text-sm text-destructive text-center">
+                  {nitaError}
+                </p>
+              )}
+            </div>
+
             <Button onClick={handleClose} className="w-full">
               {language === "en" ? "Close" : "Fermer"}
             </Button>

@@ -770,3 +770,53 @@ export async function assignDelivery(
   }
   return res.json();
 }
+
+// --- Paiement NITA ---
+
+export interface NitaPaymentResponse {
+  data: {
+    codeAchat: string | null;
+    montant: number;
+    expiresAt: string;
+    reused: boolean;
+  };
+}
+
+export async function payWithNita(
+  orderId: string
+): Promise<NitaPaymentResponse> {
+  const res = await fetch(`${API_BASE}/api/orders/${orderId}/pay-with-nita`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de la génération du paiement NITA");
+  }
+
+  return res.json();
+}
+
+export interface NitaStatusResponse {
+  data: {
+    status: string;
+    codeAchat: string | null;
+    isPaid: boolean;
+  };
+}
+
+export async function getNitaStatus(
+  orderId: string
+): Promise<NitaStatusResponse> {
+  const res = await fetch(`${API_BASE}/api/orders/${orderId}/nita-status`);
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(
+      error.error || "Impossible de vérifier le statut du paiement"
+    );
+  }
+
+  return res.json();
+}

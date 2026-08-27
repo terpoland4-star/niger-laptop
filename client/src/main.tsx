@@ -1,3 +1,9 @@
+// Correction redirection GitHub Pages SPA
+const ghRedirect = sessionStorage.getItem("gh_pages_spa_redirect");
+if (ghRedirect) {
+  sessionStorage.removeItem("gh_pages_spa_redirect");
+  window.history.replaceState(null, "", ghRedirect);
+}
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";

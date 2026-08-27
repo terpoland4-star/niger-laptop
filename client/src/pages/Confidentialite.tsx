@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { company } from "@/data/company";
+import nitaLogo from "@/assets/nita-logo.png";
 
 export default function Confidentialite() {
   const [language, setLanguage] = useState<"en" | "fr">("fr");
@@ -94,9 +95,41 @@ export default function Confidentialite() {
                 : "4. Destinataires des données"}
             </h2>
             <p className="text-muted-foreground">
-              {language === "en"
-                ? "Your data is not sold to third parties. It may be shared with payment service providers (such as MyNita or AmanaTa, once integrated) strictly to process your payment, and with delivery partners strictly to deliver your order. These providers are bound by their own data protection obligations."
-                : "Vos données ne sont pas vendues à des tiers. Elles peuvent être partagées avec des prestataires de paiement (comme MyNita ou AmanaTa, une fois intégrés) strictement pour traiter votre paiement, et avec des partenaires de livraison strictement pour livrer votre commande. Ces prestataires sont soumis à leurs propres obligations de protection des données."}
+              {language === "en" ? (
+                <>
+                  Your data is not sold to third parties. It may be shared with
+                  payment service providers (such as{" "}
+                  <span className="inline-flex items-center gap-1 align-middle">
+                    <img
+                      src={nitaLogo}
+                      alt="MyNita"
+                      className="h-4 inline-block align-middle"
+                    />
+                    MyNita
+                  </span>{" "}
+                  or AmanaTa, once integrated) strictly to process your payment,
+                  and with delivery partners strictly to deliver your order.
+                  These providers are bound by their own data protection
+                  obligations.
+                </>
+              ) : (
+                <>
+                  Vos données ne sont pas vendues à des tiers. Elles peuvent
+                  être partagées avec des prestataires de paiement (comme{" "}
+                  <span className="inline-flex items-center gap-1 align-middle">
+                    <img
+                      src={nitaLogo}
+                      alt="MyNita"
+                      className="h-4 inline-block align-middle"
+                    />
+                    MyNita
+                  </span>{" "}
+                  ou AmanaTa, une fois intégrés) strictement pour traiter votre
+                  paiement, et avec des partenaires de livraison strictement
+                  pour livrer votre commande. Ces prestataires sont soumis à
+                  leurs propres obligations de protection des données.
+                </>
+              )}
             </p>
           </section>
 

@@ -94,6 +94,13 @@ router.post("/orders/:id/pay-with-nita", payLimiter, async (req, res) => {
   } catch (err) {
     if (err instanceof NitaApiError) {
       console.error("[nita] Échec création achat:", err.message, err.raw);
+      
+      // Transmettre les erreurs de validation spécifiques (ex: montant invalide) au frontend
+      if (err.message.includes("Montant") || err.raw?.code === 400) {
+        return res.status(400).json({ error: err.message });
+      }
+      
+      // Garder le message générique uniquement pour les vraies pannes de service (502)
       return res.status(502).json({ error: "Le service de paiement NITA est momentanément indisponible. Réessayez dans un instant." });
     }
     throw err;

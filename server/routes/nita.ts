@@ -96,7 +96,7 @@ router.post("/orders/:id/pay-with-nita", payLimiter, async (req, res) => {
       console.error("[nita] Échec création achat:", err.message, err.raw);
       
       // Transmettre les erreurs de validation spécifiques (ex: montant invalide) au frontend
-      if (err.message.includes("Montant") || err.raw?.code === 400) {
+      if (err.message.includes("Montant") || (err.raw as any)?.code === 400) {
         return res.status(400).json({ error: err.message });
       }
       

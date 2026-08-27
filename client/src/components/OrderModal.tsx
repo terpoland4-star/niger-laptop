@@ -13,6 +13,7 @@ import { createOrder, payWithNita, getNitaStatus } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { isValidPhoneNumber } from "libphonenumber-js";
+import nitaLogo from "@/assets/nita-logo.png";
 
 interface OrderModalItem {
   id: string;
@@ -224,6 +225,7 @@ export const OrderModal = ({
                 </div>
               ) : nitaCode ? (
                 <div className="space-y-2 text-center">
+                  <img src={nitaLogo} alt="NITA" className="h-5 mx-auto" />
                   <p className="text-sm text-muted-foreground">
                     {language === "en"
                       ? "Pay at any NITA agency or via MYNITA with this code:"
@@ -255,10 +257,11 @@ export const OrderModal = ({
                 >
                   {nitaLoading ? (
                     <Loader2 className="animate-spin" size={18} />
-                  ) : language === "en" ? (
-                    "Pay with NITA"
                   ) : (
-                    "Payer avec NITA"
+                    <span className="inline-flex items-center gap-2">
+                      <img src={nitaLogo} alt="" className="h-4" />
+                      {language === "en" ? "Pay with NITA" : "Payer avec NITA"}
+                    </span>
                   )}
                 </Button>
               )}

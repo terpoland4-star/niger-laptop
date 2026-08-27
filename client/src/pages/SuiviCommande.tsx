@@ -27,11 +27,13 @@ export default function SuiviCommande() {
     try {
       const response = await fetch(`/api/orders/${orderId}/nita-status`);
       if (!response.ok) throw new Error("Commande introuvable");
-      const data = await response.json();
+      const json = await response.json();
+      const data = json.data;
 
       if (data.codeAchat) {
         setNitaCode(data.codeAchat);
         setNitaExpiresAt(data.expiresAt);
+        setIsPolling(true);
       }
       setIsPaid(data.isPaid || data.status === "1");
     } catch (error) {
@@ -49,7 +51,7 @@ export default function SuiviCommande() {
       interval = setInterval(async () => {
         try {
           const statusData = await getNitaStatus(orderId!);
-          if (statusData.isPaid || statusData.status === "1") {
+          if (statusData.data.isPaid || statusData.data.status === "1") {
             setIsPaid(true);
             setIsPolling(false);
             toast.success("Paiement NITA reçu avec succès ! 🎉");
@@ -66,9 +68,9 @@ export default function SuiviCommande() {
     if (!orderId) return;
     try {
       toast.info("Génération du code de paiement en cours...");
-      const data = await payWithNita(orderId);
-      setNitaCode(data.codeAchat);
-      setNitaExpiresAt(data.expiresAt);
+      const result = await payWithNita(orderId);
+      setNitaCode(result.data.codeAchat);
+      setNitaExpiresAt(result.data.expiresAt);
       setIsPolling(true);
       toast.success("Code de paiement généré !");
     } catch (error: any) {

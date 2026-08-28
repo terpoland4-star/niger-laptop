@@ -7,6 +7,7 @@ import {
   fetchAdminOrders,
   updateOrderStatus,
   markOrderAsPaid,
+  cancelOrderNita,
 } from "@/lib/api";
 import { openReceiptWhatsApp } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,29 @@ export default function AdminOrders() {
       console.error("[AdminOrders] Échec du marquage comme payé:", err);
     } finally {
       setMarkingPaidId(null);
+    }
+  };
+
+  const [cancelingNitaId, setCancelingNitaId] = useState<string | null>(null);
+
+  const handleCancelNita = async (order: AdminOrder) => {
+    if (!token) return;
+    if (
+      !window.confirm(
+        `Annuler le paiement NITA en attente pour la commande ${order.orderNumber} ?`
+      )
+    ) {
+      return;
+    }
+    setCancelingNitaId(order.id);
+    try {
+      await cancelOrderNita(token, order.id);
+      await loadOrders();
+    } catch (err) {
+      console.error("[AdminOrders] Échec de l'annulation NITA:", err);
+      alert(err instanceof Error ? err.message : "Échec de l'annulation NITA");
+    } finally {
+      setCancelingNitaId(null);
     }
   };
 
@@ -243,6 +267,19 @@ export default function AdminOrders() {
                           {markingPaidId === o.id ? "..." : "Marquer payé"}
                         </Button>
                       )}
+                      {o.nita &&
+                        o.nita.status !== "1" &&
+                        o.nita.status !== "2" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive border-destructive hover:bg-destructive/10 ml-2"
+                            onClick={() => handleCancelNita(o)}
+                            disabled={cancelingNitaId === o.id}
+                          >
+                            {cancelingNitaId === o.id ? "..." : "Annuler NITA"}
+                          </Button>
+                        )}
                     </TableCell>
                     <TableCell>
                       <Button

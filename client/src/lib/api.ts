@@ -307,6 +307,7 @@ export interface AdminOrder {
   isPaid: boolean;
   paidAt: string | null;
   receiptUrl?: string;
+  nita?: { codeAchat: string | null; status: string } | null;
 }
 
 export async function fetchAdminOrders(
@@ -355,6 +356,36 @@ export async function markOrderAsPaid(
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
     throw new Error(error.error || "Échec du marquage comme payé");
+  }
+
+  return res.json();
+}
+
+export async function cancelOrderNita(
+  token: string,
+  id: string
+): Promise<{ data: { status: string; codeAchat: string | null } }> {
+  const res = await fetch(`${API_BASE}/api/admin/orders/${id}/cancel-nita`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de l'annulation NITA");
+  }
+
+  return res.json();
+}
+
+export async function getNitaBalance(token: string): Promise<{ data: number }> {
+  const res = await fetch(`${API_BASE}/api/admin/nita/balance`, {
+    headers: authHeaders(token),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+    throw new Error(error.error || "Échec de récupération du solde NITA");
   }
 
   return res.json();

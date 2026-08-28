@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { admins, products, productHistory, orders, customers, orderStatusHistory, deliveryAgents, deliveries, agentLocations } from "../db/schema";
+import { admins, products, productHistory, orders, customers, orderStatusHistory, deliveryAgents, deliveries, agentLocations, nitaTransactions } from "../db/schema";
+import { cancelAchat, getBalance, NitaApiError } from "../lib/nita";
 import { sendOrderStatusUpdateEmail, sendReceiptEmail } from "../lib/notifications";
 import { generateReceiptPdf } from "../lib/receipt";
 import { eq, desc } from "drizzle-orm";
@@ -286,7 +287,21 @@ const statusUpdateSchema = z.object({
 
 router.get("/orders", requireAdmin, async (req: AuthenticatedRequest, res) => {
   const allOrders = await db.select().from(orders).orderBy(desc(orders.createdAt));
-  res.json({ data: allOrders });
+
+  const allNitaTx = await db.select().from(nitaTransactions);
+  const nitaByOrderId = new Map(allNitaTx.map((tx) => [tx.orderId, tx]));
+
+  const enriched = allOrders.map((o) => {
+    const tx = nitaByOrderId.get(o.id);
+    return {
+      ...o,
+      nita: tx
+        ? { codeAchat: tx.codeAchat, status: tx.status }
+        : null,
+    };
+  });
+
+  res.json({ data: enriched });
 });
 
 router.patch("/orders/:id/status", requireAdmin, async (req: AuthenticatedRequest, res) => {
@@ -401,6 +416,79 @@ router.patch("/orders/:id/mark-paid", requireAdmin, async (req: AuthenticatedReq
 
   const updatedOrder = await db.select().from(orders).where(eq(orders.id, orderId));
   res.json({ data: { ...updatedOrder[0], receiptUrl: absoluteReceiptUrl } });
+});
+
+// PATCH /api/admin/orders/:id/cancel-nita - annule la transaction NITA d'une commande
+router.patch("/orders/:id/cancel-nita", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  const orderId = req.params.id;
+
+  const [order] = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (!order) {
+    return res.status(404).json({ error: "Commande non trouvée" });
+  }
+
+  const [transaction] = await db
+    .select()
+    .from(nitaTransactions)
+    .where(eq(nitaTransactions.orderId, orderId));
+
+  if (!transaction) {
+    return res.status(404).json({ error: "Aucune transaction NITA trouvée pour cette commande" });
+  }
+
+  if (transaction.status === "1" || order.isPaid) {
+    return res.status(400).json({ error: "Impossible d'annuler : cette commande est déjà payée" });
+  }
+
+  if (transaction.status === "2") {
+    return res.status(400).json({ error: "Cette transaction NITA est déjà annulée" });
+  }
+
+  try {
+    const result = await cancelAchat({
+      codeAchat: transaction.codeAchat ?? "",
+      requestId: transaction.requestId,
+      adresseIp: req.ip ?? "unknown",
+    });
+
+    const now = new Date().toISOString();
+
+    await db
+      .update(nitaTransactions)
+      .set({ status: "2", rawResponse: JSON.stringify(result), updatedAt: now })
+      .where(eq(nitaTransactions.id, transaction.id));
+
+    await db.insert(orderStatusHistory).values({
+      id: randomUUID(),
+      orderId,
+      status: order.status,
+      note: `Transaction NITA annulée manuellement (codeAchat: ${transaction.codeAchat})`,
+      changedBy: req.admin!.id,
+      createdAt: now,
+    });
+
+    res.json({ data: { status: "2", codeAchat: transaction.codeAchat } });
+  } catch (err) {
+    if (err instanceof NitaApiError) {
+      console.error("[admin] Échec annulation NITA:", err.message, err.raw);
+      return res.status(502).json({ error: "Impossible d'annuler le paiement NITA pour le moment." });
+    }
+    throw err;
+  }
+});
+
+// GET /api/admin/nita/balance - consulte le solde du compte NITA
+router.get("/nita/balance", requireAdmin, async (req: AuthenticatedRequest, res) => {
+  try {
+    const balance = await getBalance();
+    res.json({ data: balance });
+  } catch (err) {
+    if (err instanceof NitaApiError) {
+      console.error("[admin] Échec récupération solde NITA:", err.message, err.raw);
+      return res.status(502).json({ error: "Impossible de récupérer le solde NITA pour le moment." });
+    }
+    throw err;
+  }
 });
 
 

@@ -10,6 +10,7 @@ import {
   createSupplier,
   fetchPurchases,
   createPurchase,
+  getNitaBalance,
   AccountingDashboard,
   Expense,
   Supplier,
@@ -48,6 +49,7 @@ export default function AdminAccounting() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [nitaBalance, setNitaBalance] = useState<number | null>(null);
 
   const [expenseForm, setExpenseForm] = useState({
     category: "",
@@ -95,6 +97,12 @@ export default function AdminAccounting() {
     } finally {
       setIsLoading(false);
     }
+
+    getNitaBalance(token)
+      .then(res => setNitaBalance(res.data))
+      .catch(err =>
+        console.error("[AdminAccounting] Échec récupération solde NITA:", err)
+      );
   }, [token]);
 
   useEffect(() => {
@@ -253,6 +261,13 @@ export default function AdminAccounting() {
                       }`}
                     >
                       {fcfa(dashboard.netBalance)}
+                    </p>
+                  </div>
+
+                  <div className="border border-border rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground">Solde NITA</p>
+                    <p className="text-2xl font-bold">
+                      {nitaBalance !== null ? fcfa(nitaBalance) : "—"}
                     </p>
                   </div>
 

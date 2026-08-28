@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "../db/index";
-import { products, orders, carts, customers, deliveries, agentLocations } from "../db/schema";
+import { products, orders, carts, customers, deliveries, agentLocations, nitaTransactions } from "../db/schema";
 import { eq, like, or, and, ne } from "drizzle-orm";
 import { orderSchema } from "../validators/orderValidator";
 import { randomUUID } from "crypto";
@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { phoneParamSchema, cartItemsSchema } from "../validators/cartValidator";
 import { sendOrderNotifications } from "../lib/notifications";
+import { syncNitaTransactionStatus, NitaApiError } from "../services/nitaAchat";
 import { optionalCustomer, CustomerAuthenticatedRequest } from "../middleware/customerAuth";
 
 const router = Router();
@@ -170,6 +171,7 @@ const trackingLimiter = rateLimit({
 
 // GET /api/orders/track/:orderNumber - suivi public limité (sans infos sensibles)
 router.get("/orders/track/:orderNumber", trackingLimiter, async (req, res) => {
+  res.set("Cache-Control", "no-store");
   const result = await db.select().from(orders).where(eq(orders.orderNumber, req.params.orderNumber));
   if (result.length === 0) {
     return res.status(404).json({ error: "Commande non trouvée" });
@@ -193,14 +195,55 @@ router.get("/orders/track/:orderNumber", trackingLimiter, async (req, res) => {
     };
   }
 
+  let [nitaTx] = await db
+    .select()
+    .from(nitaTransactions)
+    .where(eq(nitaTransactions.orderId, order.id));
+
+  let freshOrder = order;
+
+  // Si une transaction NITA existe et n'est pas encore confirmée, on revérifie
+  // l'état réel auprès de NITA (source de vérité) avant de répondre au client.
+  // Sans ça, le polling frontend affiche indéfiniment "non payé" même après
+  // un paiement réel, car il ne lit que l'état figé en base.
+  if (nitaTx && nitaTx.status !== "1" && !order.isPaid) {
+    try {
+      await syncNitaTransactionStatus(nitaTx.id, req.ip ?? "unknown");
+      const [updatedOrder] = await db.select().from(orders).where(eq(orders.id, order.id));
+      if (updatedOrder) freshOrder = updatedOrder;
+      const [updatedTx] = await db
+        .select()
+        .from(nitaTransactions)
+        .where(eq(nitaTransactions.orderId, order.id));
+      if (updatedTx) nitaTx = updatedTx;
+    } catch (err) {
+      // On ne bloque jamais le suivi de commande si NITA est indisponible ;
+      // on retombe simplement sur les dernières données connues en base.
+      if (err instanceof NitaApiError) {
+        console.error("[track] Échec sync NITA:", err.message);
+      } else {
+        console.error("[track] Erreur inattendue lors de la sync NITA:", err);
+      }
+    }
+  }
+
   res.json({
     data: {
-      orderNumber: order.orderNumber,
-      status: order.status,
-      total: order.total,
-      createdAt: order.createdAt,
-      items: JSON.parse(order.itemsJson),
+      id: freshOrder.id,
+      orderNumber: freshOrder.orderNumber,
+      status: freshOrder.status,
+      total: freshOrder.total,
+      createdAt: freshOrder.createdAt,
+      items: JSON.parse(freshOrder.itemsJson),
       delivery,
+      isPaid: freshOrder.isPaid,
+      nita: nitaTx
+        ? {
+            codeAchat: nitaTx.codeAchat,
+            status: nitaTx.status,
+            expiresAt: nitaTx.expiresAt,
+          }
+        : null,
     },
   });
 });

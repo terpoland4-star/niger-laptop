@@ -55,3 +55,4 @@ uploads/
 *.bak-*
 *.bak2-*
 *.bak3-*
+*.db.corrupted-*

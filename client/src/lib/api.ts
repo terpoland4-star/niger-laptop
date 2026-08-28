@@ -398,13 +398,22 @@ export interface OrderTrackingDelivery {
   location: { lat: number; lng: number; updatedAt: string } | null;
 }
 
+export interface OrderTrackingNita {
+  codeAchat: string | null;
+  status: string;
+  expiresAt: string;
+}
+
 export interface OrderTrackingData {
+  id: string;
   orderNumber: string;
   status: string;
   total: number;
   createdAt: string;
   items: OrderTrackingItem[];
   delivery: OrderTrackingDelivery | null;
+  isPaid: boolean;
+  nita: OrderTrackingNita | null;
 }
 
 export async function trackOrder(

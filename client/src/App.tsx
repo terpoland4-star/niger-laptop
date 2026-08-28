@@ -1,7 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
-import SuiviCommande from "@/pages/SuiviCommande";
 import { Suspense, lazy } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -59,7 +58,6 @@ function Router() {
         <Route path={"/agent/login"} component={AgentLogin} />
         <Route path={"/agent"} component={AgentDashboard} />
         <Route path={"/404"} component={NotFound} />
-        <Route path="/suivi-commande/:id" component={SuiviCommande} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

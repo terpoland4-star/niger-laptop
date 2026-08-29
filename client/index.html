@@ -6,26 +6,30 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Niger Laptops - Votre expert informatique au Niger</title>
+    <title><!--app-title--></title>
     <meta name="google-site-verification" content="k-C4LStCiKFAP_Wv46JwLpMW168GctJwb8665dddk8s" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#a85a3a" />
-    <meta name="description" content="Niger Laptops : vente d'ordinateurs portables, PC, stockage et accessoires informatiques neufs et occasion à Niamey. Qualité vérifiée, livraison au Niger, paiement sécurisé." />
+    <meta name="description" content="<!--app-description-->" />
+    <link rel="canonical" href="<!--app-canonical-->" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Niger Laptops - Votre expert informatique au Niger" />
-    <meta property="og:description" content="Ordinateurs portables, PC, stockage et accessoires informatiques neufs et occasion à Niamey. Qualité vérifiée, livraison au Niger." />
-    <meta property="og:image" content="https://www.niger-laptops.com/logolap.png" />
-    <meta property="og:url" content="https://www.niger-laptops.com/" />
+    <meta property="og:title" content="<!--app-title-->" />
+    <meta property="og:description" content="<!--app-description-->" />
+    <meta property="og:image" content="<!--app-og-image-->" />
+    <meta property="og:url" content="<!--app-canonical-->" />
     <meta property="og:site_name" content="Niger Laptops" />
     <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Niger Laptops - Votre expert informatique au Niger" />
-    <meta name="twitter:description" content="Ordinateurs portables, PC, stockage et accessoires informatiques neufs et occasion à Niamey." />
-    <meta name="twitter:image" content="https://www.niger-laptops.com/logolap.png" />
+    <meta name="twitter:title" content="<!--app-title-->" />
+    <meta name="twitter:description" content="<!--app-description-->" />
+    <meta name="twitter:image" content="<!--app-og-image-->" />
+
+    <!--app-jsonld-->
+
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Niger Laptops" />
@@ -34,25 +38,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // https://github.com/rafgraciani/spa-github-pages
-      (function(l) {
-        if (l.search[1] === '/') {
-          var decoded = l.search.slice(1).split('&').map(function(s) {
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location));
-    </script>
   </head>
 
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="root"><!--ssr-outlet--></div>
+    <script type="module" src="/src/entry-client.tsx"></script>
   </body>
 
 </html>

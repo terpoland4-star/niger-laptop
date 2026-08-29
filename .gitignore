@@ -56,3 +56,4 @@ uploads/
 *.bak2-*
 *.bak3-*
 *.db.corrupted-*
+scripts/test-auth.ts

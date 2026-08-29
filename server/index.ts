@@ -14,8 +14,6 @@ import agentRouter from "./routes/agent";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
 import { expireNitaTransactions } from "./jobs/expireNitaTransactions";
-import { setupSSR } from "./ssr";
-import sitemapRouter from "./routes/sitemap";
 
 function scrub(obj: any) {
   const sensitiveKeys = ["password", "apikey", "api_key", "token", "authorization", "secret"];
@@ -70,12 +68,13 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "dist", "public");
 
-  app.use(express.static(staticPath, { index: false })); // index:false — sinon Express sert dist/public/index.html brut (placeholders non remplis) pour "/" avant même d'atteindre le SSR
+  app.use(express.static(staticPath));
 
   Sentry.setupExpressErrorHandler(app);
 
-  app.use(sitemapRouter); // avant setupSSR : sinon le catch-all SSR intercepte /sitemap.xml en premier
-  await setupSSR(app, process.env.NODE_ENV === "production");
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(staticPath, "index.html"));
+  });
 
   const port = process.env.PORT || 3000;
 

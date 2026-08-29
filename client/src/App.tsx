@@ -1,6 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Router as WouterRouter, Route, Switch } from "wouter";
+import { Route, Switch } from "wouter";
 import { Suspense, lazy } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -39,7 +39,7 @@ function PageLoader() {
   );
 }
 
-function AppRoutes() {
+function Router() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Switch>
@@ -64,7 +64,7 @@ function AppRoutes() {
   );
 }
 
-function App({ ssrPath }: { ssrPath?: string }) {
+function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light" switchable>
@@ -73,9 +73,7 @@ function App({ ssrPath }: { ssrPath?: string }) {
             <WishlistProvider>
               <TooltipProvider>
                 <Toaster />
-                <WouterRouter ssrPath={ssrPath}>
-                  <AppRoutes />
-                </WouterRouter>
+                <Router />
               </TooltipProvider>
             </WishlistProvider>
           </CartProvider>

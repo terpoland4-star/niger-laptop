@@ -5,13 +5,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --host",
-    "build": "npm run build:client && npm run build:server && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
-    "format": "prettier --write .",
-    "build:client": "vite build",
-    "build:server": "SSR_BUILD=true vite build"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

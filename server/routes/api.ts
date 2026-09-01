@@ -11,6 +11,7 @@ import { phoneParamSchema, cartItemsSchema } from "../validators/cartValidator";
 import { sendOrderNotifications } from "../lib/notifications";
 import { syncNitaTransactionStatus, NitaApiError } from "../services/nitaAchat";
 import { optionalCustomer, CustomerAuthenticatedRequest } from "../middleware/customerAuth";
+import { getProductDetail, parseProductSpecs } from "../services/products";
 
 const router = Router();
 
@@ -23,13 +24,6 @@ const cartLimiter = rateLimit({
 });
 
 // GET /api/products - liste tous les produits (avec recherche optionnelle)
-function parseProductSpecs<T extends { specs: string | null }>(product: T) {
-  return {
-    ...product,
-    specs: product.specs ? JSON.parse(product.specs) : [],
-  };
-}
-
 router.get("/products", async (req, res) => {
   const search = req.query.search as string | undefined;
 
@@ -51,11 +45,11 @@ router.get("/products", async (req, res) => {
 
 // GET /api/products/:id - un seul produit
 router.get("/products/:id", async (req, res) => {
-  const result = await db.select().from(products).where(eq(products.id, req.params.id));
-  if (result.length === 0) {
+  const product = await getProductDetail(req.params.id);
+  if (!product) {
     return res.status(404).json({ error: "Produit non trouvé" });
   }
-  res.json({ data: parseProductSpecs(result[0]) });
+  res.json({ data: product });
 });
 
 // POST /api/orders - créer une commande

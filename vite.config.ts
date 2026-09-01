@@ -6,29 +6,35 @@ import { VitePWA } from "vite-plugin-pwa";
 
 process.env.BROWSERSLIST_IGNORE_OLD_DATA = "true";
 
+const isSSRBuild = !!process.env.SSR_BUILD;
+
 const plugins = [
   react(),
   tailwindcss(),
-  VitePWA({
-    strategies: "generateSW",
-    injectRegister: "auto",
-    manifest: false,
-    includeManifestIcons: false,
-    workbox: {
-      globPatterns: ["**/*.{js,css,html,ico,png,svg,webp}"],
-      navigateFallback: "/index.html",
-      runtimeCaching: [
-        {
-          urlPattern: /^https:\/\/api\.niger-laptops\.com\/api\/products/,
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "products-cache",
-            expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
+  ...(isSSRBuild
+    ? []
+    : [
+        VitePWA({
+          strategies: "generateSW",
+          injectRegister: "auto",
+          manifest: false,
+          includeManifestIcons: false,
+          workbox: {
+            globPatterns: ["**/*.{js,css,html,ico,png,svg,webp}"],
+            navigateFallback: "/index.html",
+            runtimeCaching: [
+              {
+                urlPattern: /^https:\/\/api\.niger-laptops\.com\/api\/products/,
+                handler: "NetworkFirst",
+                options: {
+                  cacheName: "products-cache",
+                  expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
+                },
+              },
+            ],
           },
-        },
-      ],
-    },
-  }),
+        }),
+      ]),
 ];
 
 export default defineConfig({
@@ -51,8 +57,13 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: isSSRBuild
+      ? path.resolve(import.meta.dirname, "dist/server")
+      : path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    ssr: isSSRBuild
+      ? path.resolve(import.meta.dirname, "client/src/entry-server.tsx")
+      : undefined,
   },
   server: {
     port: 3000,

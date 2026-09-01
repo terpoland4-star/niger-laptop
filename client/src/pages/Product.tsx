@@ -10,6 +10,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { openWhatsAppChat } from "@/lib/whatsapp";
 import { motion } from "framer-motion";
+import { useSSRInitialData } from "@/lib/ssr-data-context";
 
 const API_BASE = "https://api.niger-laptops.com";
 
@@ -38,14 +39,18 @@ export default function Product() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const [language, setLanguage] = useState<"en" | "fr">("fr");
-  const [product, setProduct] = useState<ProductDetail | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const ssrProduct = useSSRInitialData<ProductDetail>(`product:${id}`);
+  const [product, setProduct] = useState<ProductDetail | null>(ssrProduct);
+  const [isLoading, setIsLoading] = useState(!ssrProduct);
   const [error, setError] = useState<string | null>(null);
 
   const { addToCart } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   useEffect(() => {
+    if (ssrProduct && ssrProduct.id === id) {
+      return; // déjà fourni par le SSR, pas besoin de refetch au premier rendu
+    }
     let cancelled = false;
     setIsLoading(true);
     fetch(`${API_BASE}/api/products/${id}`)

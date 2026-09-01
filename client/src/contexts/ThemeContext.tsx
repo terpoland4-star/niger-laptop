@@ -22,7 +22,9 @@ export function ThemeProvider({
   switchable = false,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (switchable) {
+    // localStorage n'existe pas côté serveur (SSR) — sans cette garde,
+    // ThemeProvider plante au rendu serveur avec "localStorage is not defined"
+    if (switchable && typeof window !== "undefined") {
       const stored = localStorage.getItem("theme");
       return (stored as Theme) || defaultTheme;
     }

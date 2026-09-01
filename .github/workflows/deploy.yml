@@ -4,46 +4,20 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📥 Récupération du code
-        uses: actions/checkout@v4
-
-      - name: 📦 Installation de pnpm
-        run: npm install -g pnpm@10
-
-      - name: 📥 Installation des dépendances
-        run: pnpm install
-
-      - name: 🔨 Build du projet
-        run: pnpm build
-
-      - name: 📂 Préparation pour GitHub Pages
-        run: |
-          mkdir -p _site
-          cp -r dist/public/. _site/
-
-      - name: ⬆️ Upload de l'artefact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
   deploy:
-    needs: build-and-deploy
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: 🚀 Déploiement sur GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: 🚀 Déploiement sur le VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/niger-laptop
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart niger-laptops-api

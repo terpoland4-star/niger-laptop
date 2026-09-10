@@ -18,7 +18,7 @@ interface ApiProduct {
   stockQuantity: number;
 }
 
-const API_BASE = "https://api.niger-laptops.com";
+const API_BASE = "";
 
 export const useProducts = (language: "en" | "fr" = "fr") => {
   const [products, setProducts] = useState<Product[]>([]);

@@ -1,4 +1,4 @@
-const API_BASE = "https://api.niger-laptops.com";
+const API_BASE = "";
 
 export interface OrderItem {
   productId: string;

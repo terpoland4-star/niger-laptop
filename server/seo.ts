@@ -1,5 +1,6 @@
 import { getProductDetail } from "./services/products";
 import { resolveImageUrl } from "./lib/images";
+import { matchesKnownRoute } from "../shared/routes";
 
 export interface HeadData {
   title: string;
@@ -19,10 +20,19 @@ const DEFAULT_HEAD: Omit<HeadData, "canonical"> = {
   jsonLd: null,
 };
 
+const NOT_FOUND_HEAD: Omit<HeadData, "canonical"> = {
+  title: "Page introuvable — Niger Laptops",
+  description: "Cette page n'existe pas ou a été déplacée.",
+  ogImage: DEFAULT_HEAD.ogImage,
+  jsonLd: null,
+  notFound: true,
+};
+
 export async function resolveHead(url: string): Promise<HeadData> {
+  const pathname = url.split("?")[0];
   const canonical = `https://www.niger-laptops.com${url}`;
 
-  const productMatch = url.match(/^\/produit\/([^/?]+)/);
+  const productMatch = pathname.match(/^\/produit\/([^/?]+)/);
   if (productMatch) {
     const product = await getProductDetail(productMatch[1]);
 
@@ -65,6 +75,10 @@ export async function resolveHead(url: string): Promise<HeadData> {
       },
       initialData: { key: `product:${product.id}`, value: product },
     };
+  }
+
+  if (!matchesKnownRoute(pathname)) {
+    return { ...NOT_FOUND_HEAD, canonical };
   }
 
   return { ...DEFAULT_HEAD, canonical };

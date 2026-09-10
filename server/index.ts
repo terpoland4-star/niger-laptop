@@ -13,7 +13,6 @@ import customerAuthRouter from "./routes/customerAuth";
 import agentRouter from "./routes/agent";
 import cron from "node-cron";
 import { cleanupOldCarts } from "./jobs/cleanupCarts";
-import { expireNitaTransactions } from "./jobs/expireNitaTransactions";
 import { setupSSR } from "./ssr";
 import sitemapRouter from "./routes/sitemap";
 
@@ -83,9 +82,14 @@ async function startServer() {
     cleanupOldCarts().catch(console.error);
   });
 
-  cron.schedule("0 * * * *", () => {
-    expireNitaTransactions().catch(console.error);
-  });
+  // cron NITA désactivé temporairement - compte NigerLaptop26 suspendu 403/429
+  // TODO réactiver après passage à NigerLaptop2026
+  // cron.schedule("0 * * * *", () => {
+  // });
+  if (process.env.NITA_EXPIRE_ENABLED === 'true') {
+    cron.schedule("0 * * * *", () => {
+    });
+  }
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
